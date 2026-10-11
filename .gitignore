@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage*
+htmlcov/
+dist/
+build/
+.venv/
+host/.venv/
+
+# macOS / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Android / Gradle / developer machines
+.gradle/
+**/build/
+local.properties
+*.iml
+*.apk
+*.aab
+*.apks
+
+# Credentials and captured device data
+.env
+.env.*
+!.env.example
+*.keystore
+*.jks
+*.p12
+*.pem
+*.key
+secrets/
+artifacts/
+captures/
+screenshots/

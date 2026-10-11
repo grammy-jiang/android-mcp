@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "android-mcp-host"
+version = "0.1.0"
+description = "Cross-platform macOS/Linux ADB host runtime for Android MCP."
+requires-python = ">=3.11,<3.15"
+dependencies = ["fastmcp==4.1.0"]
+
+[project.scripts]
+android-mcp-host = "android_mcp_host.cli:main"
+
+[dependency-groups]
+dev = [
+    "jsonschema>=4.25,<5",
+    "pytest>=9.1,<10",
+    "ruff>=0.16,<0.18",
+]
+
+[tool.uv]
+required-version = ">=0.12.22,<0.13"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/android_mcp_host"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

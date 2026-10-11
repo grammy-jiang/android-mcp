@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "runtime": "host",
+  "host": {"os": "macos", "architecture": "arm64", "python": "3.14.8"},
+  "capabilities": {"adb.discovery": true, "adb.connected_device": false},
+  "adb": {
+    "available": true,
+    "executable": "/opt/homebrew/bin/adb",
+    "version": "37.0.1-15733141",
+    "error": null
+  },
+  "devices": [],
+  "errors": []
+}

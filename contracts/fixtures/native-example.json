@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "runtime": "android",
+  "capabilities": {
+    "android.accessibility.observe": false,
+    "android.accessibility.act": false,
+    "android.privileged": false
+  },
+  "devices": [
+    {
+      "device_id": "example-native-installation",
+      "state": "ready",
+      "properties": {"android_release": "example"}
+    }
+  ],
+  "errors": []
+}
