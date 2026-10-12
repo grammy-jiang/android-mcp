@@ -29,7 +29,7 @@ def test_server_has_small_catalog_and_stays_read_only_by_default():
                 "adb_develop", {"device_id": "MOCK-01", "action": {"type": "logcat_snapshot"}}
             )
             assert not reply.is_error
-            assert reply.data["status"] == "ok"
+            assert reply.structured_content["status"] == "ok"
             mutation = await client.call_tool(
                 "adb_develop",
                 {
@@ -42,6 +42,6 @@ def test_server_has_small_catalog_and_stays_read_only_by_default():
                 },
             )
             assert not mutation.is_error
-            assert mutation.data["errors"][0]["code"] == "MUTATION_DISABLED"
+            assert mutation.structured_content["errors"][0]["code"] == "MUTATION_DISABLED"
 
     asyncio.run(test())
