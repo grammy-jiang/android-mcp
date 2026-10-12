@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-package-diagnostics:v1",
+  "title": "Exact package diagnostics without raw device output v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "runtime", "device_id", "package", "status",
+    "found", "version_name", "version_code", "target_sdk",
+    "requested_permissions", "granted_permissions",
+    "permissions_truncated", "errors"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "device_id": {"type": "string", "maxLength": 128},
+    "package": {"type": "string", "maxLength": 180},
+    "status": {"enum": ["ok", "partial", "error", "unavailable"]},
+    "found": {"type": "boolean"},
+    "version_name": {"type": ["string", "null"], "maxLength": 64},
+    "version_code": {"type": ["integer", "null"], "minimum": 0},
+    "target_sdk": {"type": ["integer", "null"], "minimum": 1, "maximum": 100},
+    "requested_permissions": {
+      "type": "array", "maxItems": 32, "uniqueItems": true,
+      "items": {"type": "string", "maxLength": 128}
+    },
+    "granted_permissions": {
+      "type": "array", "maxItems": 32, "uniqueItems": true,
+      "items": {"type": "string", "maxLength": 128}
+    },
+    "permissions_truncated": {"type": "boolean"},
+    "errors": {
+      "type": "array", "maxItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string", "maxLength": 64},
+          "message": {"type": "string", "maxLength": 256}
+        }
+      }
+    }
+  }
+}
