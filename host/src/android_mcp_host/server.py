@@ -22,6 +22,7 @@ def create_server(
     operator = operations if operations is not None else OperationService(client)
     server = FastMCP(
         "android-mcp-host",
+        mask_error_details=True,
         instructions=(
             "Android host device tools are read-only. "
             "Each observation requires an explicitly selected authorized device. "
