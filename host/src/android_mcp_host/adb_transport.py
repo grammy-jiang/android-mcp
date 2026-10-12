@@ -53,6 +53,12 @@ def _error(code: str) -> dict[str, str]:
     return {"code": code, "message": "Selected ADB transport could not be safely inspected"}
 
 
+def _output_within_budget(result: subprocess.CompletedProcess[str]) -> bool:
+    # Host-controlled adapters and test runners must not be able to bypass
+    # the bounded output contract by returning a forged CompletedProcess.
+    return len(result.stdout.encode("utf-8")) + len(result.stderr.encode("utf-8")) <= OUTPUT_BYTES
+
+
 def _endpoint_valid(value: object) -> bool:
     if not isinstance(value, str) or len(value) > 145 or ":" not in value:
         return False
@@ -225,7 +231,7 @@ class AdbTransport:
             or not _TRANSPORT.fullmatch(transport_id)
         ):
             return fail("INVALID_TARGET")
-        if target_state not in _READ_STATES:
+        if not isinstance(target_state, str) or target_state not in _READ_STATES:
             return fail("INVALID_TARGET_STATE")
         if (
             type(wait_seconds) not in (int, float)
@@ -285,8 +291,10 @@ class AdbTransport:
                         return fail("TRANSPORT_TIMEOUT", "timeout")
                     except OutputLimitExceeded:
                         return fail("OUTPUT_LIMIT", "partial")
-                    except OSError:
+                    except (OSError, ValueError, RuntimeError):
                         return fail("TRANSPORT_EXEC_FAILED", "partial")
+                    if not _output_within_budget(outcome):
+                        return fail("OUTPUT_LIMIT", "partial")
                     if outcome.returncode != 0:
                         return fail("TRANSPORT_COMMAND_FAILED", "partial")
                     parsed, invalid = _routes(outcome.stdout, device_id, direction)
@@ -301,8 +309,10 @@ class AdbTransport:
                     return fail("TRANSPORT_TIMEOUT", "timeout")
                 except OutputLimitExceeded:
                     return fail("OUTPUT_LIMIT", "partial")
-                except OSError:
+                except (OSError, ValueError, RuntimeError):
                     return fail("TRANSPORT_EXEC_FAILED", "partial")
+                if not _output_within_budget(outcome):
+                    return fail("OUTPUT_LIMIT", "partial")
                 if outcome.returncode != 0:
                     return fail("TRANSPORT_COMMAND_FAILED", "partial")
                 response["mdns"], invalid = _mdns(outcome.stdout, mdns_endpoint)

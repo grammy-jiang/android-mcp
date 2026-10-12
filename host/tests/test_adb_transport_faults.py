@@ -370,3 +370,39 @@ def test_async_cancelled_mcp_call_sets_cooperative_stop_event() -> None:
             assert await asyncio.to_thread(stopped.wait, 2)
 
     asyncio.run(scenario())
+
+
+@pytest.mark.parametrize("value", [[], {}, ["device"], 17])
+def test_unhashable_target_state_returns_typed_denial_before_any_adb(
+    value: Any,
+) -> None:
+    source = Fake(report())
+    runner = Runner()
+    service = AdbTransport(adb=source, runner=runner)  # type: ignore[arg-type]
+    result = service.inspect(device_id="FIXTURE-01", transport_id="7", target_state=value)
+    assert result["status"] == "error"
+    assert codes(result) == ["INVALID_TARGET_STATE"]
+    assert source.calls == 0 and runner.calls == []
+
+
+@pytest.mark.parametrize("mdns", [False, True])
+def test_even_host_injected_malicious_runner_output_is_checked_against_64k(
+    mdns: bool,
+) -> None:
+    reader = Runner([subprocess.CompletedProcess(["fixture"], 0, "x" * 70000, "sensitive stderr")])
+    result = run(report(), reader=reader, include_routes=not mdns, include_mdns=mdns)
+    assert result["status"] == "partial"
+    assert codes(result) == ["OUTPUT_LIMIT"]
+    assert "sensitive" not in str(result)
+
+
+@pytest.mark.parametrize("fault", [ValueError("private"), RuntimeError("private")])
+@pytest.mark.parametrize("mdns", [False, True])
+def test_unexpected_host_adapter_failures_are_typed_and_redacted(
+    fault: Exception, mdns: bool
+) -> None:
+    reader = Runner([fault])
+    result = run(report(), reader=reader, include_routes=not mdns, include_mdns=mdns)
+    assert result["status"] == "partial"
+    assert codes(result) == ["TRANSPORT_EXEC_FAILED"]
+    assert "private" not in str(result)
