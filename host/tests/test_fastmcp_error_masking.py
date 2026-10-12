@@ -64,12 +64,12 @@ def test_expected_application_results_and_denials_remain_structured() -> None:
             assert [tool.name for tool in tools] == ["device_status", "adb_observe", "adb_develop"]
             status = await client.call_tool("device_status", {})
             assert status.is_error is False
-            assert status.data["runtime"] == "host"
+            assert status.structured_content["runtime"] == "host"
             seen = await client.call_tool(
                 "adb_observe", {"device_id": DEVICE, "probes": ["selinux"]}
             )
             assert seen.is_error is False
-            assert seen.data["status"] == "ok"
+            assert seen.structured_content["status"] == "ok"
             denied = await client.call_tool(
                 "adb_develop",
                 {
@@ -82,8 +82,8 @@ def test_expected_application_results_and_denials_remain_structured() -> None:
                 },
             )
             assert denied.is_error is False
-            assert denied.data["status"] == "error"
-            assert denied.data["errors"][0]["code"] == "MUTATION_DISABLED"
+            assert denied.structured_content["status"] == "error"
+            assert denied.structured_content["errors"][0]["code"] == "MUTATION_DISABLED"
             assert len(calls) == 1
             assert calls[0][1:3] == ["-s", DEVICE]
             assert "install" not in calls[0] and "instrument" not in calls[0]

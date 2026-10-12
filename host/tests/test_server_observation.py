@@ -36,7 +36,7 @@ def test_registered_mcp_observer_uses_typed_backend():
                 "adb_observe", {"device_id": "SERIAL", "probes": ["battery"]}
             )
             assert response.is_error is False
-            assert response.data["status"] == "ok"
+            assert response.structured_content["status"] == "ok"
             assert fake.calls == [("SERIAL", ["battery"])]
 
     asyncio.run(exercise())

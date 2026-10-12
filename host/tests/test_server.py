@@ -14,7 +14,7 @@ def test_local_mcp_server_registers_stable_small_catalog_without_adb():
             assert [tool.name for tool in tools] == ["device_status", "adb_observe", "adb_develop"]
             result = await client.call_tool("device_status", {})
             assert not result.is_error
-            assert result.data["schema_version"] == 1
-            assert result.data["adb"]["error"]["code"] == "ADB_NOT_FOUND"
+            assert result.structured_content["schema_version"] == 1
+            assert result.structured_content["adb"]["error"]["code"] == "ADB_NOT_FOUND"
 
     asyncio.run(exercise())

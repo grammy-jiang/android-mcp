@@ -72,3 +72,26 @@ def test_live_smoke_retries_fastmcp_runtime_error_before_server_ready(monkeypatc
     monkeypatch.setattr(module.asyncio, "sleep", immediate_sleep)
     assert asyncio.run(module._catalog_when_ready("http://127.0.0.1:1/mcp/")) == ["device_status"]
     assert len(attempts) == 2
+
+
+def test_live_smoke_reads_wire_structured_content_not_sdk_parsed_data():
+    """FastMCP .data becomes a dynamic model when outputSchema is explicit."""
+    import importlib.util
+    from types import SimpleNamespace
+
+    import pytest
+
+    spec = importlib.util.spec_from_file_location("smoke_host_live_data", SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    expected = {"schema_version": 1, "runtime": "host"}
+    typed_data = SimpleNamespace(schema_version=1, runtime="host")
+    success = SimpleNamespace(is_error=False, data=typed_data, structured_content=expected)
+    assert module._body(success) == expected
+
+    with pytest.raises(RuntimeError, match="Malformed or failed MCP tool result"):
+        module._body(SimpleNamespace(is_error=True, structured_content=expected))
+    with pytest.raises(RuntimeError, match="Malformed or failed MCP tool result"):
+        module._body(SimpleNamespace(is_error=False, structured_content=None))
