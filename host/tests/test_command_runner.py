@@ -112,3 +112,32 @@ def test_cleanup_kills_process_group_even_if_launcher_has_exited(monkeypatch):
     runner._end_process(ParentExitedWithLiveDescendant())
     assert calls[0] == ("killpg", 123456, runner.signal.SIGKILL)
     assert calls[1] == ("wait", 2.0)
+
+
+def test_process_closes_both_pipes_before_exiting_but_still_times_out():
+    # A process can close stdout/stderr while continuing to execute. A pipe EOF
+    # must not be interpreted as successful process completion.
+    command = "import os, time; os.close(1); os.close(2); time.sleep(5)"
+    with pytest.raises(subprocess.TimeoutExpired):
+        bounded_run([sys.executable, "-c", command], 0.2, 4096)
+
+
+def test_deadline_expiring_just_after_both_pipes_finish(monkeypatch):
+    import types
+
+    import android_mcp_host.command_runner as runner
+
+    clock_reads = 0
+
+    def monotonic():
+        nonlocal clock_reads
+        clock_reads += 1
+        return 0.0 if clock_reads <= 2 else 2.0
+
+    monkeypatch.setattr(runner, "time", types.SimpleNamespace(monotonic=monotonic))
+    # The synthetic deadline is injected after process EOF; no process needs
+    # killing, and the real process-group cleanup has separate tests.
+    monkeypatch.setattr(runner, "_end_process", lambda process: process.wait(timeout=2))
+    with pytest.raises(subprocess.TimeoutExpired):
+        bounded_run([sys.executable, "-c", "pass"], 1.0, 4096)
+    assert clock_reads >= 3
