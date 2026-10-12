@@ -1,13 +1,27 @@
 # Android Host + Native MCP: full-lifecycle capability architecture and staged roadmap
 
 **Date:** 2026-10-12, Australia/Sydney
-**Status:** **PROPOSED DESIGN FOR REVIEW; NOT AUTHORIZED IMPLEMENTATION**
+**Status:** Capability/architecture reference. Implementation decisions and
+merge scheduling are split into independent Host and Native plans; no privileged
+or device-mutating action is approved by publishing these documents.
 **Target main:** `7c4ff1e7350b36c89a59b95a9618c471c8906f5b`.
 **Inputs:** [toolchain and Native capability catalog](android-toolchain-capability-catalog-20261012.md),
 previous [FastMCP F0 acceptance](host-fastmcp-final-acceptance-20261012.md),
 [Host/Native coordination draft](host-native-coordination.md), Android official
 documentation cited in the catalog. No executable Tool or privilege change
 was made during this research.
+
+**Implementation ownership:** This file is a *shared catalog and strategic
+reference*, **not** a single joint feature branch or the executable PR
+schedule. Read the dedicated
+[Host MCP implementation plan](host-mcp-implementation-plan-20261013.md)
+and [Native MCP implementation plan](native-mcp-implementation-plan-20261013.md)
+separately. Their cross-stream integration commitments, including daily
+merge windows into the repository's actual `main` branch, are in the
+[shared integration schedule](host-native-integration-schedule-20261013.md).
+Each stream retains one writer, narrow PRs and independent merges.
+The older summary of stages below groups capabilities; the **work-package
+IDs, acceptance tests and merge points** are in the new plans.
 
 ## 1. Product decision to evaluate
 
@@ -280,7 +294,13 @@ passwords, notifications, user data or secrets. Apply per-tool
 minimum capture, destination whitelist, size caps, output redaction,
 short retention and explicit collection consent.
 
-## 8. Prioritized staged implementation (proposed)
+## 8. Prioritized staged implementation (umbrella reference)
+
+The table below remains a full-life-cycle priority map, not an
+instruction to develop Host and Native in a single long-lived branch.
+For execution use Host `HW0–HW9` and Native `NW0–NW8` stages,
+with explicit `M-HW*` and `M-NW*` main-merge checkpoints in the
+separate plans and the common integration schedule.
 
 Priority classes: **P0** critical foundations/diagnostics, **P1**
 routine full app development, **P2** UI/performance and valuable
