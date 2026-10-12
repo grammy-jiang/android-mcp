@@ -39,6 +39,12 @@ PROBES: Mapping[str, tuple[CommandSpec, ...]] = {
         CommandSpec("build_type", ("shell", "getprop", "ro.build.type")),
         CommandSpec("lineage_version", ("shell", "getprop", "ro.lineage.version")),
     ),
+    "compatibility": (
+        CommandSpec("primary_abi", ("shell", "getprop", "ro.product.cpu.abi")),
+        CommandSpec("security_patch", ("shell", "getprop", "ro.build.version.security_patch")),
+        CommandSpec("soc_model", ("shell", "getprop", "ro.soc.model")),
+        CommandSpec("kernel_release", ("shell", "uname", "-r")),
+    ),
     "boot": (
         CommandSpec("boot_completed", ("shell", "getprop", "sys.boot_completed")),
         CommandSpec("debuggable", ("shell", "getprop", "ro.debuggable")),
@@ -146,7 +152,8 @@ class ProbeService:
         if error:
             response["errors"].append(error)
             return response
-        binary = self._adb_executable or self._locate("adb")
+        # Reuse the executable that actually produced this discovery report.
+        binary = self._adb_executable or report.executable or self._locate("adb")
         if not binary:
             response["errors"].append(_error("ADB_NOT_FOUND", "ADB executable unavailable"))
             return response

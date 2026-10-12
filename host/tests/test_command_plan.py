@@ -101,6 +101,7 @@ def test_rejects_remote_shell_metacharacters_in_package(name):
         "Runner",
         "x y",
         "com.test.Runner$(id)",
+        "com.test.Outer$Inner",
         "x/y",
         "a.#b",
     ],

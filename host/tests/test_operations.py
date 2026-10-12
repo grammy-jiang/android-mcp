@@ -235,3 +235,20 @@ def test_instrumentation_code_zero_is_not_success():
     state, issue = _diagnose("instrument_test", RunResult(0, "INSTRUMENTATION_CODE: 0", "", False))
     assert state == "error"
     assert issue["code"] == "TEST_FAILED"
+
+
+def test_display_limit_is_reported_even_within_subprocess_capture_limit():
+    service, _, _ = _service(runner=lambda *args: RunResult(0, "X" * 26000, "", False))
+    result = service.execute("DEV123", {"type": "package_details", "package": "com.example"})
+    assert result["status"] == "partial"
+    assert result["result"]["truncated"] is True
+    assert len(result["result"]["stdout"]) == 25000
+    assert [e["code"] for e in result["errors"]] == ["OUTPUT_LIMIT"]
+
+
+def test_display_cap_does_not_duplicate_existing_capture_failure():
+    service, _, _ = _service(runner=lambda *args: RunResult(0, "X" * 26000, "", True))
+    result = service.execute("DEV123", {"type": "package_details", "package": "com.example"})
+    assert result["status"] == "partial"
+    assert result["result"]["truncated"] is True
+    assert [e["code"] for e in result["errors"]] == ["OUTPUT_LIMIT"]

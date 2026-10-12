@@ -70,6 +70,24 @@ def test_good_device_runs_only_whitelisted_commands_and_preserves_order():
     assert adb.calls == 1
 
 
+def test_compatibility_probe_uses_only_fixed_readonly_properties():
+    service, _, calls = _service(on_run=lambda argv, timeout: _cp(argv, stdout="a-b-12\n"))
+    result = service.observe("SAMPLE-42", ["compatibility"])
+    assert result["status"] == "ok"
+    assert result["results"][0]["fields"] == {
+        "primary_abi": "a-b-12",
+        "security_patch": "a-b-12",
+        "soc_model": "a-b-12",
+        "kernel_release": "a-b-12",
+    }
+    assert [call[0][3:] for call in calls] == [
+        ["shell", "getprop", "ro.product.cpu.abi"],
+        ["shell", "getprop", "ro.build.version.security_patch"],
+        ["shell", "getprop", "ro.soc.model"],
+        ["shell", "uname", "-r"],
+    ]
+
+
 @pytest.mark.parametrize("state", ["unauthorized", "offline", "recovery", "bootloader"])
 def test_not_ready_is_reported_without_running_any_shell(state):
     service, _, calls = _service(state=state)
@@ -117,7 +135,10 @@ def test_bad_probe_names_rejected_before_discovery(invalid):
 
 
 def test_missing_binary_blocks_shell_even_if_device_listed():
-    service, _, calls = _service(path="")
+    # The discovery report must also lack an executable; a discovered
+    # executable now takes precedence over PATH by design.
+    report = AdbReport(True, None, "37.0", None, (Device("SAMPLE-42", "device", {}),))
+    service, _, calls = _service(report=report, path="")
     service._locate = lambda _: None
     response = service.observe("SAMPLE-42", ["battery"])
     assert response["errors"][0]["code"] == "ADB_NOT_FOUND"
@@ -225,6 +246,7 @@ def test_output_limit_fails_closed_without_infinite_logging():
 def test_readonly_registry_contains_no_root_su_or_user_arguments():
     assert set(PROBES) == {
         "identity",
+        "compatibility",
         "boot",
         "battery",
         "display",
@@ -293,3 +315,25 @@ def test_capture_limit_is_classified_without_leaking_output():
     assert response["status"] == "error"
     assert response["errors"][0]["code"] == "OUTPUT_LIMIT"
     assert "private device material" not in str(response)
+
+
+def test_probe_prefers_discovered_adb_executable_over_path_lookup():
+    calls = []
+
+    def reader(argv, timeout):
+        calls.append(argv)
+        return _cp(argv, stdout="Enforcing")
+
+    discovery = StaticDiscovery(
+        AdbReport(
+            available=True,
+            executable="/reviewed/adb",
+            version="37",
+            error=None,
+            devices=(Device("SAMPLE-42", "device", {}),),
+        )
+    )
+    service = ProbeService(discovery, locate=lambda _: "/untrusted/adb", reader=reader)
+    response = service.observe("SAMPLE-42", ["selinux"])
+    assert response["status"] == "ok"
+    assert calls == [["/reviewed/adb", "-s", "SAMPLE-42", "shell", "getenforce"]]

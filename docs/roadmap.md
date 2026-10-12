@@ -2,7 +2,7 @@
 
 ## Current status (2026-10-12)
 
-**M0/Q1** quality baseline merged. **Host H1/H2/H3 candidate** adds explicit-device observations, bounded type-checked ADB operations, and a *non-activated* signed-grant/local-lease/audit prototype. No tablet is attached, so physical-device behavior, Host↔Native coordination and remote access are unverified. The Kotlin Native APK is not implemented.
+**M0/Q1** quality baseline merged. **Host H1/H2/H3 release candidate** includes explicit-device read-only observation, bounded typed ADB diagnostics, and *non-activated* signed-grant/local-lease/audit prototypes. On 2026-10-12, Host MCP over localhost Streamable HTTP passed **real USB** read-only acceptance on sextant (Linux ARM64) against an authorized OnePlus Pad 3 (Android 16), and macOS/Linux development gates passed. The hardened CI matrix includes Python 3.11/3.13/3.14, packaging, static security and dependency audits; see [Host acceptance](host-live-acceptance.md). The MacBook's own direct USB connection awaits macOS accessory authorization. Host↔Native coordination, external authenticated access and the Kotlin Native APK remain unimplemented/unverified.
 
 ## Parallel workstreams with explicit I/O
 
@@ -38,4 +38,4 @@ Read real `adb devices -l`, model, Android version, build type, SELinux, optiona
 
 ## Explicit non-goals
 
-No tablet pairing today, no Android app implementation today, no remote MCP tunnel/auth claim today, no Binnacle changes, no shopping account actions, no publishing a public repository.
+No Android Native pairing or APK deployment in this Host release, no remote MCP tunnel/auth claim, no Binnacle changes, no shopping account actions, no public repository publishing.

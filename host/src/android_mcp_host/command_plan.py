@@ -13,7 +13,8 @@ from pathlib import Path
 from typing import Any
 
 ANDROID_PACKAGE_RE = re.compile(r"[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+\Z", re.ASCII)
-JAVA_CLASS_RE = re.compile(r"[A-Za-z_$][A-Za-z0-9_$]*(?:\.[A-Za-z_$][A-Za-z0-9_$]*)+\Z", re.ASCII)
+# ADB shell may expand $ in an unquoted component; never accept it in a runner.
+JAVA_CLASS_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)+\Z", re.ASCII)
 MAX_APK_BYTES = 2 * 1024**3
 
 

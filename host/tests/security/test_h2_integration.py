@@ -76,3 +76,15 @@ def test_read_actions_do_not_use_high_privilege_coordinator():
     r = service.execute("ABC-1", {"type": "logcat_snapshot"})
     assert r["status"] == "ok"
     assert fake.calls == []
+
+
+def test_coordinator_returning_long_success_is_downgraded_to_partial():
+    fake = TrustedFakeCoordinator(
+        SecureOutcome("completed", "NONE", RunResult(0, "x" * 26000, "", False))
+    )
+    service = OperationService(FakeDiscovery(), secure_coordinator=fake)
+    result = service.execute("ABC-1", ACTION)
+    assert result["status"] == "partial"
+    assert result["result"]["truncated"] is True
+    assert len(result["result"]["stdout"]) == 25000
+    assert [e["code"] for e in result["errors"]] == ["OUTPUT_LIMIT"]
