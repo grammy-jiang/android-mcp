@@ -17,7 +17,7 @@ if [[ "$java_major" != 17 ]]; then
   exit 2
 fi
 ./android/gradlew --project-dir android --no-daemon --console=plain \
-  :native-protocol:test :native-mcp-jvm:test :native-mcp-jvm:installDist
+  :native-protocol:test :native-lifecycle:test :native-mcp-jvm:test :native-mcp-jvm:installDist
 
 echo "== Live local Python <-> Kotlin MCP and shared schema acceptance =="
 uv run --project host --locked --python 3.13 python scripts/smoke-native-jvm.py
