@@ -29,7 +29,7 @@ a design-readiness assessment, not validation of 45 implementations.
 | --- | --- | --- | --- |
 | REV-01 | High | Broad multi-domain work packages, e.g. HW1.b diagnostics/package/logcat and HW3.a all emulator lifecycle actions | 45 independent H0.a–H9.c work packages in dependency order |
 | REV-02 | High | Long-running build/test/trace operations before persistent job/artifact contract | H2.c and H2.d precede builds, emulators, media and trace jobs |
-| REV-03 | High | Only terse test themes; no per-operation error, invalid input, cancellation or leak cases | Companion matrix with >5 explicitly named behavioral tests per atomic package, U01–U08 cross-cutting gates |
+| REV-03 | High | Only terse test themes; no per-operation error, invalid input, cancellation or leak cases | Companion matrix with six numbered behavioral tests per atomic package (270 tests) plus Q-01–Q-06 cross-cutting gates |
 | REV-04 | High | Human decisions and external review acting as mid-session execution dependencies | ChatGPT resolves normal choices conservatively; approved safe PRs merge immediately; high-privilege enabling stays disabled, no fake independent review |
 | REV-05 | High | The shared calendar's 13:00/18:00 windows could delay one serial Chat | Exact-head green gate triggers immediate main merge; calendar is coordination reminder only |
 | REV-06 | Medium | Two developers/worktrees implied by umbrella full-lifecycle roadmap | Host Chat is sole writer for Host worktree, no Codex/Claude agent delegation or simultaneous Host packages; Native unaffected |
