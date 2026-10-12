@@ -1,6 +1,6 @@
 # Host FastMCP — Wave 2 V1 metadata policy and tool-selection evaluation
 
-**Status:** Verification design, not a change to published Tool metadata.
+**Status:** V1 review policy; I3 metadata applied in a separate reviewed change.
 **Date:** 2026-10-12. **Owner:** ChatGPT Host integrator.
 **Inputs:** Wave 0 tools/list JSON, P1 FastMCP 4.1.0 compatibility,
 P2 v1 Tool-contract inventory, D0 accepted decisions and
@@ -18,7 +18,7 @@ Do not add middleware, Resources, Prompts or extra Tool registrations solely
 to compensate for imprecise metadata. Exactly three public Tool names are
 part of the accepted catalog for this refactor.
 
-## Current documented metadata and proposed targets
+## V1 observed metadata and I3 target criteria
 
 | Tool | Current published intent | Required stable inputs | Decision for later I3 |
 | --- | --- | --- | --- |
@@ -82,9 +82,28 @@ schemas as permissive objects, auto-generated titles, annotation absence,
 or permissive string-to-boolean conversion. Those belong to I1/I2/I3 after
 separate acceptance.
 
-I3 should first add red tests for each newly accepted metadata attribute,
-check with actual FastMCP tools/list plus loopback HTTP and model-selection
-evaluations, then use the supported FastMCP `tool()` options. The full
-macOS/Linux Python CI and no-mutation tests remain merge gates. The tool
-metadata review cannot certify an external ChatGPT session without an
-explicitly executed product-surface test.
+I3 now adds dedicated red/green tests for accepted metadata properties
+and registers titles, descriptions and conservative annotations through
+FastMCP's tool registration interface. HTTP plus local macOS/Linux checks
+remain required. Metadata tests are not real ChatGPT surface evaluations;
+the tool-selection corpus above remains proposed and unscored.
+
+## I3 applied annotation policy (2026-10-12)
+
+| Tool | readOnlyHint | destructiveHint | idempotentHint | openWorldHint |
+| --- | --- | --- | --- | --- |
+| device_status | false | false | true | false |
+| adb_observe | false | false | true | false |
+| adb_develop | false | true | false | false |
+
+This follows the strict, conservative alternative from P2. ADB discovery
+may start a Host daemon, so status and observation are not claimed to be
+entirely side-effect-free. These operations are non-destructive and repeatable.
+The engineering Tool can, with separately injected trusted configuration,
+represent mutating actions and must not promise read-only behavior.
+
+openWorldHint=false refers to the closed vocabulary and authorized ADB devices,
+not the trustworthiness of text returned by a device. Tool metadata is advisory
+and never replaces policy enforcement, signed grants, process limits or leases.
+A conservative hint might increase approval prompts in some clients; ordinary
+Chat and Work tool-selection impact has not been measured.
