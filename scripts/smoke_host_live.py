@@ -44,17 +44,20 @@ def _body(reply: Any) -> dict[str, Any]:
     return reply.data
 
 
-async def _exercise(port: int, serial: str, probes: list[str], log_lines: int | None):
-    url = f"http://127.0.0.1:{port}/mcp/"
+async def _catalog_when_ready(url: str) -> list[str]:
+    """FastMCP reports a not-yet-listening HTTP server as RuntimeError."""
     for _ in range(40):
         try:
             async with Client(url) as client:
-                catalog = [tool.name for tool in await client.list_tools()]
-                break
-        except (OSError, ConnectionError):
+                return [tool.name for tool in await client.list_tools()]
+        except (OSError, ConnectionError, RuntimeError):
             await asyncio.sleep(0.15)
-    else:
-        raise RuntimeError("Local MCP server did not become ready")
+    raise RuntimeError("Local MCP server did not become ready")
+
+
+async def _exercise(port: int, serial: str, probes: list[str], log_lines: int | None):
+    url = f"http://127.0.0.1:{port}/mcp/"
+    catalog = await _catalog_when_ready(url)
 
     async with Client(url) as client:
         if catalog != TOOL_NAMES:
