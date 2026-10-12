@@ -1,4 +1,4 @@
-name: Native N2 Android emulator runtime (no physical device)
+name: Native Android emulator acceptance (no physical device)
 
 on:
   pull_request:
@@ -8,6 +8,8 @@ on:
       - "scripts/check-native.sh"
       - "scripts/check-native-apk.sh"
       - "scripts/smoke-native-emulator.py"
+      - "scripts/smoke-native-foreground-emulator.py"
+      - "scripts/check-native-emulator.sh"
       - "host/uv.lock"
       - ".github/workflows/native-emulator-ci.yml"
   push:
@@ -18,6 +20,8 @@ on:
       - "scripts/check-native.sh"
       - "scripts/check-native-apk.sh"
       - "scripts/smoke-native-emulator.py"
+      - "scripts/smoke-native-foreground-emulator.py"
+      - "scripts/check-native-emulator.sh"
       - "host/uv.lock"
       - ".github/workflows/native-emulator-ci.yml"
   workflow_dispatch:
@@ -27,7 +31,7 @@ permissions:
 
 jobs:
   native-emulator:
-    name: Android 16 real MCP status / Activity lifecycle
+    name: Android 16 local and foreground-service MCP lifecycle
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
@@ -42,7 +46,7 @@ jobs:
       - name: Install pinned Python and confirm emulator-only guards
         run: |
           uv python install 3.13
-          uv run --project host --locked --group dev --python 3.13 pytest -q android/tests/test_emulator_smoke.py
+          uv run --project host --locked --group dev --python 3.13 pytest -q android/tests
       - name: Install API 36 Android SDK from runner's preauthorized environment
         run: |
           test -n "$ANDROID_HOME"
@@ -65,8 +69,4 @@ jobs:
           disk-size: 4096M
           emulator-boot-timeout: 720
           disable-animations: true
-          script: >-
-            uv run --project host --locked --group dev --python 3.13
-            python scripts/smoke-native-emulator.py
-            --serial emulator-5554
-            --apk android/app/build/outputs/apk/debug/app-debug.apk
+          script: bash scripts/check-native-emulator.sh
