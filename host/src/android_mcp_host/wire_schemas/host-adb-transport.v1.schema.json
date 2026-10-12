@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:adb-transport-inspection:v1",
+  "title": "ADB exact-target read-only transport inspection v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "device_id", "transport_id", "observed_state", "status", "routes", "mdns", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "device_id": {"type": "string", "maxLength": 128},
+    "transport_id": {"type": ["string", "null"], "pattern": "^[1-9][0-9]{0,9}$"},
+    "observed_state": {"type": ["string", "null"], "maxLength": 24},
+    "status": {"enum": ["ok", "partial", "pending", "timeout", "cancelled", "error"]},
+    "routes": {
+      "type": "array", "maxItems": 32,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["direction", "local_port", "remote_port"],
+        "properties": {
+          "direction": {"enum": ["forward", "reverse"]},
+          "local_port": {"type": "integer", "minimum": 1, "maximum": 65535},
+          "remote_port": {"type": "integer", "minimum": 1, "maximum": 65535}
+        }
+      }
+    },
+    "mdns": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["service_count", "endpoint_found"],
+          "properties": {
+            "service_count": {"type": "integer", "minimum": 0, "maximum": 32},
+            "endpoint_found": {"type": ["boolean", "null"]}
+          }
+        }
+      ]
+    },
+    "errors": {
+      "type": "array", "maxItems": 16,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string", "maxLength": 64},
+          "message": {"type": "string", "maxLength": 256}
+        }
+      }
+    }
+  }
+}
