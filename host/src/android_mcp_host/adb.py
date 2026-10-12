@@ -11,6 +11,8 @@ import subprocess
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
 
+from android_mcp_host.command_runner import OutputLimitExceeded, completed_bounded
+
 ALLOWED_STATES = {
     "device",
     "offline",
@@ -83,16 +85,7 @@ def parse_device_listing(stdout: str) -> tuple[Device, ...]:
 
 
 def _execute(argv: list[str], timeout_s: float) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        argv,
-        shell=False,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        check=False,
-        timeout=timeout_s,
-    )
+    return completed_bounded(argv, timeout_s, 65536)
 
 
 def _version(stdout: str) -> str | None:
@@ -161,6 +154,16 @@ class AdbClient:
                     error=Diagnostic("ADB_LIST_FAILED", _clean_error(list_result.stderr)),
                     devices=(),
                 )
+        except OutputLimitExceeded:
+            return AdbReport(
+                available=False,
+                executable=path,
+                version=None,
+                error=Diagnostic(
+                    "ADB_OUTPUT_LIMIT", "ADB output exceeded the safe capture budget."
+                ),
+                devices=(),
+            )
         except subprocess.TimeoutExpired:
             return AdbReport(
                 available=False,

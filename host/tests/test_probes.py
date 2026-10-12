@@ -246,19 +246,14 @@ def test_invalid_timeout_configuration_is_rejected():
             ProbeService(timeout_s=invalid)
 
 
-def test_subprocess_wrapper_does_not_call_shell(monkeypatch):
-    observed = {}
+def test_subprocess_wrapper_passes_arguments_without_host_shell():
+    import sys
 
-    def fake_run(argv, **kwargs):
-        observed["argv"] = argv
-        observed["kwargs"] = kwargs
-        return _cp(argv)
-
-    monkeypatch.setattr(subprocess, "run", fake_run)
-    _run(["adb", "-s", "serial", "version"], 2.0)
-    assert observed["kwargs"]["shell"] is False
-    assert observed["kwargs"]["timeout"] == 2.0
-    assert observed["argv"][-1] == "version"
+    token = "a; echo INJECTED"
+    response = _run([sys.executable, "-c", "import sys; print(sys.argv[1])", token], 2.0)
+    assert response.returncode == 0
+    assert response.stdout.strip() == token
+    assert response.stderr == ""
 
 
 def test_bounded_preserves_text_without_extra_reformatting():
@@ -276,3 +271,25 @@ def test_missing_adb_executable_report_without_diagnostic_is_still_closed():
 
 def test_control_characters_are_removed_from_device_text():
     assert _bounded("Enforcing\x00\x1b[31m\n", 99) == ("Enforcing[31m", False)
+
+
+def test_probe_does_not_hold_unlimited_device_output():
+    import sys
+
+    from android_mcp_host.command_runner import OutputLimitExceeded
+
+    with pytest.raises(OutputLimitExceeded):
+        _run([sys.executable, "-c", "print('X' * 300000)"], 3)
+
+
+def test_capture_limit_is_classified_without_leaking_output():
+    from android_mcp_host.command_runner import OutputLimitExceeded
+
+    def flooded(argv, timeout):
+        raise OutputLimitExceeded("private device material")
+
+    service, _, _ = _service(on_run=flooded)
+    response = service.observe("SAMPLE-42", ["battery"])
+    assert response["status"] == "error"
+    assert response["errors"][0]["code"] == "OUTPUT_LIMIT"
+    assert "private device material" not in str(response)
