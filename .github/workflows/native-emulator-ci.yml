@@ -1,0 +1,72 @@
+name: Native N2 Android emulator runtime (no physical device)
+
+on:
+  pull_request:
+    paths:
+      - "android/**"
+      - "contracts/**"
+      - "scripts/check-native.sh"
+      - "scripts/check-native-apk.sh"
+      - "scripts/smoke-native-emulator.py"
+      - "host/uv.lock"
+      - ".github/workflows/native-emulator-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "android/**"
+      - "contracts/**"
+      - "scripts/check-native.sh"
+      - "scripts/check-native-apk.sh"
+      - "scripts/smoke-native-emulator.py"
+      - "host/uv.lock"
+      - ".github/workflows/native-emulator-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-emulator:
+    name: Android 16 real MCP status / Activity lifecycle
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.12.24"
+      - name: Install pinned Python and confirm emulator-only guards
+        run: |
+          uv python install 3.13
+          uv run --project host --locked --group dev --python 3.13 pytest -q android/tests/test_emulator_smoke.py
+      - name: Install API 36 Android SDK from runner's preauthorized environment
+        run: |
+          test -n "$ANDROID_HOME"
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-36" "build-tools;36.0.0"
+      - name: Build, lint, sign and inspect Android Debug APK
+        run: bash scripts/check-native-apk.sh
+      - name: Enable ephemeral runner KVM access
+        run: |
+          test -e /dev/kvm
+          sudo chmod a+rw /dev/kvm
+      - name: Boot isolated Android 16 emulator and exercise real Kotlin MCP
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2
+        with:
+          api-level: 36
+          target: default
+          arch: x86_64
+          cores: 2
+          ram-size: 4096M
+          heap-size: 512M
+          disk-size: 4096M
+          emulator-boot-timeout: 720
+          disable-animations: true
+          script: >-
+            uv run --project host --locked --group dev --python 3.13
+            python scripts/smoke-native-emulator.py
+            --serial emulator-5554
+            --apk android/app/build/outputs/apk/debug/app-debug.apk
