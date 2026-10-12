@@ -6,7 +6,18 @@
     "coverage_critical_minimum": 95.0,
     "coverage_critical_modules": [
       "src/android_mcp_host/adb.py",
-      "src/android_mcp_host/cli.py"
+      "src/android_mcp_host/cli.py",
+      "src/android_mcp_host/probes.py",
+      "src/android_mcp_host/command_plan.py",
+      "src/android_mcp_host/command_runner.py",
+      "src/android_mcp_host/operations.py",
+      "src/android_mcp_host/device_guard.py",
+      "src/android_mcp_host/security/approvals.py",
+      "src/android_mcp_host/security/artifacts.py",
+      "src/android_mcp_host/security/audit.py",
+      "src/android_mcp_host/security/coordinator.py",
+      "src/android_mcp_host/security/identity.py",
+      "src/android_mcp_host/security/store.py"
     ],
     "coverage_exempt_entrypoints": [
       "src/android_mcp_host/__init__.py",

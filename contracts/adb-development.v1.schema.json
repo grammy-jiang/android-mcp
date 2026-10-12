@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:adb-development:v1",
+  "title": "Android Host Typed Engineering Operation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "runtime", "device_id", "operation", "status", "mutating",
+    "dry_run", "command", "result", "errors"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "device_id": {"type": "string"},
+    "operation": {"type": "string"},
+    "status": {"enum": ["ok", "planned", "partial", "error"]},
+    "mutating": {"type": "boolean"},
+    "dry_run": {"type": "boolean"},
+    "command": {"type": "array", "items": {"type": "string"}, "maxItems": 12},
+    "result": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["exit_code", "stdout", "truncated"],
+          "properties": {
+            "exit_code": {"type": "integer"},
+            "stdout": {"type": "string", "maxLength": 25000},
+            "truncated": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string", "minLength": 1, "maxLength": 64},
+          "message": {"type": "string", "minLength": 1, "maxLength": 256}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "ok"}}},
+      "then": {"properties": {"errors": {"maxItems": 0}, "result": {"type": "object"}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "planned"}}},
+      "then": {"properties": {"result": {"type": "null"}, "command": {"minItems": 2}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "error"}}},
+      "then": {"properties": {"errors": {"minItems": 1}}}
+    }
+  ]
+}

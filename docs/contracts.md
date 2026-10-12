@@ -27,3 +27,10 @@ Device descriptor fields: `device_id`, `state`, and `properties`. `device_id` is
 ## Compatibility and versioning
 
 Schema versions are explicit integers. Changes that invalidate existing consumers must increment the schema version and ship compatibility tests across Host and Native. The Monorepo may ship separate host wheels and Android APKs under one coordinated repository release without requiring upgrades at exactly the same moment.
+
+## Host typed extensions (candidate)
+
+- `adb-observation.v1.schema.json`: explicit-device observation envelope, allowlisted probes, typed errors and bounded output.
+- `adb-development-action.v1.schema.json`: validated action types, fixed fields and allowed limits (not an arbitrary shell).
+- `adb-development.v1.schema.json`: result status, dry-run plan, typed errors and truncated-output marker.
+- Native joint control is not yet a wire contract; see [Host↔Native coordination](host-native-coordination.md). Do not implement a default permissive bridge.

@@ -19,7 +19,7 @@ Adapted from the **principles** of Binnacle's development, testing and quality-g
 
 `quality-policy.json` is the authoritative source of per-module limits. Newly added production modules inherit a 90% floor by default. Critical interfaces (ADB parsing/execution, future auth, privilege broker, mutation policy, device lease) require at least 95%, with explicit additions to the policy when implemented.
 
-Coverage is measured with `--cov-branch`; the checker reads **per-file raw percentages**, validates that every production module has evidence, and rejects stale critical-module entries. A high aggregate percentage cannot hide an uncovered module. Entry-point-only `__main__.py` and package marker `__init__.py` are explicitly exempt. Coverage does not substitute for realistic failure or concurrency tests.
+The module inventory includes **nested packages** such as `security/`; new security modules cannot hide from the policy. Coverage is measured with `--cov-branch`; the checker reads **per-file raw percentages**, validates that every production module has evidence, and rejects stale critical-module entries. A high aggregate percentage cannot hide an uncovered module. Entry-point-only `__main__.py` and package marker `__init__.py` are explicitly exempt. Coverage does not substitute for realistic failure or concurrency tests.
 
 The quality checker itself is covered with negative tests: missing report, weak module, new uncovered module, too-large file and branch coverage disabled.
 

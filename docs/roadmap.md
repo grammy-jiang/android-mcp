@@ -2,7 +2,7 @@
 
 ## Current status (2026-10-12)
 
-**M0** foundational repository, Host quality-gate infrastructure and development standards only. The Android tablet is not attached. The new host MCP has read-only discovery, a CLI/doctor, isolated ADB subprocess provider, contract fixtures, cross-platform automated tests, and documentation. Everything beyond that is a roadmap, not an implemented claim.
+**M0/Q1** quality baseline merged. **Host H1/H2/H3 candidate** adds explicit-device observations, bounded type-checked ADB operations, and a *non-activated* signed-grant/local-lease/audit prototype. No tablet is attached, so physical-device behavior, Host↔Native coordination and remote access are unverified. The Kotlin Native APK is not implemented.
 
 ## Parallel workstreams with explicit I/O
 
@@ -16,6 +16,8 @@
 | B — business | stable native UI API | shopping adapters and evidence extraction | platform-specific live app tests | E |
 
 ### Milestones
+
+The H1/H2/H3 candidate is pre-hardware and must pass macOS/Linux/CI and independent security review before any device-mutating execution. It does not replace M2/M3/M5 acceptance gates.
 
 - **M0** (this scaffold): private repository, Host read-only status, no-device tests, Mac/Linux CI, draft Android architecture and security; locked lint/type/coverage checks, Git hooks, developer doctor, package smoke and scheduled audits.
 - **M1**: gated Host ADB capabilities: explicit serial, validated read-only diagnostic operations, stable errors/timeouts, Linux USB permission guidance; separate tests.

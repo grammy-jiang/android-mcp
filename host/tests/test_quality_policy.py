@@ -103,3 +103,13 @@ def test_stale_critical_policy_entry_fails(tmp_path):
     result = _check(tmp_path)
     assert result.returncode == 1
     assert "old.py" in result.stdout
+
+
+def test_nested_security_module_requires_coverage(tmp_path):
+    src = _fixture(tmp_path)
+    security = src / "security"
+    security.mkdir()
+    (security / "approvals.py").write_text("VALUE = 1\n")
+    result = _check(tmp_path)
+    assert result.returncode == 1
+    assert "security/approvals.py" in result.stdout
