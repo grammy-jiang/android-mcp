@@ -10,6 +10,7 @@ from pydantic import Field
 
 from android_mcp_host.adb import AdbClient
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
+from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
 from android_mcp_host.operations import OperationService
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
@@ -26,6 +27,7 @@ def create_server(
     operations: OperationService | None = None,
     toolchain_inventory: ToolchainInventory | None = None,
     capability_profiles: CapabilityProfiles | None = None,
+    adb_discovery: DeviceDiscovery | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -149,5 +151,21 @@ def create_server(
         def host_capability_profile() -> dict[str, object]:
             """Report bounded Host capability states; never grant mutation or leases."""
             return capability_profiles.snapshot()
+
+    if adb_discovery is not None:
+
+        @server.tool(
+            title="List Read-Only ADB Device Targets",
+            output_schema=get_device_list_output_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        def adb_devices_list() -> dict[str, object]:
+            """List ADB device states and transport IDs; never connect or select a device."""
+            return adb_discovery.list_devices()
 
     return server

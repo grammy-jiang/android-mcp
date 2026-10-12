@@ -29,6 +29,8 @@ from android_mcp_host.capability_profiles import (
     get_capability_output_schema,
     load_ledger,
 )
+from android_mcp_host.adb import AdbClient
+from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 
 with open(sys.argv[1], encoding="utf-8") as report_file:
     report = json.load(report_file)
@@ -42,5 +44,8 @@ assert get_capability_output_schema()["$id"] == "urn:android-mcp:host-capability
 assert len(load_ledger()) == 95
 assert CapabilityProfiles().snapshot()["mutation_enabled"] is False
 assert create_server(capability_profiles=CapabilityProfiles()) is not None
+assert get_device_list_output_schema()["$id"] == "urn:android-mcp:adb-device-list:v1"
+assert DeviceDiscovery(AdbClient(locator=lambda _: None)).list_devices()["status"] == "unavailable"
+assert create_server(adb_discovery=DeviceDiscovery(AdbClient(locator=lambda _: None))) is not None
 PY
 echo "Host sdist/wheel clean-install and CLI doctor passed."
