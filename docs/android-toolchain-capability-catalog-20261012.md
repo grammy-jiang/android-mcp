@@ -42,15 +42,21 @@ Stages are *proposals*: `0` registry+security design, `1` diagnostics,
 | Python Host | Three registered Tools: `device_status`, `adb_observe`, `adb_develop` | The latter allows bounded logcat/package reads and previews, not default mutation |
 | Android Native | One real device-side Tool: `device_status`, reporting minimal loopback service status | No current screenshot, Accessibility, package scan, UI action, install, or root |
 | Native transport | User-started, local-only Kotlin service on `127.0.0.1:38765`; two UI lifecycle modes with process-local port ownership | No caller authentication, no approved external relay, no distributed lease |
-| MacBook | `adb` 37.0.1, `fastboot` 37.0.1; full Android SDK directory, emulator, build-tools 36.0.0; `sdkmanager`, `avdmanager`, `apkanalyzer`, `lint`, `retrace`, `android` CLI on PATH | `sdkmanager --help` and `apkanalyzer --help` FAILED in this shell because Java runtime could not be resolved; installed is not yet callable |
-| Mac SDK binaries | `apksigner`, `zipalign`, `aapt`, `aapt2`, `d8`, `dexdump` and Emulator exist under the SDK directory | Several are not on PATH; require validated JDK/SDK resolution, no automatic installation |
-| sextant Linux ARM64 | `adb` 34.0.5 Debian package; connected USB development workflow exists independently | `fastboot`, full SDK/AVD/build tools not found on PATH; Android SDK emulator not validated |
+| MacBook | `adb` and `fastboot` 37.0.1; registered OpenJDK 17.0.20.1; SDK Build Tools 36.0.0, Emulator 37.2.12.0, Gradle 9.6.0 | Fresh zsh successfully ran Java/Javac/Gradle version, SDK-local sdkmanager 22.0, apkanalyzer, apksigner and Emulator version; no real device test |
+| Mac SDK binaries | `apksigner`, `zipalign`, `aapt`/`aapt2`, `d8` and SDK-local `apkanalyzer` verified on disk | JAVA_HOME and SDK bin paths persisted for zsh; Homebrew ADB/Fastboot preferred; GUI launchctl environment denied under SIP |
+| sextant Linux ARM64 | Debian `adb` 34.0.5 and newly installed `fastboot` 34.0.5 | Official Debian arm64 package validated; no full SDK/AVD toolchain detected on PATH, no actual bootloader test |
+| raspberrypi Linux ARM64 | Debian `adb` 34.0.5 and newly installed `fastboot` 34.0.5 | Second Pi 5 confirmed same official packages, no project branch change or device operation |
 | Host/Native pairing | Draft state machine / fencing rules in `docs/host-native-coordination.md` | NOT implemented; Host-side process locks cannot arbitrate Native or another Host |
 | Repo security | Default no root/arbitrary shell/public listener/device mutation; all three Tool output Schemas versioned | Claims below beyond the current three are design candidates only |
 
 No physical-device command was executed to prepare this catalog. The
 MacBook's CLI help and `fastboot --help` were inspected, and the
 source registry was cross-checked with current official docs.
+
+The installation follow-up and exact version validation are recorded in
+[2026-10-12 toolchain setup evidence](android-development-toolchain-setup-20261012.md).
+The Mac's JAVA_HOME setup and Pi Fastboot installations were performed after
+the original exploratory inventory, without running device-changing commands.
 
 ## A. Android platform-tools: ADB host service, transport and connection
 
@@ -110,20 +116,20 @@ source registry was cross-checked with current official docs.
 | ID | Tool/capability | Host status | Risk | Stage | Official |
 | --- | --- | --- | --- | --- | --- |
 | H01 | Discover installed SDK, platform-tools, fastboot, Java/JDK, versions and validity | partial host reporting | D0 | 0–2 | O04 |
-| H02 | SDK packages list/update/install/uninstall, licenses | `sdkmanager` and newer Android CLI candidate; Java currently not resolved | W3 | 2 | O04,O05 |
-| H03 | AVD list/show/create/edit/delete profiles | `avdmanager` candidate; Java resolution pending | D0/W2 | 2 | O04,O06 |
+| H02 | SDK packages list/update/install/uninstall, licenses | SDK-local `sdkmanager` 22.0 and new Android CLI run with existing JDK 17; no install/update executed | W3 | 2 | O04,O05 |
+| H03 | AVD list/show/create/edit/delete profiles | `avdmanager` help verified with JDK 17; no AVD modification | D0/W2 | 2 | O04,O06 |
 | H04 | Emulator list/start/stop, headless/writable, startup diagnostics | Emulator installed in Mac SDK | W2 | 3 | O07 |
 | H05 | Emulator snapshots: list/save/load/reset/restore with artifact inventory | SDK emulator available, not wired to MCP | W2/W3 | 3 | O07 |
 | H06 | Emulator camera/network/geolocation/battery/sensor simulation | candidate with AVD-only guards | W2 | 3 | O07 |
 | H07 | Gradle wrapper build / variant / task introspection and report | wrapper exists, not Host MCP Tool | D0/W3 | 2 | O08 |
-| H08 | `assembleDebug`, package APK/AAB and recorded build artifacts | wrapper available; toolchain/JDK prereqs | W3 | 2 | O08 |
+| H08 | `assembleDebug`, package APK/AAB and recorded build artifacts | Gradle 9.6.0 wrapper runs `--version --offline` using JDK 17; actual APK build separately gated | W3 | 2 | O08 |
 | H09 | `test`, `lint`, static/security/code inspections | scripted outside MCP; not model-visible | D0/W3 | 2–3 | O08,O10 |
 | H10 | `connectedAndroidTest`, test package install/run/results | scripts exist; runner state/target selection needed | W2/W3 | 3 | O10 |
-| H11 | APK size, metadata, Manifest, DEX, resource diff (`apkanalyzer`) | installed CLI, Java runtime not resolved now | D0/D1 | 2 | O11 |
+| H11 | APK size, metadata, Manifest, DEX, resource diff (`apkanalyzer`) | SDK-local `apkanalyzer --help` works with JDK 17; no actual APK file analysis performed | D0/D1 | 2 | O11 |
 | H12 | AAPT2 compile/link/inspect resources; d8/dexdump intermediate verification | build-tools 36 installed on Mac | W3 | 2 | O04 |
 | H13 | `apksigner verify`, cert fingerprint, `zipalign -c` | build-tools installed | D0 | 2 | O12 |
 | H14 | Sign/align output; release keystore handling in separate vault | build-tools installed; never expose key material to model | W3 | 2/6 | O12 |
-| H15 | R8 `retrace` mapping of obfuscated stack traces | installed CLI, Java runtime not resolved now | D1 | 5 | O04 |
+| H15 | R8 `retrace` mapping of obfuscated stack traces | JDK now configured; retrace itself not individually verified | D1 | 5 | O04 |
 | H16 | AAB `bundletool build-apks`, device-specific split install, size estimate | not installed on PATH | W2/W3 | 2–3 | O19 |
 | H17 | Build/test reports, provenance, manifest and retained artifact IDs | proposed | D0/D1 | 2–5 | O08,O10 |
 | H18 | Git source revision/branch/worktree, safe diff and reproducibility | Git installed; shared PR process exists | D0/W2 | 0/2 | O20 |
@@ -171,7 +177,8 @@ tested implementation, not hard-code yesterday's spelling. [O05–O07]
 | F12 | `fastboot` recovery after Native and normal ADB unavailable | staged/manual plan with exact physical selection | X4 | 7 | O22 |
 
 Fastboot is **not** a substitute for ADB inside a booted Android session.
-On the Mac the CLI is installed; on sextant it was not found on PATH.
+Fastboot CLI is installed on the Mac (37.0.1) and now on both Pi 5 machines
+(34.0.5). Real bootloader-mode operation remains untested and unapproved.
 Bootloader/fastbootd implementation, partition availability and OEM
 support must be probed per physical device. Unlocking is a data-wipe
 operation on ordinary devices. [O21–O23]

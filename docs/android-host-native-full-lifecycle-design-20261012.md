@@ -76,13 +76,18 @@ authorization. The Native endpoint at 127.0.0.1:38765 cannot be reached
 from an unrelated remote ChatGPT client without an explicitly engineered
 secure transport.
 
-Tool discovery on the Mac found ADB 37.0.1, Fastboot 37.0.1, SDK/Emulator,
-Build Tools 36 and Android CLI candidates. But at the time of this check,
-`sdkmanager --help` and `apkanalyzer --help` could not resolve Java.
-On sextant Linux ARM64 only ADB 34.0.5 was confirmed on PATH from this
-toolchain set; Fastboot/emulator/build-tools were not. These are
-**versioned capability gaps** that `host_toolchain_inventory` must
-report with reasons and corrective prerequisites, not conceal.
+After the initial inventory, the Mac's existing Homebrew JDK 17.0.20.1
+was registered with macOS and configured in both zsh profiles; the SDK-local
+command paths now work in fresh shells. Java, Javac, Gradle 9.6.0
+`--version --offline`, sdkmanager 22.0, apkanalyzer, apksigner and
+Emulator version were checked without any device operation. ADB and Fastboot
+on Mac remain at 37.0.1. The two Pi 5 machines (raspberrypi and sextant)
+now have Debian Fastboot 34.0.5 alongside existing ADB 34.0.5. Full Android
+SDK/AVD tools remain absent or unverified on the Pi. Current macOS SIP
+refused setting the GUI launchctl environment, so future non-shell MCP
+services must use a verified per-service SDK/JDK environment. See the
+[toolchain setup report](android-development-toolchain-setup-20261012.md).
+Installed, runnable and authorized remain distinct capability states.
 
 ## 4. Proposed architecture: capable providers, focused public contracts
 
@@ -407,7 +412,7 @@ measured separately if both are accepted target surfaces.
 | Fastboot | Inspect first; only approved dedicated physical recovery workflows may write | Unlock/erase/flashall require separate, supervised design |
 | AOSP | Provide an eligible x86_64 Linux/glibc worker for full builds; Repo/Soong lifecycle | Neither macOS ARM64 nor Pi ARM64 qualifies by assumption |
 | App distribution | Separate opt-in Firebase/Play provider, read before write and no default publishing | External account connection, release policy and human approval required |
-| Android SDK CLI | Prefer modern `android` CLI only after exact installed/version support proof; fallback to legacy with tests | Installed Java-dependent wrappers currently fail in Mac session |
+| Android SDK CLI | Java and SDK-local `sdkmanager`, `apkanalyzer` and `apksigner` now run; prefer modern `android` CLI after feature tests | Full build/install actions and GUI launchd inheritance still require separate verification |
 | Security gates | Zero-paid local matrices, device/Native permission and independent high-risk review | Paying for GitHub Hosted Actions is not required/authorized |
 | Implementation order | Stage 0 safety, routine Stages 1–5, gated Stages 6–9; Stage 9 follows build/artifact evidence | Read-only Fastboot can occur earlier; distribution does not depend on ROM flashing |
 
@@ -422,8 +427,10 @@ measured separately if both are accepted target surfaces.
 3. Is ChatGPT ordinary Chat, Work, or both the target public MCP
    consumer? Current loopback endpoints and product-surface
    interoperation have different constraints.
-4. Which Mac JDK location is correct for each SDK/Gradle CLI? The
-   installed wrappers did not run with the default shell's Java.
+4. How will non-login MCP/GUI services receive a bounded, verified JDK/SDK
+   environment? Fresh zsh and command-line Java/SDK are fixed, but GUI
+   `launchctl setenv` was blocked by SIP; service-specific
+   environment propagation remains to be designed.
 5. Do the current Android CLI replacements for SDK/AVD/emulator
    cover all planned operations on the pinned installation, or do
    we need versioned fallback to legacy tools?
