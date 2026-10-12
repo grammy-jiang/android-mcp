@@ -39,9 +39,13 @@ def _ephemeral_port() -> int:
 
 
 def _body(reply: Any) -> dict[str, Any]:
-    if reply.is_error or not isinstance(reply.data, dict):
+    # FastMCP's Python convenience `.data` changes from dict to a generated
+    # typed object when a Tool starts advertising an explicit outputSchema.
+    # The MCP wire-level `structured_content` remains the stable JSON object.
+    body = reply.structured_content
+    if reply.is_error or not isinstance(body, dict):
         raise RuntimeError("Malformed or failed MCP tool result")
-    return reply.data
+    return body
 
 
 async def _catalog_when_ready(url: str) -> list[str]:

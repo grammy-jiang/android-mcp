@@ -91,7 +91,7 @@ def _exercise(
 
 
 def _errors(result: Any) -> list[str]:
-    return [error["code"] for error in result.data["errors"]]
+    return [error["code"] for error in result.structured_content["errors"]]
 
 
 def test_required_catalog_and_input_metadata():
@@ -116,20 +116,20 @@ def test_required_status_envelope_and_read_only_observation():
     async def body(client, rec):
         status = await client.call_tool("device_status", {})
         assert not status.is_error
-        assert status.data["schema_version"] == 1
-        assert status.data["runtime"] == "host"
+        assert status.structured_content["schema_version"] == 1
+        assert status.structured_content["runtime"] == "host"
         for key in ("host", "capabilities", "adb", "devices", "errors"):
-            assert key in status.data
-        assert [d["device_id"] for d in status.data["devices"]] == [DEVICE]
+            assert key in status.structured_content
+        assert [d["device_id"] for d in status.structured_content["devices"]] == [DEVICE]
 
         seen = await client.call_tool("adb_observe", {"device_id": DEVICE, "probes": ["selinux"]})
         assert not seen.is_error
-        assert seen.data["schema_version"] == 1
-        assert seen.data["runtime"] == "host"
-        assert seen.data["device_id"] == DEVICE
-        assert seen.data["status"] == "ok"
-        assert seen.data["errors"] == []
-        assert seen.data["results"][0]["probe"] == "selinux"
+        assert seen.structured_content["schema_version"] == 1
+        assert seen.structured_content["runtime"] == "host"
+        assert seen.structured_content["device_id"] == DEVICE
+        assert seen.structured_content["status"] == "ok"
+        assert seen.structured_content["errors"] == []
+        assert seen.structured_content["results"][0]["probe"] == "selinux"
         # REQUIRED: fixed argv with an explicit -s serial and no free-form shell.
         assert rec.reads == [["/fake/adb", "-s", DEVICE, "shell", "getenforce"]]
 
@@ -150,7 +150,7 @@ def test_required_observe_denials_never_dispatch_and_app_error_is_not_mcp_error(
             # (is_error False) with status "error"; a refactor may change the
             # transport level only via an approved P2 decision.
             assert result.is_error is False
-            assert result.data["status"] == "error"
+            assert result.structured_content["status"] == "error"
             assert code in _errors(result)
         assert rec.reads == []  # REQUIRED: nothing dispatched for denied calls
 
@@ -160,10 +160,10 @@ def test_required_observe_denials_never_dispatch_and_app_error_is_not_mcp_error(
 def test_required_offline_device_is_refused_without_dispatch():
     async def body(client, rec):
         result = await client.call_tool("adb_observe", {"device_id": DEVICE, "probes": ["boot"]})
-        assert result.data["status"] == "error"
+        assert result.structured_content["status"] == "error"
         assert _errors(result) == ["DEVICE_NOT_READY"]
         develop = await client.call_tool("adb_develop", {"device_id": DEVICE, "action": LOGCAT})
-        assert develop.data["status"] == "error"
+        assert develop.structured_content["status"] == "error"
         assert _errors(develop) == ["DEVICE_NOT_READY"]
         assert rec.reads == [] and rec.runs == []
 
@@ -185,7 +185,7 @@ def test_required_develop_denials_never_dispatch():
             "adb_develop", {"device_id": DEVICE, "action": {"type": "raw_shell", "cmd": "id"}}
         )
         assert unknown.is_error is False  # OBSERVED_ONLY two-level error semantics
-        assert unknown.data["status"] == "error"
+        assert unknown.structured_content["status"] == "error"
         assert _errors(unknown) == ["UNKNOWN_OPERATION"]
 
         bad_device = await client.call_tool("adb_develop", {"device_id": "-s", "action": LOGCAT})
@@ -195,8 +195,8 @@ def test_required_develop_denials_never_dispatch():
             "adb_develop", {"device_id": DEVICE, "action": INSTRUMENT}
         )
         assert mutation.is_error is False
-        assert mutation.data["status"] == "error"
-        assert mutation.data["mutating"] is True
+        assert mutation.structured_content["status"] == "error"
+        assert mutation.structured_content["mutating"] is True
         assert _errors(mutation) == ["MUTATION_DISABLED"]
         assert rec.runs == []  # REQUIRED: no command executed for any denial
 
@@ -209,9 +209,9 @@ def test_required_dry_run_previews_mutation_without_dispatch():
             "adb_develop", {"device_id": DEVICE, "action": INSTRUMENT, "dry_run": True}
         )
         assert plan.is_error is False
-        assert plan.data["status"] == "planned"
-        assert plan.data["mutating"] is True
-        assert plan.data["command"][:3] == ["adb", "-s", DEVICE]
+        assert plan.structured_content["status"] == "planned"
+        assert plan.structured_content["mutating"] is True
+        assert plan.structured_content["command"][:3] == ["adb", "-s", DEVICE]
         assert rec.runs == []
 
     _exercise(body)
@@ -221,8 +221,8 @@ def test_required_read_only_action_dispatches_once_with_explicit_device():
     async def body(client, rec):
         result = await client.call_tool("adb_develop", {"device_id": DEVICE, "action": LOGCAT})
         assert result.is_error is False
-        assert result.data["status"] == "ok"
-        assert result.data["mutating"] is False
+        assert result.structured_content["status"] == "ok"
+        assert result.structured_content["mutating"] is False
         assert len(rec.runs) == 1
         assert rec.runs[0][1:3] == ["-s", DEVICE]
 
@@ -232,9 +232,9 @@ def test_required_read_only_action_dispatches_once_with_explicit_device():
 def test_required_oversized_output_is_bounded_and_flagged_partial():
     async def body(client, rec):
         result = await client.call_tool("adb_develop", {"device_id": DEVICE, "action": LOGCAT})
-        assert result.data["status"] == "partial"  # REQUIRED: never silently "ok"
-        assert result.data["result"]["truncated"] is True
-        assert len(result.data["result"]["stdout"]) <= MAX_RESULT_CHARS
+        assert result.structured_content["status"] == "partial"  # REQUIRED: never silently "ok"
+        assert result.structured_content["result"]["truncated"] is True
+        assert len(result.structured_content["result"]["stdout"]) <= MAX_RESULT_CHARS
         assert "OUTPUT_LIMIT" in _errors(result)
 
     _exercise(body, recorder=Recorder(stdout="x" * (MAX_RESULT_CHARS + 50)))
@@ -246,8 +246,8 @@ def test_required_observation_failure_after_first_probe_is_partial():
             "adb_observe", {"device_id": DEVICE, "probes": ["selinux", "shell_identity"]}
         )
         assert result.is_error is False
-        assert result.data["status"] == "partial"
-        assert [r["probe"] for r in result.data["results"]] == ["selinux"]
+        assert result.structured_content["status"] == "partial"
+        assert [r["probe"] for r in result.structured_content["results"]] == ["selinux"]
         assert _errors(result) == ["PROBE_TIMEOUT"]
 
     _exercise(body, recorder=Recorder(timeout_after=1))

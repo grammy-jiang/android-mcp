@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import asyncio
+from typing import Annotated
 
 from fastmcp import FastMCP
+from pydantic import Field
 
 from android_mcp_host.adb import AdbClient
+from android_mcp_host.mcp_boundary import get_output_schema
 from android_mcp_host.operations import OperationService
-from android_mcp_host.probes import ProbeService
+from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.status import build_status
 
 
@@ -22,6 +25,7 @@ def create_server(
     operator = operations if operations is not None else OperationService(client)
     server = FastMCP(
         "android-mcp-host",
+        mask_error_details=True,
         instructions=(
             "Android host device tools are read-only. "
             "Each observation requires an explicitly selected authorized device. "
@@ -31,13 +35,27 @@ def create_server(
         ),
     )
 
-    @server.tool
+    @server.tool(output_schema=get_output_schema("device_status"))
     def device_status() -> dict[str, object]:
         """Inspect host platform and ADB device states; never change a device."""
         return build_status(client)
 
-    @server.tool
-    async def adb_observe(device_id: str, probes: list[str]) -> dict[str, object]:
+    @server.tool(output_schema=get_output_schema("adb_observe"))
+    async def adb_observe(
+        device_id: str,
+        probes: Annotated[
+            list[str],
+            Field(
+                description="Select 1-8 distinct allowlisted ADB observation groups.",
+                json_schema_extra={
+                    "minItems": 1,
+                    "maxItems": MAX_PROBES,
+                    "uniqueItems": True,
+                    "items": {"type": "string", "enum": sorted(PROBES)},
+                },
+            ),
+        ],
+    ) -> dict[str, object]:
         """Read selected device diagnostics: identity, boot, battery, display,
         storage, selinux, shell_identity, third_party_packages, compatibility. Read-only.
         The serial must match one online, authorized device from device_status.

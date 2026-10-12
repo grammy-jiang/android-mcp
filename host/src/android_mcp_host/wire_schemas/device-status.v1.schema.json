@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:device-status:v1",
+  "title": "Android MCP Device Status v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "capabilities", "devices", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"enum": ["host", "android"]},
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["os", "architecture", "python"],
+      "properties": {
+        "os": {"enum": ["macos", "linux", "unsupported"]},
+        "architecture": {"type": "string", "minLength": 1},
+        "python": {"type": "string", "minLength": 1}
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": {"type": "boolean"}
+    },
+    "adb": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available", "executable", "version", "error"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "executable": {"type": ["string", "null"]},
+        "version": {"type": ["string", "null"]},
+        "error": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/diagnostic"}]}
+      }
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["device_id", "state", "properties"],
+        "properties": {
+          "device_id": {"type": "string", "minLength": 1},
+          "state": {"type": "string", "minLength": 1},
+          "properties": {
+            "type": "object",
+            "additionalProperties": {"type": "string"}
+          }
+        }
+      }
+    },
+    "errors": {"type": "array", "items": {"$ref": "#/$defs/diagnostic"}}
+  },
+  "$defs": {
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "message": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"runtime": {"const": "host"}}},
+      "then": {"required": ["host", "adb"]}
+    }
+  ]
+}
