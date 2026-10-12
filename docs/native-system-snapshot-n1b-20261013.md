@@ -14,14 +14,15 @@ SystemClock.elapsedRealtime, not a time-zone or account-clock signal.
 No physical display identification or system-wide storage data is
 claimed. The same-package filesDir supplies the filesystem path.
 
-Network state is checked ONLY after Android grants
-ACCESS_NETWORK_STATE. As that permission is absent from the approved
-APK, the current service reports permission_denied rather than
-executing ConnectivityManager or inferring an active network.
-If a separately approved future APK declares the permission,
-the adapter can classify only validated, internet-capable, offline or
-unavailable state. It cannot emit SSID, BSSID, network/advertising ID,
-Wi-Fi scans, MAC/IP, location, device names or nearby devices.
+Network monitoring is disabled in this APK. Because ACCESS_NETWORK_STATE
+is absent from the approved Manifest, this adapter reports
+permission_denied unconditionally and does not call ConnectivityManager
+or any network observation API. A future separately reviewed package can
+implement a permission-aware connectivity adapter if authorization and the
+APK's approved permission allowlist permit it. No SSID, BSSID, network
+identifier, Wi-Fi scan, MAC/IP, location or nearby-device data is read.
+This conservative change fixes a real Android Lint MissingPermission
+failure without weakening Lint policy or adding a new permission.
 
 NativeSystemSnapshots is an immutable, version-1 Kotlin normalization
 boundary. It validates Android API30+, battery percent, nonnegative

@@ -31,15 +31,13 @@ def test_battery_storage_display_use_app_apis_and_monotonic_time() -> None:
     assert "getExternalStorage" not in source
 
 
-def test_network_permission_is_checked_before_connectivity_manager() -> None:
+def test_network_denied_without_manifest_grant_and_no_network_api_calls() -> None:
     source = ADAPTER.read_text()
-    assert "Manifest.permission.ACCESS_NETWORK_STATE" in source
-    assert "context.checkSelfPermission" in source
-    assert "if (granted != true) return NativeNetworkReadiness.PERMISSION_DENIED" in source
-    assert source.index("if (granted != true)") < source.index(
-        "context.getSystemService(ConnectivityManager::class.java)"
-    )
+    assert "network = NativeNetworkReadiness.PERMISSION_DENIED" in source
     for forbidden in (
+        "ConnectivityManager",
+        "NetworkCapabilities",
+        "ACCESS_NETWORK_STATE",
         "getConnectionInfo(",
         "getScanResults(",
         "getLinkProperties(",
