@@ -24,6 +24,11 @@ from android_mcp_host.toolchain_inventory import (
     ToolchainInventory,
     get_toolchain_output_schema,
 )
+from android_mcp_host.capability_profiles import (
+    CapabilityProfiles,
+    get_capability_output_schema,
+    load_ledger,
+)
 
 with open(sys.argv[1], encoding="utf-8") as report_file:
     report = json.load(report_file)
@@ -33,5 +38,9 @@ assert "devices" in report
 assert callable(create_server)
 assert get_toolchain_output_schema()["$id"] == "urn:android-mcp:host-toolchain-inventory:v1"
 assert create_server(toolchain_inventory=ToolchainInventory(paths={})) is not None
+assert get_capability_output_schema()["$id"] == "urn:android-mcp:host-capability-profile:v1"
+assert len(load_ledger()) == 95
+assert CapabilityProfiles().snapshot()["mutation_enabled"] is False
+assert create_server(capability_profiles=CapabilityProfiles()) is not None
 PY
 echo "Host sdist/wheel clean-install and CLI doctor passed."
