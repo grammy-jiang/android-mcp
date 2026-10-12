@@ -77,6 +77,7 @@ def test_input_schema_matches_safe_typed_operations():
         {"type": "package_details", "package": "com.app; id"},
         {"type": "package_details", "package": "a"},
         {"type": "instrument_test", "package": "com.app", "runner": "runner; reboot"},
+        {"type": "instrument_test", "package": "com.app", "runner": "com.example.Outer$Inner"},
         {"type": "install_apk", "apk_path": "/tmp/x.apk", "arbitrary_shell": "id"},
     )
     for action in invalid:

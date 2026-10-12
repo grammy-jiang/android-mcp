@@ -44,6 +44,6 @@ uv run --project host --locked --group dev pre-commit run --hook-stage pre-push 
 
 ### Development is not deployment
 
-The current Host MCP has a localhost-only, read-only status tool. Do not expose it publicly or use it as production Android device management without separate auth/transport, security tests and live hardware acceptance gates.
+The current Host MCP has three localhost-only tools: device_status, adb_observe, and adb_develop. The latter supports bounded read-only diagnostics and non-mutating action previews. Actual APK installation/instrumentation remains disabled in the default server. The real USB Android 16 read-only Host HTTP path is verified on Linux ARM64 (see [Host live acceptance](host-live-acceptance.md)), not authenticated public deployment. Do not expose it publicly or enable device mutation without independent auth/transport, Native lease fencing, and explicit release gates.
 
 Release policy is documented in [quality.md](quality.md); no PyPI / APK publishing job exists at this stage.

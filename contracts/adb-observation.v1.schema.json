@@ -43,6 +43,7 @@
           "probe": {
             "enum": [
               "identity",
+              "compatibility",
               "boot",
               "battery",
               "display",

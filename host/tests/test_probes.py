@@ -135,7 +135,10 @@ def test_bad_probe_names_rejected_before_discovery(invalid):
 
 
 def test_missing_binary_blocks_shell_even_if_device_listed():
-    service, _, calls = _service(path="")
+    # The discovery report must also lack an executable; a discovered
+    # executable now takes precedence over PATH by design.
+    report = AdbReport(True, None, "37.0", None, (Device("SAMPLE-42", "device", {}),))
+    service, _, calls = _service(report=report, path="")
     service._locate = lambda _: None
     response = service.observe("SAMPLE-42", ["battery"])
     assert response["errors"][0]["code"] == "ADB_NOT_FOUND"
@@ -312,3 +315,25 @@ def test_capture_limit_is_classified_without_leaking_output():
     assert response["status"] == "error"
     assert response["errors"][0]["code"] == "OUTPUT_LIMIT"
     assert "private device material" not in str(response)
+
+
+def test_probe_prefers_discovered_adb_executable_over_path_lookup():
+    calls = []
+
+    def reader(argv, timeout):
+        calls.append(argv)
+        return _cp(argv, stdout="Enforcing")
+
+    discovery = StaticDiscovery(
+        AdbReport(
+            available=True,
+            executable="/reviewed/adb",
+            version="37",
+            error=None,
+            devices=(Device("SAMPLE-42", "device", {}),),
+        )
+    )
+    service = ProbeService(discovery, locate=lambda _: "/untrusted/adb", reader=reader)
+    response = service.observe("SAMPLE-42", ["selinux"])
+    assert response["status"] == "ok"
+    assert calls == [["/reviewed/adb", "-s", "SAMPLE-42", "shell", "getenforce"]]

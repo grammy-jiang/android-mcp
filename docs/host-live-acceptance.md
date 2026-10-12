@@ -27,6 +27,16 @@ Evidence already performed with real processes and actual USB-connected hardware
   probes. A denied instrumentation request returned MUTATION_DISABLED.
 - No APK install, shell escape, root escalation, reboot, screen capture or
   device modification was performed.
+- A repeatable smoke at the Host release-candidate SHA verifies all eight
+  read-only groups, including fixed ABI, security patch, SoC and kernel probes.
+- Full Host quality gates enforce per-module branch coverage, Python 3.11,
+  3.13 and 3.14 on Ubuntu/macOS, clean wheel installation, vulnerability
+  audit and pinned hygiene hooks in CI.
+- Independent read-only security review identified four P2 issues in the
+  pre-merge candidate: observation schema mismatch, implicit ADB executable
+  selection, silent response display truncation, and unsafe dollar-sign
+  runner components. The corrected release candidate has regression tests
+  for all four.
 
 The above proves **local** Host MCP + Linux USB ADB. It does not prove an
 authenticated internet-facing MCP server, any Android Native APK, or any

@@ -152,7 +152,8 @@ class ProbeService:
         if error:
             response["errors"].append(error)
             return response
-        binary = self._adb_executable or self._locate("adb")
+        # Reuse the executable that actually produced this discovery report.
+        binary = self._adb_executable or report.executable or self._locate("adb")
         if not binary:
             response["errors"].append(_error("ADB_NOT_FOUND", "ADB executable unavailable"))
             return response

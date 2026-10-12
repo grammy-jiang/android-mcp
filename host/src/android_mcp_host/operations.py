@@ -34,11 +34,23 @@ def _error(code: str, message: str) -> dict[str, str]:
     return {"code": code, "message": message}
 
 
+def _safe_text_status(text: str) -> tuple[str, bool]:
+    """Strip controls and distinguish a display cap from complete output."""
+    clean = "".join(ch for ch in text if ch in "\n\r\t" or ord(ch) >= 32 and ord(ch) != 127)
+    return clean[:MAX_RESULT_CHARS], len(clean) > MAX_RESULT_CHARS
+
+
 def _safe_text(text: str) -> str:
-    """Remove control/escape characters; never log raw device stderr."""
-    return "".join(ch for ch in text if ch in "\n\r\t" or ord(ch) >= 32 and ord(ch) != 127)[
-        :MAX_RESULT_CHARS
-    ]
+    return _safe_text_status(text)[0]
+
+
+def _result_body(result: RunResult) -> tuple[dict[str, object], bool]:
+    safe, shortened = _safe_text_status(result.stdout)
+    return {
+        "exit_code": result.returncode,
+        "stdout": safe,
+        "truncated": result.truncated or shortened,
+    }, shortened
 
 
 def _diagnose(kind: str, result: RunResult) -> tuple[str, dict[str, str] | None]:
@@ -172,11 +184,13 @@ class OperationService:
                     "error": "error",
                 }.get(outcome.status, "error")
                 if outcome.result is not None:
-                    response["result"] = {
-                        "exit_code": outcome.result.returncode,
-                        "stdout": _safe_text(outcome.result.stdout),
-                        "truncated": outcome.result.truncated,
-                    }
+                    response["result"], shortened = _result_body(outcome.result)
+                    if shortened:
+                        if response["status"] == "ok":
+                            response["status"] = "partial"
+                        response["errors"].append(
+                            _error("OUTPUT_LIMIT", "Result shortened to response display budget")
+                        )
                 if outcome.code != "NONE":
                     response["errors"].append(
                         _error(outcome.code, "Secure operation did not fully complete")
@@ -197,13 +211,16 @@ class OperationService:
                 return response
             status, failure = _diagnose(plan.kind, result)
             response["status"] = status
-            response["result"] = {
-                "exit_code": result.returncode,
-                "stdout": _safe_text(result.stdout),
-                "truncated": result.truncated,
-            }
+            response["result"], shortened = _result_body(result)
             if failure is not None:
                 response["errors"].append(failure)
+            if shortened:
+                if response["status"] == "ok":
+                    response["status"] = "partial"
+                if failure is None or failure["code"] != "OUTPUT_LIMIT":
+                    response["errors"].append(
+                        _error("OUTPUT_LIMIT", "Result shortened to response display budget")
+                    )
             return response
         finally:
             lock.release()
