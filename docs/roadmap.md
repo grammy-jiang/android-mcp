@@ -2,7 +2,7 @@
 
 ## Current status (2026-10-12)
 
-**M0/Q1** quality baseline merged. **Host H1/H2/H3 release candidate** includes explicit-device read-only observation, bounded typed ADB diagnostics, and *non-activated* signed-grant/local-lease/audit prototypes. On 2026-10-12, Host MCP over localhost Streamable HTTP passed **real USB** read-only acceptance on sextant (Linux ARM64) against an authorized OnePlus Pad 3 (Android 16), and macOS/Linux development gates passed. The hardened CI matrix includes Python 3.11/3.13/3.14, packaging, static security and dependency audits; see [Host acceptance](host-live-acceptance.md). The MacBook's own direct USB connection awaits macOS accessory authorization. Host↔Native coordination, external authenticated access and the Kotlin Native APK remain unimplemented/unverified.
+**M0/Q1** quality baseline merged. Host H1/H2/H3 implements explicit-device read-only observation, bounded typed ADB diagnostics, and *non-activated* signed-grant/local-lease/audit prototypes. Host MCP localhost Streamable HTTP passed **real USB** acceptance on sextant (Linux ARM64) against an authorized OnePlus Pad 3 (Android 16), including a repeat run on 2026-10-12 at `e7645e4d` after the ADB safety fixes. Host CI now includes Python **3.11, 3.12, 3.13 and 3.14** on macOS/Linux, separate repository hygiene and weekly dependency audits; see [Host acceptance](host-live-acceptance.md). Native N0 JVM and N1 buildable foreground-only localhost APK scaffolds are merged; Native APK installation on real hardware, Host↔Native coordination, authenticated external access and enabled device mutations remain unverified. The MacBook's own USB ADB direct path remains unverified; do not confuse it with sextant hardware evidence.
 
 ## Parallel workstreams with explicit I/O
 
@@ -17,7 +17,7 @@
 
 ### Milestones
 
-The H1/H2/H3 candidate is pre-hardware and must pass macOS/Linux/CI and independent security review before any device-mutating execution. It does not replace M2/M3/M5 acceptance gates.
+The H1/H2/H3 **read-only** Host path has completed local hardware acceptance, but device-mutating execution still requires independently reviewed authenticated grants, Native lease fencing and audit gates. Read-only hardware evidence does not replace M2/M3/M5 acceptance gates.
 
 - **M0** (this scaffold): private repository, Host read-only status, no-device tests, Mac/Linux CI, draft Android architecture and security; locked lint/type/coverage checks, Git hooks, developer doctor, package smoke and scheduled audits.
 - **M1**: gated Host ADB capabilities: explicit serial, validated read-only diagnostic operations, stable errors/timeouts, Linux USB permission guidance; separate tests.

@@ -42,6 +42,29 @@ The above proves **local** Host MCP + Linux USB ADB. It does not prove an
 authenticated internet-facing MCP server, any Android Native APK, or any
 Host/Native distributed mutation authority.
 
+## Latest revalidation (2026-10-12; Host security fix merged)
+
+A new **detached, isolated test Worktree** on `sextant` at
+`~/Projects/android-mcp-host-verification-20261012` checked out
+`e7645e4dba356aa7f21e8764a5c91f6b7c312dde` (Host ADB output safety,
+PR #11). Linux ARM64, Python 3.13.5, locked dependencies:
+
+- `HOST_PYTHON=3.13 bash scripts/check-host.sh`: **301 tests passed**,
+  Ruff, strict mypy, Bandit, and independently computed per-module statement
+  and true branch coverage all passed (total combined coverage about 99%).
+- Actual ephemeral `127.0.0.1` FastMCP HTTP server → local USB ADB →
+  one previously authorized online tablet: **pass**; exactly three tools;
+  eight fixed read-only probe groups (`identity`, `compatibility`, `boot`,
+  `battery`, `display`, `storage`, `selinux`, `shell_identity`).
+- Rejected an invalid serial, an unregistered serial and an unknown action;
+  the summary reported `device_output_persisted=false`. **No logcat was
+  requested in this revalidation**, and no device-changing command ran.
+- The detached Worktree was left clean. There was no remote public listener,
+  Native hardware APK installation, screenshot, privilege use or reboot.
+- This certifies the **Host source at that exact commit**. PR #13 subsequently
+  changed Host CI/workflows, not runtime Host source. A future runtime code
+  change requires another separately attributed hardware test.
+
 ## Repeatable opt-in test
 
 Build checkout from a reviewed Host branch and run, only on the machine that

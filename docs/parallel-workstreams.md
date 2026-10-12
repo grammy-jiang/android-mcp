@@ -1,6 +1,6 @@
 # Android MCP — 双工作流、双 Chat Session 并行开发与交接规范
 
-> 版本：v1，2026-10-12（Australia/Sydney）。本文件是协作约定，不代表两段 Chat 能自动共享记忆或在没有活动执行环境时持续运行。仓库：`grammy-jiang/android-mcp`；默认集成分支：`main`。
+> 版本：v2，2026-10-12（Australia/Sydney）。本文件是协作约定，不代表两段 Chat 能自动共享记忆或在没有活动执行环境时持续运行。仓库：`grammy-jiang/android-mcp`；默认集成分支：`main`。
 
 ## 1. 核心决策
 
@@ -13,8 +13,8 @@
 
 | 会话 / 工作流 | 主要职责 | 专属工作区（macOS） | 允许主要修改的范围 | 当前入口 |
 | --- | --- | --- | --- | --- |
-| **Session A：本次会话 / Native** | Kotlin 契约、MCP Native 服务、APK/Android 生命周期、权限隔离、跨语言互操作 | `~/Projects/android-mcp-native-setup` | `android/**`、`docs/native-*.md`、`scripts/check-native.sh`、`scripts/smoke-native-jvm.py`、Native 专用 CI | [PR #6](https://github.com/grammy-jiang/android-mcp/pull/6)，`feature/android-native-bootstrap` |
-| **Session B：新会话 / Host** | Python Host MCP 的稳定性、安全加固、ADB 只读能力、开发基础设施、跨平台自动化质量 | **新建**独立 Worktree（例如 `~/Projects/android-mcp-host-next`，不要共享已有目录） | `host/**`、`docs/host-*.md`、Host 专用脚本与 Host CI | 从最新 `origin/main` 创建短期 `feature/host-<topic>` 分支 |
+| **Session A：Native** | Kotlin 契约、MCP Native 服务、APK/Android 生命周期、权限隔离、跨语言互操作 | `~/Projects/android-mcp-native-setup` | `android/**`、`docs/native-*.md`、`scripts/check-native.sh`、`scripts/smoke-native-jvm.py`、Native 专用 CI | Native N0 [PR #6](https://github.com/grammy-jiang/android-mcp/pull/6) 与 N1 [PR #9](https://github.com/grammy-jiang/android-mcp/pull/9) 已合并；后续以 GitHub 实时 PR 为准 |
+| **Session B：Host** | Python Host MCP 的稳定性、安全加固、ADB 只读能力、开发基础设施、跨平台自动化质量 | 已采用专属 Host Worktree；后续新建短期分支或专属 Worktree，禁止共享写入 | `host/**`、`docs/host-*.md`、Host 专用脚本与 Host CI | 从最新 `origin/main` 创建 `feature/host-<topic>` 分支 |
 
 工作流是职责边界而非永久锁定。若用户决定交换 A/B 角色，先在对应 PR 描述中声明新的拥有者，并核实没有另一会话正在写入相同目录或分支。**同一 Git branch / worktree 在任一时刻只能由一个会话拥有写权限。**
 
@@ -22,10 +22,10 @@ MacBook 上原有的 `~/Projects/android-mcp` 工作区当前仍位于已合并�
 
 ## 3. 必须先核对的项目快照（2026-10-12；之后以 GitHub 为准）
 
-- 默认分支：`main`；Host PR [#3](https://github.com/grammy-jiang/android-mcp/pull/3)、[#4](https://github.com/grammy-jiang/android-mcp/pull/4)、[#5](https://github.com/grammy-jiang/android-mcp/pull/5) 已合并；记录时 `main` HEAD 为 `8fd5ea59872d7cb1ac3e3d92652db2f1f3c8f96c`。
-- Host 的当前 read-only 里程碑：三个工具 `device_status`、`adb_observe`、`adb_develop`；Mac/Linux 各 278 个测试通过，约 99% 覆盖率；Host HTTP → USB ADB → OnePlus Pad 3 真机只读路径已验收。**APK 安装、instrumentation 等实际变更默认禁用**。
-- Native [PR #6](https://github.com/grammy-jiang/android-mcp/pull/6) 是 Draft 的 JVM-only Kotlin 基础：Gradle/JDK17、严格契约与 Lease 状态模型、18 个 Kotlin 单测、Python ↔ Kotlin MCP localhost HTTP smoke。**没有 Android APK 或 Android 服务**。
-- MacBook 的 Android SDK 目录尚无已安装组件；SDK/许可、Android 服务生命周期、认证、权限模型与真机 Native APK 验收仍是后续工作。任何会话在宣称 APK 已完成之前必须拿到真实构建产物和设备验收证据。
+- 默认分支：`main`；截至本次更新，Host PR #3、#4、#5、#8、#10、#11、#13 与 Native N0/N1 PR #6、#9 已合并。本轮文档基线 SHA 为 `310834b515799e5023902ad97aec4d592f77db31`；后续务必重新核实 GitHub 的实际 HEAD。
+- Host 的只读里程碑：三个工具 `device_status`、`adb_observe`、`adb_develop`；安全加固版在 `sextant` Linux ARM64 上 301 个测试通过、约 99% 综合覆盖率，HTTP → USB ADB → OnePlus Pad 3 真机八组只读探测已复验。关键模块独立执行至少 95% 的语句与真实分支覆盖率门禁。**APK 安装、instrumentation 等设备变更仍默认禁用**。
+- Native N0 JVM Kotlin 原型与 N1 **前台 localhost Android APK 框架**已合入主干。N1 需要显式启动 Activity，停止 Activity 即停止监听；不包含 Accessibility、Root 或外部认证。Native 的真实平板 APK 安装、运行及 Host/Native 联合控制权限仍**未验收**；N2 进度以 GitHub 的实际 PR 为准。
+- MacBook 已安装 Android SDK 部分组件（本次检查约 3.5 GB）；Homebrew JDK 17 已存在，但默认 Java PATH 可能仍需显式设置。SDK/JDK 存在不代表 Native APK 真机验收完成；必须提供构建产物、CI 与设备证据。
 - OnePlus Pad 3 目前经 `sextant` USB ADB 连接；MacBook USB 直连受 macOS 配件授权限制。不可把这个连接事实推断为 MacBook 上的设备可用。
 
 ## 4. 分支生命周期：短命、经常同步，避免历史分叉
@@ -55,7 +55,7 @@ python3 scripts/dev.py doctor --require-hooks
 bash scripts/check-host.sh
 ```
 
-Session A 保留现有 Native 专属 Worktree 和 PR #6，不允许 Session B 切换、重置、重写该工作区。一个分支合并后，只有在确认没有未提交修改/未运行任务时才清理属于自己的 Worktree；不要直接删除共享的 Git 元数据。
+Session A 保留 Native 专属 Worktree 与当前 Native PR，不允许 Session B 切换、重置、重写该工作区。一个分支合并后，只有在确认没有未提交修改/未运行任务时才清理属于自己的 Worktree；不要直接删除共享的 Git 元数据。
 
 ## 6. 文件边界与跨工作流接口
 
@@ -71,8 +71,8 @@ Session A 保留现有 Native 专属 Worktree 和 PR #6，不允许 Session B �
 | Gate | Host 工作流 | Native 工作流 |
 | --- | --- | --- |
 | 本地验证 | Ruff、strict mypy、Bandit、per-module branch coverage、Host Pytest、doctor、包安装 | Gradle JDK 17 单测、共享契约、Python FastMCP ↔ Kotlin localhost HTTP smoke |
-| GitHub CI | macOS/Linux × Python 3.11、3.13、3.14，打包、依赖审计、仓库卫生 | macOS/Linux Kotlin JVM CI；后续 APK 阶段再新增 SDK/AGP/Android Lint/Instrumentation |
-| 真机 | 仅在明确设备授权后由 `sextant` 做 localhost MCP ↔ ADB 的允许清单**只读**验收 | Android SDK/APK 尚未具备；不得把 JVM 测试当作 APK 真机成功 |
+| GitHub CI | macOS/Linux × Python 3.11、3.12、3.13、3.14；按 Host 相关路径触发，所有 PR 执行仓库 Hygiene，另设每周依赖审计 | macOS/Linux Kotlin JVM CI；N1 具备 APK/AGP 构建规则，Emulator/Instrumentation 根据 Native 里程碑单独验收 |
+| 真机 | 已授权 `sextant` 完成 localhost MCP ↔ USB ADB 的八组**只读**验收；后续继续显式授权 | N1 APK 框架已有，但真机安装/运行尚无验收证据；JVM 或 Emulator 通过不能代表真机成功 |
 
 真机属于唯一共享的物理资源。两个会话只能**串行**安排同一平板的真实硬件测试；在 PR 描述中记录测试拥有者、范围、设备连接位置和结果。默认不采集、不保存、不公开设备诊断/日志/截图/序列号；不能运行未经用户明确授权的状态改变操作。
 
@@ -85,11 +85,11 @@ Session A 保留现有 Native 专属 Worktree 和 PR #6，不允许 Session B �
 
 ## 9. 新 Chat Session 的启动指令（Session B / Host，可直接复制）
 
-> 请通过 MacBook Pro MCP 连接器访问私有仓库 `grammy-jiang/android-mcp`。首先读取 `docs/parallel-workstreams.md`、`AGENTS.md`、`docs/development.md`、`docs/security.md`、`docs/quality.md` 和 `docs/host-live-acceptance.md`，并核对最新 GitHub main、PR、CI、已有 worktree、正在运行的任务。你负责 **Host Workstream**，另一个 Chat Session 正在负责 Native 的 `~/Projects/android-mcp-native-setup` 与 PR #6，**不要修改它们**。从最新 `origin/main` 建立你自己独立且没有占用的 Worktree 与短期 `feature/host-*` 分支，先跑 Host 基线质量门禁，再选择一个小范围只读稳定性/安全性增强任务，编写测试、完成安全审查并开独立 PR。不能默认启用设备变更、Root 或公网监听，不能重写其他会话的分支；仅在满足合并门禁后合入 `main`。在 PR 描述中记录进度供另一个会话同步。
+> 请通过 MacBook Pro MCP 连接器访问私有仓库 `grammy-jiang/android-mcp`。首先读取 `docs/parallel-workstreams.md`、`AGENTS.md`、`docs/development.md`、`docs/security.md`、`docs/quality.md` 和 `docs/host-live-acceptance.md`，并核对最新 GitHub main、PR、CI、已有 worktree、正在运行的任务。你负责 **Host Workstream**，另一个 Chat Session 负责 Native 的 `~/Projects/android-mcp-native-setup` 与当时活跃的 Native PR，**不要修改它们**。从最新 `origin/main` 建立你自己独立且没有占用的 Worktree 与短期 `feature/host-*` 分支，先跑 Host 基线质量门禁，再选择一个小范围只读稳定性/安全性增强任务，编写测试、完成安全审查并开独立 PR。不能默认启用设备变更、Root 或公网监听，不能重写其他会话的分支；仅在满足合并门禁后合入 `main`。在 PR 描述中记录进度供另一个会话同步。
 
 ## 10. Session A / Native 的继续执行指令
 
-保持 `~/Projects/android-mcp-native-setup` 为单写入者工作区；先核对 PR #6 的实际 head、CI 与分支状态。先将 JVM 基础与共享协议验证稳定化，再独立规划 Android SDK/许可、APK 应用模块、服务生命周期及权限隔离。真实设备只读测试与 Host 会话协调；任何需要修改 Host 或共享 Schema 的工作先提出单独协作 PR。不要覆盖 Host Worktree，不能把 Native JVM smoke 描述成 APK 验收。
+保持 `~/Projects/android-mcp-native-setup` 为单写入者工作区；核对最新 Native PR、CI 与分支状态。N0 JVM、N1 前台 APK 框架已合并，后续按实际进度推进 Emulator、真机 APK 生命周期、权限隔离和安全门禁。真实设备只读测试与 Host 会话协调；任何需要修改 Host 或共享 Schema 的工作先提出单独协作 PR。不要覆盖 Host Worktree，不能把 Native JVM smoke 描述成 APK 验收。
 
 ## 11. 每次交接应留下的最小记录
 
