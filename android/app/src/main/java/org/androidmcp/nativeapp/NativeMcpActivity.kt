@@ -2,7 +2,9 @@ package org.androidmcp.nativeapp
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import org.androidmcp.lifecycle.NativeForegroundSupport
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -45,12 +47,20 @@ class NativeMcpActivity : Activity() {
         backgroundPreviewButton = Button(this).apply {
             text = "Open persistent service preview"
             setOnClickListener {
-                // The Activity listener stops onStop before this screen can
-                // launch a separately user-controlled foreground service.
-                startActivity(Intent(this@NativeMcpActivity, BackgroundMcpActivity::class.java))
+                // N3 foreground-service type specialUse is only supported on
+                // Android 14+. Keep N2 Activity-only behavior on older APIs.
+                if (NativeForegroundSupport.supported(Build.VERSION.SDK_INT)) {
+                    startActivity(Intent(this@NativeMcpActivity, BackgroundMcpActivity::class.java))
+                }
             }
         }
         content.addView(backgroundPreviewButton)
+        if (!NativeForegroundSupport.supported(Build.VERSION.SDK_INT)) {
+            backgroundPreviewButton.isEnabled = false
+            content.addView(TextView(this).apply {
+                text = "Persistent MCP service requires Android 14 (API 34) or later."
+            })
+        }
         setContentView(content)
     }
 
@@ -78,7 +88,7 @@ class NativeMcpActivity : Activity() {
                     if (generation.get() == ticket) {
                         status.text = "Could not start local MCP listener."
                         startButton.isEnabled = true
-                        backgroundPreviewButton.isEnabled = true
+                        backgroundPreviewButton.isEnabled = NativeForegroundSupport.supported(Build.VERSION.SDK_INT)
                     }
                 }
             }
@@ -90,7 +100,7 @@ class NativeMcpActivity : Activity() {
         worker.execute { gateway.stop() }
         status.text = "Stopped while app is not visible."
         startButton.isEnabled = true
-        backgroundPreviewButton.isEnabled = true
+        backgroundPreviewButton.isEnabled = NativeForegroundSupport.supported(Build.VERSION.SDK_INT)
     }
 
     override fun onStop() {

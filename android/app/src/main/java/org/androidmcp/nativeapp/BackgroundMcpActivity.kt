@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import org.androidmcp.lifecycle.NativeForegroundSupport
 
 /**
  * User-visible service mode. Activity visibility is NOT the service's lifetime.
@@ -33,18 +34,28 @@ class BackgroundMcpActivity : Activity() {
             textSize = 15f
         }
         content.addView(status)
+        val supported = NativeForegroundSupport.supported(Build.VERSION.SDK_INT)
         content.addView(Button(this).apply {
             text = "Start background local MCP"
+            isEnabled = supported
             setOnClickListener { requestNotificationPermissionOrStart() }
         })
         content.addView(Button(this).apply {
             text = "Stop background local MCP"
+            isEnabled = supported
             setOnClickListener { stopLocalService() }
         })
+        if (!supported) {
+            status.text = "Persistent MCP service requires Android 14 (API 34) or later."
+        }
         setContentView(content)
     }
 
     private fun requestNotificationPermissionOrStart() {
+        if (!NativeForegroundSupport.supported(Build.VERSION.SDK_INT)) {
+            status.text = "Persistent MCP service requires Android 14 (API 34) or later."
+            return
+        }
         if (
             Build.VERSION.SDK_INT >= 33 &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
@@ -61,6 +72,10 @@ class BackgroundMcpActivity : Activity() {
     }
 
     private fun startLocalService() {
+        if (!NativeForegroundSupport.supported(Build.VERSION.SDK_INT)) {
+            status.text = "Persistent MCP service requires Android 14 (API 34) or later."
+            return
+        }
         try {
             val intent = Intent(this, NativeMcpForegroundService::class.java).apply {
                 action = NativeMcpForegroundService.ACTION_START

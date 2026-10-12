@@ -8,9 +8,11 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Handler
+import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import org.androidmcp.lifecycle.LifecycleDecision
+import org.androidmcp.lifecycle.NativeForegroundSupport
 import org.androidmcp.lifecycle.NativeServiceLifecycle
 import org.androidmcp.lifecycle.ServicePhase
 import java.util.concurrent.Executors
@@ -37,6 +39,12 @@ class NativeMcpForegroundService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (!NativeForegroundSupport.supported(Build.VERSION.SDK_INT)) {
+            // Defensive boundary even if the non-exported Service receives
+            // a direct or unexpected start request on Android 11-13.
+            stopSelfResult(startId)
+            return START_NOT_STICKY
+        }
         latestStartId = startId
         when (intent?.action) {
             ACTION_START -> requestStart()
