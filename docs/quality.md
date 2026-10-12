@@ -4,9 +4,11 @@ Adapted from the **principles** of Binnacle's development, testing and quality-g
 
 ## Python Host (enforced now)
 
+As of 2026-10-12, GitHub Hosted Actions cannot start due billing limits; entries below mentioning CI describe retained workflow definitions, **not evidence of a recent executed check**. The current authoritative Host merge gate is the locked local macOS/Linux ARM64 matrix and package/security suite in [Host merge gates](host-merge-gates.md).
+
 | Gate | Current target | Enforcement |
 | --- | --- | --- |
-| Python | 3.11, 3.13, 3.14 on Ubuntu/macOS | GitHub Actions matrix |
+| Python | 3.11, 3.12, 3.13, 3.14 on macOS/Linux ARM64 | Local locked matrix during Hosted Actions billing block |
 | Deterministic dependencies | `uv.lock`, `uv lock --check --offline` | pre-commit, doctor, CI |
 | Static quality | Ruff check and format, strict mypy | pre-commit, CI |
 | Security static scan | Bandit medium-and-higher | pre-commit, CI |
@@ -14,8 +16,8 @@ Adapted from the **principles** of Binnacle's development, testing and quality-g
 | Unit/contract/failure tests | deterministic pytest + Hypothesis bounded examples | pre-push, CI |
 | Branch coverage | critical Host modules >=95%; all others >=90% **per module** | `quality-policy.json` + fail-closed checker |
 | Module size | <=500 physical lines (production, scripts, tests) | fail-closed checker |
-| Packaging | build sdist and wheel; clean wheel install and CLI smoke | CI packaging job |
-| Dependency CVEs | pip-audit, independent scheduled check | Security workflow |
+| Packaging | build sdist and wheel; clean wheel install and CLI smoke | Local check-host-package.sh; CI only when available |
+| Dependency CVEs | uv audit --project host --locked; retain scheduled audit definition | Manual local audit while Actions billing blocks jobs |
 
 `quality-policy.json` is the authoritative source of per-module limits. Newly added production modules inherit a 90% floor by default. Critical interfaces (ADB parsing/execution, future auth, privilege broker, mutation policy, device lease) require at least 95%, with explicit additions to the policy when implemented.
 
@@ -45,4 +47,4 @@ Do not claim Kotlin CI or emulator coverage until there is buildable Android sou
 
 ## Delivery boundaries
 
-Pull requests should show affected tests, CI results, contract compatibility and any security impacts. Independent review is necessary before enabling arbitrary device mutation, remote access, privilege escalation, bootloader/recovery or payment-related workflows. Shipping a Python wheel is not equivalent to deploying an authenticated MCP endpoint.
+Pull requests should show affected tests, actual local exact-SHA results and any executed CI results, contract compatibility and security impacts. Independent review is necessary before enabling arbitrary device mutation, remote access, privilege escalation, bootloader/recovery or payment-related workflows. Shipping a Python wheel is not equivalent to deploying an authenticated MCP endpoint.
