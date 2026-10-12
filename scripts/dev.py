@@ -71,7 +71,18 @@ def doctor(require_hooks: bool = False) -> tuple[dict[str, object], list[str]]:
         output["uv_version"] = uv_result.stdout.strip()
         if uv_result.returncode != 0:
             problems.append("uv --version failed")
-        lock = _run([uv, "lock", "--check", "--offline", "--project", "host"])
+        lock = _run(
+            [
+                uv,
+                "lock",
+                "--check",
+                "--offline",
+                "--project",
+                "host",
+                "--python",
+                sys.executable,
+            ]
+        )
         output["lock_consistent"] = lock.returncode == 0
         if lock.returncode != 0:
             problems.append("host/uv.lock is missing or out of sync")
