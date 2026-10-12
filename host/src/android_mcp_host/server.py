@@ -15,6 +15,11 @@ from android_mcp_host.capability_profiles import CapabilityProfiles, get_capabil
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
 from android_mcp_host.operations import OperationService
+from android_mcp_host.package_inspector import (
+    MAX_PERMISSIONS,
+    PackageInspector,
+    get_package_output_schema,
+)
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.status import build_status
 from android_mcp_host.system_snapshot import SystemSnapshot, get_snapshot_output_schema
@@ -33,6 +38,7 @@ def create_server(
     adb_discovery: DeviceDiscovery | None = None,
     adb_transport: AdbTransport | None = None,
     system_snapshot: SystemSnapshot | None = None,
+    package_inspector: PackageInspector | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -236,5 +242,35 @@ def create_server(
             remain explicitly partial or denied; never enable device mutation.
             """
             return await asyncio.to_thread(system_snapshot.inspect, device_id, groups)
+
+    if package_inspector is not None:
+
+        @server.tool(
+            title="Inspect Exact Android Package Metadata",
+            output_schema=get_package_output_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        async def adb_package_inspect(
+            device_id: str,
+            package: str,
+            include_permissions: bool = True,
+            permission_limit: int = MAX_PERMISSIONS,
+        ) -> dict[str, object]:
+            """Read one exact package version/SDK and bounded permission summary.
+
+            No installation, uninstall, arbitrary command or raw dumpsys output.
+            """
+            return await asyncio.to_thread(
+                package_inspector.inspect,
+                device_id,
+                package,
+                include_permissions=include_permissions,
+                permission_limit=permission_limit,
+            )
 
     return server

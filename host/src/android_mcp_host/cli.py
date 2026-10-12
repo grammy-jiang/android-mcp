@@ -11,6 +11,7 @@ from android_mcp_host.adb import AdbClient
 from android_mcp_host.adb_transport import AdbTransport
 from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.device_discovery import DeviceDiscovery
+from android_mcp_host.package_inspector import PackageInspector
 from android_mcp_host.server import create_server
 from android_mcp_host.status import build_status, host_platform_name
 from android_mcp_host.system_snapshot import SystemSnapshot
@@ -50,6 +51,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Opt in to fixed, typed, read-only Android system diagnostics.",
     )
+    serve.add_argument(
+        "--adb-package-inspect",
+        action="store_true",
+        help="Opt in to exact-package read-only version and permission diagnostics.",
+    )
     args = parser.parse_args(argv)
 
     if args.command == "doctor":
@@ -80,6 +86,8 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["adb_transport"] = AdbTransport()
     if args.adb_system_snapshot:
         kwargs["system_snapshot"] = SystemSnapshot()
+    if args.adb_package_inspect:
+        kwargs["package_inspector"] = PackageInspector()
     server = create_server(**kwargs)
     server.run(transport="http", host=args.host, port=args.port)
     return 0
