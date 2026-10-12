@@ -252,3 +252,20 @@ def test_display_cap_does_not_duplicate_existing_capture_failure():
     assert result["status"] == "partial"
     assert result["result"]["truncated"] is True
     assert [e["code"] for e in result["errors"]] == ["OUTPUT_LIMIT"]
+
+
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_duplicate_selected_serial_blocks_development_actions(dry_run):
+    discovery = Discovery()
+    discovery.report = AdbReport(
+        True,
+        "/opt/adb",
+        "37",
+        None,
+        (Device("DEV123", "device", {}), Device("DEV123", "offline", {})),
+    )
+    service, _, calls = _service(adb=discovery)
+    result = service.execute("DEV123", {"type": "logcat_snapshot"}, dry_run=dry_run)
+    assert result["status"] == "error"
+    assert result["errors"][0]["code"] == "AMBIGUOUS_DEVICE_ID"
+    assert calls == []

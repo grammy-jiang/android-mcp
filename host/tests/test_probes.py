@@ -337,3 +337,18 @@ def test_probe_prefers_discovered_adb_executable_over_path_lookup():
     response = service.observe("SAMPLE-42", ["selinux"])
     assert response["status"] == "ok"
     assert calls == [["/reviewed/adb", "-s", "SAMPLE-42", "shell", "getenforce"]]
+
+
+def test_duplicate_selected_serial_never_runs_probe():
+    report = AdbReport(
+        True,
+        "/fake/adb",
+        "37",
+        None,
+        (Device("SAMPLE-42", "offline", {}), Device("SAMPLE-42", "device", {})),
+    )
+    service, _, calls = _service(report=report)
+    result = service.observe("SAMPLE-42", ["battery"])
+    assert result["status"] == "error"
+    assert result["errors"][0]["code"] == "AMBIGUOUS_DEVICE_ID"
+    assert calls == []

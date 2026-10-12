@@ -20,11 +20,15 @@ def require_online(report: AdbReport, device_id: str) -> dict[str, str] | None:
         return {"code": report.error.code, "message": "ADB discovery is not ready"}
     if not report.available:
         return {"code": "ADB_NOT_FOUND", "message": "Android Platform Tools are not available"}
-    devices = {item.device_id: item for item in report.devices}
-    selected = devices.get(device_id)
-    if selected is None:
+    matches = [item for item in report.devices if item.device_id == device_id]
+    if not matches:
         return {"code": "DEVICE_NOT_FOUND", "message": "The selected device is not attached"}
-    if selected.state != "device":
+    if len(matches) != 1:
+        return {
+            "code": "AMBIGUOUS_DEVICE_ID",
+            "message": "ADB discovery returned multiple entries for the selected device",
+        }
+    if matches[0].state != "device":
         return {
             "code": "DEVICE_NOT_READY",
             "message": "The selected device is not authorized and online",
