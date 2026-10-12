@@ -14,6 +14,7 @@ from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.fastboot_inventory import FastbootInventory
 from android_mcp_host.logcat_filters import LogcatFilters
 from android_mcp_host.package_inspector import PackageInspector
+from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory
 from android_mcp_host.server import create_server
 from android_mcp_host.status import build_status, host_platform_name
 from android_mcp_host.system_snapshot import SystemSnapshot
@@ -68,6 +69,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Opt in to bounded Fastboot version and bootloader transport discovery only.",
     )
+    serve.add_argument(
+        "--sdk-ndk-inventory",
+        action="store_true",
+        help="Opt in to fixed read-only Android SDK/NDK/JDK workstation inventory.",
+    )
     args = parser.parse_args(argv)
 
     if args.command == "doctor":
@@ -104,6 +110,8 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["logcat_filter"] = LogcatFilters()
     if args.fastboot_inventory:
         kwargs["fastboot_inventory"] = FastbootInventory()
+    if args.sdk_ndk_inventory:
+        kwargs["sdk_ndk_inventory"] = SdkNdkInventory()
     server = create_server(**kwargs)
     server.run(transport="http", host=args.host, port=args.port)
     return 0

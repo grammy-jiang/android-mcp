@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-sdk-ndk-inventory:v1",
+  "title": "Host SDK NDK fixed workstation prerequisites v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "runtime", "status", "build_prerequisites_present",
+    "build_authorized", "sdk_licenses_verified", "tools"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok", "partial", "unavailable"]},
+    "build_prerequisites_present": {"type": "boolean"},
+    "build_authorized": {"const": false},
+    "sdk_licenses_verified": {"const": false},
+    "tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jdk17", "sdk_platform", "build_tools", "gradle", "emulator",
+        "ndk", "cmake", "apkanalyzer_sdk", "apkanalyzer_homebrew"
+      ],
+      "properties": {
+        "jdk17": {"$ref": "#/$defs/tool"},
+        "sdk_platform": {"$ref": "#/$defs/tool"},
+        "build_tools": {"$ref": "#/$defs/tool"},
+        "gradle": {"$ref": "#/$defs/tool"},
+        "emulator": {"$ref": "#/$defs/tool"},
+        "ndk": {"$ref": "#/$defs/tool"},
+        "cmake": {"$ref": "#/$defs/tool"},
+        "apkanalyzer_sdk": {"$ref": "#/$defs/tool"},
+        "apkanalyzer_homebrew": {"$ref": "#/$defs/tool"}
+      }
+    }
+  },
+  "$defs": {
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reason", "version", "installed", "runnable"],
+      "properties": {
+        "state": {
+          "enum": [
+            "runnable", "not_installed", "installed_unusable",
+            "path_rejected", "unsupported_host"
+          ]
+        },
+        "reason": {
+          "enum": [
+            "OK", "NOT_INSTALLED", "SDK_ROOT_SYMLINK", "SDK_ROOT_INVALID",
+            "UNTRUSTED_SYMLINK", "NOT_EXECUTABLE", "PERMISSION_DENIED",
+            "EXEC_FAILED", "TIMEOUT", "OUTPUT_LIMIT", "NONZERO_EXIT",
+            "MALFORMED_VERSION", "VERSION_MISMATCH", "MISSING_ARTIFACT",
+            "UNSUPPORTED_HOST"
+          ]
+        },
+        "version": {"type": ["string", "null"], "maxLength": 64},
+        "installed": {"type": "boolean"},
+        "runnable": {"type": "boolean"}
+      }
+    }
+  }
+}
