@@ -13,6 +13,7 @@ from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.server import create_server
 from android_mcp_host.status import build_status, host_platform_name
+from android_mcp_host.system_snapshot import SystemSnapshot
 from android_mcp_host.toolchain_inventory import ToolchainInventory
 
 
@@ -44,6 +45,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Opt in to bounded, read-only exact-target transport inspection.",
     )
+    serve.add_argument(
+        "--adb-system-snapshot",
+        action="store_true",
+        help="Opt in to fixed, typed, read-only Android system diagnostics.",
+    )
     args = parser.parse_args(argv)
 
     if args.command == "doctor":
@@ -72,6 +78,8 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["adb_discovery"] = DeviceDiscovery()
     if args.adb_transport_inspect:
         kwargs["adb_transport"] = AdbTransport()
+    if args.adb_system_snapshot:
+        kwargs["system_snapshot"] = SystemSnapshot()
     server = create_server(**kwargs)
     server.run(transport="http", host=args.host, port=args.port)
     return 0

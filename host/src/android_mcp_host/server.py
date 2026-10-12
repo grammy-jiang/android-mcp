@@ -17,6 +17,7 @@ from android_mcp_host.mcp_boundary import get_development_action_field_schema, g
 from android_mcp_host.operations import OperationService
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.status import build_status
+from android_mcp_host.system_snapshot import SystemSnapshot, get_snapshot_output_schema
 from android_mcp_host.toolchain_inventory import (
     ToolchainInventory,
     get_toolchain_output_schema,
@@ -31,6 +32,7 @@ def create_server(
     capability_profiles: CapabilityProfiles | None = None,
     adb_discovery: DeviceDiscovery | None = None,
     adb_transport: AdbTransport | None = None,
+    system_snapshot: SystemSnapshot | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -214,5 +216,25 @@ def create_server(
             except asyncio.CancelledError:
                 cancel.set()
                 raise
+
+    if system_snapshot is not None:
+
+        @server.tool(
+            title="Read Typed Android System Snapshot",
+            output_schema=get_snapshot_output_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        async def adb_system_snapshot(device_id: str, groups: list[str]) -> dict[str, object]:
+            """Read fixed device-pinned identity, battery, storage, display and network fields.
+
+            No arbitrary dumpsys or shell input. Invalid and unavailable fields
+            remain explicitly partial or denied; never enable device mutation.
+            """
+            return await asyncio.to_thread(system_snapshot.inspect, device_id, groups)
 
     return server
