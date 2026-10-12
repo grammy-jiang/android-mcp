@@ -77,8 +77,10 @@ The combined acceptance suite verifies both behaviors separately:
 - N3: permission refusal does not start service; permission granted in
   **verified emulator only**, explicit UI Start, real Kotlin HTTP MCP;
   `dumpsys activity services` proves `isForeground=true` with notification;
-  Home preserves MCP; UI Stop closes listener; explicit restart works;
-  Android process force-stop does **not** auto-restart the service.
+  Home preserves MCP; the SystemUI notification's actual **Stop** action
+  closes the MCP listener, removes Android Service and notification records;
+  UI Stop also closes the listener; explicit restart works; Android process
+  force-stop does **not** auto-restart the service.
 - Both scripts clean up Android app/port forwarding on the disposable AVD,
   print only short PASS/FAIL summaries, and do not read or write physical
   devices. The real OnePlus Pad 3 connected to sextant is excluded.
@@ -91,15 +93,16 @@ The combined acceptance suite verifies both behaviors separately:
   port before owner handoff. That path carries no authentication key or
   privileged data and is not an MCP tool. The failed secondary start preserves
   the original foreground service's MCP response.
-  This manual contention negative is not yet part of GitHub emulator CI.
+  This contention negative is now part of the repeatable emulator test
+  script; its GitHub Linux CI result must be verified on the updated PR HEAD.
 
 ## Actual local validation and remaining release gates
 
 On 2026-10-12 the MacBook Pro (Apple Silicon, Android 16 ARM64 emulator)
 compiled the APK with all four allowed permissions, and N2/N3 real
-HTTP/lifecycle acceptance passed. At this checkpoint there were 41 SDK-free
-Python emulator/permission tests passing, including bounded raw HTTP
-stop-detection regressions. The app was not installed on the
+HTTP/lifecycle acceptance passed. At this checkpoint there were 46 SDK-free
+Python emulator/permission tests passing, including negative shutdown-oracle,
+notification identity and bounded HTTP stop-detection regressions. The app was not installed on the
 real OnePlus Pad 3.
 
 Before merging this PR, require GitHub's separate Linux x86_64 Android 16
@@ -119,10 +122,10 @@ and repository security gates. Test failures must be fixed, never skipped.
   memory pressure or user action. `START_NOT_STICKY` intentionally avoids
   automatic resurrection. Long-duration and process-death recovery policy
   must be tested independently.
-- **Notification action**: the action is registered in the ongoing Android
-  notification. Simulator E2E proves the app's UI Stop flow; a separate
-  user-visible notification-action interaction test should be added before
-  calling the notification UX fully accepted.
+- **Notification portability**: the real notification Stop action passed on
+  the MacBook's Android 16 ARM64 AVD. GitHub Linux x86_64 CI and lower API
+  versions remain independent verification gates; other OEM notification
+  layouts and visibility policies are not yet certified.
 
 Official Android sources:
 

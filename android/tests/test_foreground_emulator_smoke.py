@@ -87,3 +87,81 @@ def test_unpromoted_service_is_not_reported_healthy(
     )
     with pytest.raises(AssertionError, match="not actually promoted"):
         module.check_service_running("emulator-5554")
+
+
+def test_notification_stop_requires_exact_title_and_unambiguous_action() -> None:
+    good = (
+        '<hierarchy><node text="Android MCP local service" bounds="[1,2][10,12]"/>'
+        '<node text="STOP" content-desc="Stop" class="android.widget.Button" '
+        'bounds="[10,20][110,60]"/></hierarchy>'
+    )
+    assert module.notification_stop_button_center(good) == (60, 40)
+    with pytest.raises(ValueError, match="not visible"):
+        module.notification_stop_button_center(
+            '<hierarchy><node text="STOP" bounds="[10,20][110,60]"/></hierarchy>'
+        )
+    duplicate = good.replace(
+        "</hierarchy>", ('<node text="STOP" bounds="[15,20][110,60]"/></hierarchy>')
+    )
+    with pytest.raises(ValueError, match="unambiguous"):
+        module.notification_stop_button_center(duplicate)
+
+
+def test_notification_oracle_distinguishes_channel_from_live_record() -> None:
+    active = (
+        "NotificationRecord(0xabc: pkg=org.androidmcp.nativeapp "
+        "user=UserHandle{0} id=23166 tag=null)"
+    )
+    assert module.has_ongoing_notification_record(active)
+    assert not module.has_ongoing_notification_record(
+        "NotificationChannel{mId='android_mcp_local_developer', mName='Android MCP'}"
+    )
+    assert not module.has_ongoing_notification_record(
+        "NotificationRecord(0xabc: pkg=other.app user=UserHandle{0} id=23166)"
+    )
+    assert not module.has_ongoing_notification_record(
+        "NotificationRecord(0xabc: pkg=org.androidmcp.nativeapp user=UserHandle{0} id=42)"
+    )
+
+
+def test_stop_proof_denies_disconnected_adb_forward(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(module.core, "adb", lambda *args, **kwargs: "")
+    with pytest.raises(AssertionError, match="forwarding disappeared"):
+        module.assert_forward_present("emulator-5554", 50955)
+
+
+def test_stop_proof_denies_service_still_running(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(module.core, "verify_emulator", lambda _serial: None)
+    monkeypatch.setattr(module.time, "sleep", lambda _delay: None)
+
+    def fake_adb(_serial: str, *args: str, **kwargs: object) -> str:
+        if "services" in args:
+            return "ServiceRecord NativeMcpForegroundService isForeground=true"
+        return ""
+
+    monkeypatch.setattr(module.core, "adb", fake_adb)
+    with pytest.raises(AssertionError, match="not removed"):
+        module.await_android_service_and_notification_removed("emulator-5554")
+
+
+def test_stop_proof_denies_notification_still_present(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(module.core, "verify_emulator", lambda _serial: None)
+    monkeypatch.setattr(module.time, "sleep", lambda _delay: None)
+
+    def fake_adb(_serial: str, *args: str, **kwargs: object) -> str:
+        if "notification" in args:
+            return (
+                "NotificationRecord(0xabc: pkg=org.androidmcp.nativeapp "
+                "user=UserHandle{0} id=23166 tag=null)"
+            )
+        return ""
+
+    monkeypatch.setattr(module.core, "adb", fake_adb)
+    with pytest.raises(AssertionError, match="not removed"):
+        module.await_android_service_and_notification_removed("emulator-5554")
