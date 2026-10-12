@@ -1,6 +1,7 @@
 package org.androidmcp.nativeapp
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
@@ -18,6 +19,7 @@ class NativeMcpActivity : Activity() {
     private val generation = AtomicInteger(0)
     private lateinit var status: TextView
     private lateinit var startButton: Button
+    private lateinit var backgroundPreviewButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,12 +42,22 @@ class NativeMcpActivity : Activity() {
             setOnClickListener { startLocalMcp() }
         }
         content.addView(startButton)
+        backgroundPreviewButton = Button(this).apply {
+            text = "Open persistent service preview"
+            setOnClickListener {
+                // The Activity listener stops onStop before this screen can
+                // launch a separately user-controlled foreground service.
+                startActivity(Intent(this@NativeMcpActivity, BackgroundMcpActivity::class.java))
+            }
+        }
+        content.addView(backgroundPreviewButton)
         setContentView(content)
     }
 
     private fun startLocalMcp() {
         val ticket = generation.incrementAndGet()
         startButton.isEnabled = false
+        backgroundPreviewButton.isEnabled = false
         status.text = "Starting local-only MCP..."
         worker.execute {
             try {
@@ -66,6 +78,7 @@ class NativeMcpActivity : Activity() {
                     if (generation.get() == ticket) {
                         status.text = "Could not start local MCP listener."
                         startButton.isEnabled = true
+                        backgroundPreviewButton.isEnabled = true
                     }
                 }
             }
@@ -77,6 +90,7 @@ class NativeMcpActivity : Activity() {
         worker.execute { gateway.stop() }
         status.text = "Stopped while app is not visible."
         startButton.isEnabled = true
+        backgroundPreviewButton.isEnabled = true
     }
 
     override fun onStop() {

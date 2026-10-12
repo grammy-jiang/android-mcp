@@ -22,6 +22,6 @@ fi
 echo "== Live local Python <-> Kotlin MCP and shared schema acceptance =="
 uv run --project host --locked --python 3.13 python scripts/smoke-native-jvm.py
 echo "== Emulator-only guard and UI selection tests (no Android SDK) =="
-uv run --project host --locked --group dev --python 3.13 pytest -q android/tests/test_emulator_smoke.py
+uv run --project host --locked --group dev --python 3.13 pytest -q android/tests
 
 echo "JVM Native protocol tests, cross-language MCP and emulator safety gates passed."

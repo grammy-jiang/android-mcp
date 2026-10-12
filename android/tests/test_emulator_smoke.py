@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import importlib.util
 from pathlib import Path
 
@@ -43,6 +44,43 @@ def test_android_all_caps_rendering_does_not_hide_start_button() -> None:
         'class="android.widget.Button" bounds="[10,20][110,60]"/></hierarchy>'
     )
     assert module.get_button_center(xml) == (60, 40)
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://localhost:38765/mcp",
+        "https://127.0.0.1:38765/mcp",
+        "http://127.0.0.1:38765/other",
+        "http://127.0.0.1/mcp",
+    ],
+)
+def test_shutdown_probe_denies_non_exact_local_endpoint(url: str) -> None:
+    with pytest.raises(ValueError, match="localhost"):
+        asyncio.run(module.http_server_responds(url))
+
+
+def test_shutdown_probe_distinguishes_real_http_response_from_disconnected_socket() -> (
+    None
+):
+    async def exercise() -> None:
+        async def handler(
+            reader: asyncio.StreamReader, writer: asyncio.StreamWriter
+        ) -> None:
+            await reader.read(500)
+            writer.write(b"HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n")
+            await writer.drain()
+            writer.close()
+
+        server = await asyncio.start_server(handler, host="127.0.0.1", port=0)
+        port = server.sockets[0].getsockname()[1]
+        url = f"http://127.0.0.1:{port}/mcp"
+        assert await module.http_server_responds(url)
+        server.close()
+        await server.wait_closed()
+        assert not await module.http_server_responds(url)
+
+    asyncio.run(exercise())
 
 
 def test_ui_button_center() -> None:

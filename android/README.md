@@ -10,9 +10,10 @@ an Android SDK, emulator, connected tablet, Root or third-party app credentials.
 It uses the repository's versioned JSON fixtures and tests the device-status
 contract in a second language independently of the Host Python implementation.
 
-> No APK or Android accessibility service is built by this module yet. A passing
-> JVM test is **not** proof of Android background-service operation, MCP-over-HTTP
-> compatibility, screenshot transport or Root access.
+> N1/N2 now provide a buildable Android APK and validated Android 16 emulator
+> MCP HTTP/lifecycle acceptance. N3 adds a separately opt-in user-visible local
+> foreground-service prototype. **No Accessibility, Root, paired identity,
+> authenticated remote listener, or real-tablet Native APK acceptance exists.**
 
 ## Local development
 
@@ -32,10 +33,13 @@ cd android
 ./gradlew --no-daemon :native-protocol:test
 ```
 
-Once an Android app module is introduced, its build should use verified Android
-SDK / AGP compatibility, Android Lint, emulator/instrumentation tests and an
-independent permission-security review. The protocol module must remain free of
-`android.*` package imports and Android process lifecycle assumptions.
+The opt-in Android app uses verified SDK API 36, AGP 9.4, Android Lint and
+an exact manifest-permission allowlist. Execute `bash scripts/check-native-apk.sh`
+with an installed licensed Android SDK to build and verify its Debug APK.
+Execute `bash scripts/check-native-emulator.sh` only against an explicit,
+prestarted disposable `emulator-5554` Android 16 AVD; both test scripts enforce
+`ro.kernel.qemu=1` before any emulator mutation. No real tablet is used.
+The protocol module remains independent of Android process lifecycle.
 
 ## Planned boundaries
 
@@ -46,13 +50,14 @@ independent permission-security review. The protocol module must remain free of
 - A local privileged broker, **not** the public HTTP listener, may be added
   only after ROM/root privilege, SELinux and signed-request review.
 - Host/Native lease coordination is specified in
-  `../docs/host-native-coordination.md` on the Host H1–H3 review branch,
-  and must be merged before enabling device mutation.
+  `../docs/host-native-coordination.md`; the design is not implemented
+  and cannot authorize any device mutation.
 
 The Native runtime is expected to operate when no Host PC is attached.
 
 ## Local Kotlin MCP wire test
 
-The `native-mcp-jvm` module runs a synthetic, read-only `device_status` tool
-over loopback HTTP using the official Kotlin MCP SDK. It is **not** an Android
-service; see `../docs/native-jvm-mcp-prototype.md`.
+The `native-mcp-jvm` module remains an SDK-free synthetic protocol proof.
+See [JVM prototype](../docs/native-jvm-mcp-prototype.md),
+[real Android N2 emulator acceptance](../docs/native-emulator-n2.md), and
+[N3 user-started foreground service](../docs/native-foreground-n3.md).
