@@ -74,15 +74,18 @@ def test_real_http_mcp_uses_only_allowlisted_subprocesses(tmp_path: Path):
 
                     status = await client.call_tool("device_status", {})
                     assert not status.is_error
-                    assert status.data["devices"][0]["device_id"] == "TEST-DEVICE-01"
+                    assert status.structured_content["devices"][0]["device_id"] == "TEST-DEVICE-01"
 
                     seen = await client.call_tool(
                         "adb_observe",
                         {"device_id": "TEST-DEVICE-01", "probes": ["selinux"]},
                     )
                     assert not seen.is_error
-                    assert seen.data["status"] == "ok"
-                    assert seen.data["results"][0]["fields"]["enforcement"] == "Enforcing"
+                    assert seen.structured_content["status"] == "ok"
+                    assert (
+                        seen.structured_content["results"][0]["fields"]["enforcement"]
+                        == "Enforcing"
+                    )
 
                     log = await client.call_tool(
                         "adb_develop",
@@ -92,8 +95,8 @@ def test_real_http_mcp_uses_only_allowlisted_subprocesses(tmp_path: Path):
                         },
                     )
                     assert not log.is_error
-                    assert log.data["status"] == "ok"
-                    assert "simulated" in log.data["result"]["stdout"]
+                    assert log.structured_content["status"] == "ok"
+                    assert "simulated" in log.structured_content["result"]["stdout"]
 
                     before_invalid = trace.read_text(encoding="utf-8").count("\n")
                     invalid = await client.call_tool(
@@ -101,7 +104,7 @@ def test_real_http_mcp_uses_only_allowlisted_subprocesses(tmp_path: Path):
                         {"device_id": "-s", "probes": ["selinux"]},
                     )
                     assert not invalid.is_error
-                    assert invalid.data["errors"][0]["code"] == "INVALID_DEVICE_ID"
+                    assert invalid.structured_content["errors"][0]["code"] == "INVALID_DEVICE_ID"
                     assert trace.read_text(encoding="utf-8").count("\n") == before_invalid
 
                     rejected = await client.call_tool(
@@ -116,7 +119,7 @@ def test_real_http_mcp_uses_only_allowlisted_subprocesses(tmp_path: Path):
                         },
                     )
                     assert not rejected.is_error
-                    assert rejected.data["errors"][0]["code"] == "MUTATION_DISABLED"
+                    assert rejected.structured_content["errors"][0]["code"] == "MUTATION_DISABLED"
                     return
             except Exception as error:
                 last = error
