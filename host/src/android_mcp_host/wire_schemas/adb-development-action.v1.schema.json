@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:adb-development-action:v1",
+  "title": "Android Host Typed Engineering Action v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {"const": "logcat_snapshot"},
+        "lines": {"type": "integer", "minimum": 10, "maximum": 2000}
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "package"],
+      "properties": {
+        "type": {"const": "package_details"},
+        "package": {"$ref": "#/$defs/package"}
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "package", "runner"],
+      "properties": {
+        "type": {"const": "instrument_test"},
+        "package": {"$ref": "#/$defs/package"},
+        "runner": {
+          "type": "string",
+          "maxLength": 256,
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)+$"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "apk_path"],
+      "properties": {
+        "type": {"const": "install_apk"},
+        "apk_path": {"type": "string", "minLength": 1},
+        "replace": {"type": "boolean"},
+        "allow_test": {"type": "boolean"}
+      }
+    }
+  ],
+  "$defs": {
+    "package": {
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+$"
+    }
+  }
+}
