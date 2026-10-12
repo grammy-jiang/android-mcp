@@ -24,7 +24,7 @@ uv run --project host --locked --group dev pre-commit run --all-files
 uv run --project host --locked --group dev pre-commit run --hook-stage pre-push --all-files
 ```
 
-Host CI runs macOS + Linux × Python 3.11/3.12/3.13/3.14 tests and validates both per-module statement and true branch coverage in the full Host check. A separate packaging job validates distribution installation; repository hygiene runs on every PR, and a scheduled Host audit checks vulnerability data weekly.
+The repository retains macOS/Linux x Python 3.11/3.12/3.13/3.14 Hosted Actions definitions, packaging and security-audit workflows. As of 2026-10-12 GitHub Hosted Actions cannot start due account billing/limits, and the user does not want a paid upgrade. The authoritative Host merge gate is instead the same full locked checks run locally on MacBook and Linux ARM64 across all four Python versions plus separate clean-wheel/sdist install and pre-commit/pre-push checks. See [Host merge gates](host-merge-gates.md). Workflow definitions or unstarted jobs are not test passes.
 
 ## Coverage integrity
 

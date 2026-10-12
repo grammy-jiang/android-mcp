@@ -1,48 +1,88 @@
-# Host MCP pull-request review and merge gates
+# Host MCP review and merge gates — zero-paid Runner mode
 
-This checklist is **procedural**, not a claim of server-side branch protection.
-As of 2026-10-12, GitHub returns HTTP 403 for branch-protection/ruleset APIs on
-this private repository, with an account-plan upgrade message. Local commits
-and direct pushes may remain technically possible until repository protections
-are available. Never label procedural checks as automatically enforced.
+These are procedural gates, not a claim of GitHub branch protection.
+As of 2026-10-12, protected-branch/ruleset API access for this private
+repository requires a plan upgrade. Do not bypass other writers or imply
+that documentation alone enforces merges.
 
-## Small read-only Host changes
+## Current policy (2026-10-12)
 
-1. One Host-owned short-lived branch/worktree from the latest `origin/main`,
-   with no changes to another workstream's uncommitted files.
-2. Record affected paths, contracts, negative cases, command/test evidence,
-   risk, device usage, and exact commit/base SHAs in the PR body.
-3. Before merge, inspect `gh pr view <N> --json headRefOid,baseRefOid,mergeable,mergeStateStatus,isDraft,reviewDecision`,
-   and `gh pr checks <N> --json name,state,link`. All applicable Host checks,
-   security/dependency audits, and repository hygiene checks must be green
-   **for the exact head SHA**. A skipped required check is not success.
-4. Recheck `origin/main` and any concurrent Native/shared-schema changes.
-   Rebase only the Host-owned exclusive branch; repeat gates after changes.
-5. Complete the applicable independent code review **before** merge. A
-   Copilot `COMMENTED` event by itself does not constitute formal approval.
-   Preserve the review outcome and merge SHA in the PR.
-6. Prefer squash merge with an expected head SHA; confirm merged tree and
-   post-merge CI, and let the other workstream know through GitHub.
+The user explicitly declined GitHub Actions spending/plan upgrades.
+Hosted Actions jobs are failing to start for an account billing/limit
+reason, not failing source tests. Do not treat unstarted jobs as
+successful checks; do not require paid Hosted Actions to merge
+non-privileged Host changes. Keep workflow definitions as historical
+evidence, not as proof that a current job ran.
 
-## Privileged / transport / identity changes
+Authoritative verification for the Host is the locally executed
+MacBook and Linux ARM64 Raspberry Pi quality gate on the same exact
+Git revision. If either target is unavailable, the merge gate is
+blocked. Store check outcomes separately from the execution status.
 
-**Never merge an enabling change solely because tests pass.** Enabling APK
-execution, external listeners/authentication, force-stop/recovery, elevated
-access, or Host/Native shared leases requires an independent security review
-with explicit approval, negative tests, rollback/recovery and hardware evidence.
-The production composition must remain read-only until external authenticated
-transport and true Native lease fencing have been validated.
+## Small Host changes: required steps
 
-## Current CI responsibilities
+1. Use a fresh, exclusive Host worktree/branch from origin/main.
+   Do not alter uncommitted files in the Native worktree or any other
+   workstream, and avoid changing shared contracts without coordination.
+2. Add a failing protection test before changing production behavior.
+   Preserve the three MCP Tool names, versioned JSON envelopes, explicit
+   device selection, typed domain errors and default-denied device mutation.
+3. On macOS, run the complete Host quality gate for Python 3.11, 3.12,
+   3.13 and 3.14, plus security/format hooks, lock consistency and
+   separate clean wheel/sdist installation:
 
-- `host-ci.yml` tests only Host, shared contracts and relevant quality/CI paths,
-  and covers macOS/Linux with Python 3.11–3.14.
-- `repository-hygiene.yml` runs on every PR and main commit, including
-  Native-only, docs-only and workflow-only changes.
-- `host-security-audit.yml` checks dependencies weekly and on manual dispatch;
-  Host CI also audits them for relevant PRs.
-- Android-specific CI and on-device testing remain Native-owned. Changes to
-  shared contracts should trigger both runtimes' relevant test gates.
+       HOST_PYTHON=3.11 bash scripts/check-host.sh
+       HOST_PYTHON=3.12 bash scripts/check-host.sh
+       HOST_PYTHON=3.13 bash scripts/check-host.sh
+       HOST_PYTHON=3.14 bash scripts/check-host.sh
+       uv run --project host --locked --group dev pre-commit run --all-files
+       uv run --project host --locked --group dev pre-commit run --hook-stage pre-push --all-files
+       bash scripts/check-host-package.sh
+       git diff --check
 
-GitHub plan support for mandatory reviews and protected branches is still a
-separate administrative blocker; the above is the fallback until enabled.
+4. On Linux ARM64, use a clean, isolated checkout at the exact same
+   branch HEAD and run the four Python full Host gates and separate
+   clean-wheel installation. Never run actual Android mutation in this
+   automated acceptance suite.
+5. Preserve the git SHA, toolchain versions, test counts, outcome,
+   command, log path and target environment. Check exact PR head/base,
+   changed-file scope, domain contract/negative cases, security findings,
+   rollback path and relevant independent review.
+6. Recheck origin/main immediately before merge. When concurrent Native
+   work advances it, replay only the Host-owned commit onto latest main
+   in a new branch, rerun required checks and compare the resulting
+   Git source tree with the previously verified code when applicable.
+   Never force-push another writer's branch.
+7. For an accepted non-privilege-enabling PR only, squash merge using
+   an exact expected head SHA, then refetch origin/main and check that
+   the merged Git tree is byte-for-byte identical to the tested source
+   tree. Repeat applicable post-merge Host smoke/full checks.
+   Failed, blocked and not-run tests must not be reported as passed.
+
+## Privileged/security-affecting work
+
+Never merge device mutation, external authenticated/unauthenticated
+transport, elevated/root access, recovery/bootloader controls or
+cross-runtime Host/Native lease fencing on local tests alone. These
+changes require separate explicit approval, independent security review,
+authorization and negative tests, rollback plan, appropriate Native
+coordination and opt-in real hardware evidence.
+
+No such privileged capability is enabled by the FastMCP 2026-10-12
+framework-first Host refactor.
+
+## Workflow configurations retained for future use
+
+The repository still contains host-ci.yml, repository-hygiene.yml and
+host-security-audit.yml, including dependency auditing, packaging and
+other security checks. Their presence does not establish execution.
+The weekly audit may be unavailable while billing prevents GitHub
+Actions jobs from starting. Dependency auditing can be run manually;
+retain and report its output independently.
+
+If paid or self-hosted GitHub Actions become reliably available,
+changing the merge policy back requires a separate user decision.
+Android Native owns its own tests and release gates.
+
+See host-fastmcp-final-acceptance-20261012.md for this refactor's
+exact HEAD, cross-platform evidence and remaining risks.
