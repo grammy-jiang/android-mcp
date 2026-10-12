@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-fastboot-inventory:v1",
+  "title": "Read-only Fastboot transport inventory v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "status", "fastboot", "devices", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok", "partial", "unavailable", "error"]},
+    "fastboot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["available", "version"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "version": {"type": ["string", "null"], "maxLength": 64}
+      }
+    },
+    "devices": {
+      "type": "array", "maxItems": 32,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["device_id", "state", "transport", "mode", "device_authorized"],
+        "properties": {
+          "device_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"},
+          "state": {"const": "fastboot"},
+          "transport": {"enum": ["usb", "unknown"]},
+          "mode": {"const": "unverified"},
+          "device_authorized": {"const": false}
+        }
+      }
+    },
+    "errors": {
+      "type": "array", "maxItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string", "maxLength": 64},
+          "message": {"type": "string", "maxLength": 256}
+        }
+      }
+    }
+  }
+}
