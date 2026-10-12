@@ -16,7 +16,12 @@ sensitive device capabilities.
 - The original `NativeMcpActivity` keeps the same `Start local read-only MCP`
   button and Activity `onStop` semantics, plus a separate button to open the
   N3 service screen. Both modes share the exact same TCP loopback endpoint
-  and must **not** be used concurrently.
+  and must **not** be used concurrently. The `native-lifecycle` module has
+  a fail-closed process-local port-owner guard: N3 rejects any second owner,
+  checks its own Ktor HTTP readiness with a fresh correlation marker, and
+  only releases the owner after verifying the kernel socket port can be
+  re-bound. Shutdown failures keep an UNKNOWN owner and block handoff.
+  This is **not** Host/Native authentication or a distributed Lease.
 - `BackgroundMcpActivity` is **not exported**. The user sees explicit
   **Start background local MCP** and **Stop background local MCP** controls.
 - On Android 13+ the Activity requires the user to allow notification
@@ -77,6 +82,16 @@ The combined acceptance suite verifies both behaviors separately:
 - Both scripts clean up Android app/port forwarding on the disposable AVD,
   print only short PASS/FAIL summaries, and do not read or write physical
   devices. The real OnePlus Pad 3 connected to sextant is excluded.
+- A separate Mac ARM64 simulator contention check started the foreground
+  service, pressed Back into the original Activity, then deliberately tapped
+  the legacy local Start button. The UI reported **Could not start local MCP
+  listener.**, while Android still reported the foreground service as running.
+  The N3-03 owner also checks a process-local ephemeral HTTP readiness path
+  under `/_native_internal/ready/` and requires a verified released TCP
+  port before owner handoff. That path carries no authentication key or
+  privileged data and is not an MCP tool. The failed secondary start preserves
+  the original foreground service's MCP response.
+  This manual contention negative is not yet part of GitHub emulator CI.
 
 ## Actual local validation and remaining release gates
 
