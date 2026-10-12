@@ -1,0 +1,26 @@
+name: Scheduled Host dependency security audit
+
+on:
+  schedule:
+    # Every Monday 17:17 UTC; independent of repository changes and PRs.
+    - cron: "17 17 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: host-scheduled-security-audit
+  cancel-in-progress: false
+
+jobs:
+  host-security:
+    name: Locked Host dependency vulnerability audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.12.24"
+      - name: Audit locked Host dependencies against current advisories
+        run: uv audit --project host --locked
