@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:adb-device-list:v1",
+  "title": "ADB read-only target discovery v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "status", "devices", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok", "partial", "unavailable", "error"]},
+    "devices": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["device_id", "state", "transport_id", "ready_for_read"],
+        "properties": {
+          "device_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"},
+          "state": {"enum": [
+            "device", "offline", "unauthorized", "authorizing", "recovery",
+            "sideload", "bootloader", "rescue", "no_permissions"
+          ]},
+          "transport_id": {"type": ["string", "null"], "pattern": "^[1-9][0-9]{0,9}$"},
+          "ready_for_read": {"type": "boolean"}
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "maxItems": 65,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string", "maxLength": 64},
+          "message": {"type": "string", "maxLength": 256}
+        }
+      }
+    }
+  }
+}
