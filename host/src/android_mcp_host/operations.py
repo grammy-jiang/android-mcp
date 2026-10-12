@@ -118,15 +118,14 @@ class OperationService:
         require a trusted injected SecureMutationCoordinator with verified
         operator grants, Host/Native leases and durable auditing.
         """
+        valid_id = valid_device_id(device_id)
         response: dict[str, Any] = {
             "schema_version": 1,
             "runtime": "host",
-            "device_id": device_id if isinstance(device_id, str) else "",
-            "operation": (
-                action["type"]
-                if isinstance(action, dict) and isinstance(action.get("type"), str)
-                else ""
-            ),
+            "device_id": device_id if valid_id else "",
+            # Only a successfully validated plan may advertise its kind.
+            # Never reflect arbitrary caller-provided Action text in denials.
+            "operation": "",
             "status": "error",
             "mutating": False,
             "dry_run": dry_run if isinstance(dry_run, bool) else False,
@@ -134,7 +133,7 @@ class OperationService:
             "result": None,
             "errors": [],
         }
-        if not valid_device_id(device_id):
+        if not valid_id:
             response["errors"].append(_error("INVALID_DEVICE_ID", "Invalid device identifier"))
             return response
         if type(dry_run) is not bool:

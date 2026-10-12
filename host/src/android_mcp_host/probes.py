@@ -123,15 +123,16 @@ class ProbeService:
         Arguments and membership are validated *before* making any host or
         device call. Never choose the first connected device implicitly.
         """
+        valid_id = valid_device_id(device_id)
         response: dict[str, Any] = {
             "schema_version": 1,
             "runtime": "host",
-            "device_id": device_id if isinstance(device_id, str) else "",
+            "device_id": device_id if valid_id else "",
             "status": "error",
             "results": [],
             "errors": [],
         }
-        if not isinstance(device_id, str) or not valid_device_id(device_id):
+        if not valid_id:
             response["errors"].append(_error("INVALID_DEVICE_ID", "Invalid device identifier"))
             return response
         if isinstance(probes, (str, bytes)) or not isinstance(probes, Sequence):
