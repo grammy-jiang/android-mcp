@@ -13,7 +13,14 @@ uv_run() {
   fi
 }
 
-uv lock --check --offline --project host
+# The offline lock check must use the matrix interpreter as well: otherwise
+# host/.python-version (3.13) makes isolated 3.11/3.14 Linux runners fail
+# before any tests are launched.
+if [[ -n "$(printenv HOST_PYTHON || true)" ]]; then
+  uv lock --check --offline --project host --python "$(printenv HOST_PYTHON)"
+else
+  uv lock --check --offline --project host
+fi
 uv_run --project host --locked --group dev ruff check host/src host/tests scripts
 uv_run --project host --locked --group dev ruff format --check host/src host/tests scripts
 uv_run --project host --locked --group dev mypy --config-file host/pyproject.toml host/src
