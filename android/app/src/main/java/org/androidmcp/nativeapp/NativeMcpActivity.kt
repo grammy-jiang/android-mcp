@@ -83,12 +83,26 @@ class NativeMcpActivity : Activity() {
                     }
                 }
             } catch (_: Exception) {
-                gateway.stop()
+                // Fail closed if startup cleanup cannot verify listener exit.
+                // Unhandled worker exceptions would crash the Android process.
+                val cleaned = try {
+                    gateway.stop()
+                    true
+                } catch (_: Exception) {
+                    false
+                }
                 runOnUiThread {
                     if (generation.get() == ticket) {
-                        status.text = "Could not start local MCP listener."
-                        startButton.isEnabled = true
-                        backgroundPreviewButton.isEnabled = NativeForegroundSupport.supported(Build.VERSION.SDK_INT)
+                        if (cleaned) {
+                            status.text = "Could not start local MCP listener."
+                            startButton.isEnabled = true
+                            backgroundPreviewButton.isEnabled =
+                                NativeForegroundSupport.supported(Build.VERSION.SDK_INT)
+                        } else {
+                            status.text = "Local MCP shutdown is unconfirmed; restart app to recover."
+                            startButton.isEnabled = false
+                            backgroundPreviewButton.isEnabled = false
+                        }
                     }
                 }
             }
@@ -96,11 +110,32 @@ class NativeMcpActivity : Activity() {
     }
 
     private fun stopLocalMcp() {
-        generation.incrementAndGet()
-        worker.execute { gateway.stop() }
-        status.text = "Stopped while app is not visible."
-        startButton.isEnabled = true
-        backgroundPreviewButton.isEnabled = NativeForegroundSupport.supported(Build.VERSION.SDK_INT)
+        val ticket = generation.incrementAndGet()
+        startButton.isEnabled = false
+        backgroundPreviewButton.isEnabled = false
+        status.text = "Stopping local MCP..."
+        worker.execute {
+            val stopped = try {
+                gateway.stop()
+                true
+            } catch (_: Exception) {
+                false
+            }
+            runOnUiThread {
+                if (generation.get() == ticket && !isDestroyed) {
+                    if (stopped) {
+                        status.text = "Stopped while app is not visible."
+                        startButton.isEnabled = true
+                        backgroundPreviewButton.isEnabled =
+                            NativeForegroundSupport.supported(Build.VERSION.SDK_INT)
+                    } else {
+                        status.text = "Local MCP shutdown is unconfirmed; restart app to recover."
+                        startButton.isEnabled = false
+                        backgroundPreviewButton.isEnabled = false
+                    }
+                }
+            }
+        }
     }
 
     override fun onStop() {
