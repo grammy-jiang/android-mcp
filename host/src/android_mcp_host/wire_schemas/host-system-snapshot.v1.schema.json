@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-system-snapshot:v1",
+  "title": "Fixed Android system snapshots v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "device_id", "status", "results", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "device_id": {"type": "string", "maxLength": 128},
+    "status": {"enum": ["ok", "partial", "error"]},
+    "results": {
+      "type": "array", "maxItems": 5,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["group", "values"],
+        "properties": {
+          "group": {"enum": ["identity", "battery", "storage", "display", "network"]},
+          "values": {
+            "type": "object", "additionalProperties": false,
+            "maxProperties": 11,
+            "properties": {
+              "api_level": {"type": "integer", "minimum": 1, "maximum": 100},
+              "model": {"type": "string", "maxLength": 96},
+              "battery_percent": {"type": "number", "minimum": 0, "maximum": 100},
+              "battery_temperature_c": {"type": "number", "minimum": 0, "maximum": 90},
+              "battery_ac_powered": {"type": "boolean"},
+              "total_kib": {"type": "integer", "minimum": 1},
+              "free_kib": {"type": "integer", "minimum": 0},
+              "width_px": {"type": "integer", "minimum": 100},
+              "height_px": {"type": "integer", "minimum": 100},
+              "density_dpi": {"type": "integer", "minimum": 72},
+              "default_network_connected": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    "errors": {
+      "type": "array", "maxItems": 6,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string", "maxLength": 64},
+          "message": {"type": "string", "maxLength": 256}
+        }
+      }
+    }
+  }
+}
