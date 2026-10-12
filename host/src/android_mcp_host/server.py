@@ -13,12 +13,17 @@ from android_mcp_host.mcp_boundary import get_development_action_field_schema, g
 from android_mcp_host.operations import OperationService
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.status import build_status
+from android_mcp_host.toolchain_inventory import (
+    ToolchainInventory,
+    get_toolchain_output_schema,
+)
 
 
 def create_server(
     adb: AdbClient | None = None,
     probes: ProbeService | None = None,
     operations: OperationService | None = None,
+    toolchain_inventory: ToolchainInventory | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -110,5 +115,21 @@ def create_server(
         approval, device lease and durable audit; default Host disables it.
         """
         return await asyncio.to_thread(operator.execute, device_id, action, dry_run=dry_run)
+
+    if toolchain_inventory is not None:
+
+        @server.tool(
+            title="Inspect Fixed Android Host Toolchain",
+            output_schema=get_toolchain_output_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        def host_toolchain_inventory() -> dict[str, object]:
+            """Inspect trusted fixed-path CLI versions and SDK; never install or update."""
+            return toolchain_inventory.inspect()
 
     return server

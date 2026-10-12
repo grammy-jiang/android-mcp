@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-toolchain-inventory:v1",
+  "title": "Host toolchain inventory v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "status", "tools"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok", "partial", "unavailable"]},
+    "tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adb", "fastboot", "java", "gradle", "sdk"],
+      "properties": {
+        "adb": {"$ref": "#/$defs/tool"},
+        "fastboot": {"$ref": "#/$defs/tool"},
+        "java": {"$ref": "#/$defs/tool"},
+        "gradle": {"$ref": "#/$defs/tool"},
+        "sdk": {"$ref": "#/$defs/tool"}
+      }
+    }
+  },
+  "$defs": {
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available", "runnable", "version", "reason"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "runnable": {"type": "boolean"},
+        "version": {"type": ["string", "null"], "maxLength": 64},
+        "reason": {
+          "enum": [
+            "OK", "NOT_INSTALLED", "NOT_EXECUTABLE", "PERMISSION_DENIED",
+            "MALFORMED_VERSION", "TIMEOUT", "OUTPUT_LIMIT", "NONZERO_EXIT",
+            "EXEC_FAILED", "SDK_PLATFORM_NOT_FOUND", "PROBE_FAILED"
+          ]
+        }
+      }
+    }
+  }
+}
