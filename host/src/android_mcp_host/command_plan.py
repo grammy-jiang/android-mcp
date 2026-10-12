@@ -43,6 +43,10 @@ def _check_apk(path_value: object, allowed_roots: tuple[Path, ...]) -> Path | Pl
     untrusted = Path(path_value)
     if not untrusted.is_absolute() or untrusted.suffix.lower() != ".apk":
         return PlanError("INVALID_APK_PATH", "Provide an absolute .apk file path")
+    # The default Host has no approved APK directories. Refuse uniformly
+    # before touching the filesystem, so callers cannot probe path existence.
+    if not allowed_roots:
+        return PlanError("APK_NOT_ALLOWED", "No APK directories are approved")
     try:
         if untrusted.is_symlink():
             return PlanError("APK_NOT_ALLOWED", "Symlink APK files are not allowed")
