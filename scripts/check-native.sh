@@ -9,6 +9,9 @@ if [[ -z "$(printenv JAVA_HOME || true)" ]] || [[ ! -x "$(printenv JAVA_HOME || 
   exit 2
 fi
 
+echo "== Native Gradle version, dependency lock and checksum policy =="
+uv run --project host --locked --group dev --python 3.13 python scripts/audit_native_gradle_policy.py --strict
+
 echo "== JVM-only Native build; no Android SDK and no device mutation =="
 "$JAVA_HOME/bin/java" -version
 java_major="$("$JAVA_HOME/bin/java" -version 2>&1 | head -n 1 | sed -E 's/^.*version "([0-9]+).*/\1/')"
