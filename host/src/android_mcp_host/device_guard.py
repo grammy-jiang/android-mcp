@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-import re
-
-from android_mcp_host.adb import AdbReport
-
-SERIAL_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:\-]{0,127}\Z", re.ASCII)
+from android_mcp_host.adb import AdbReport, valid_device_serial
 
 
 def valid_device_id(device_id: object) -> bool:
     """Restrict serial syntax; actual membership is checked separately."""
-    return isinstance(device_id, str) and SERIAL_RE.fullmatch(device_id) is not None
+    return valid_device_serial(device_id)
 
 
 def require_online(report: AdbReport, device_id: str) -> dict[str, str] | None:

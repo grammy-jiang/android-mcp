@@ -35,9 +35,10 @@ def test_version_parser_without_normal_version_line():
 
 
 def test_error_report_is_bounded_and_safe_when_no_stderr():
-    assert _clean_error("") == "ADB returned a non-zero status"
-    assert _clean_error("problem\ninternal stack\n") == "problem"
-    assert len(_clean_error("x" * 5000)) == 240
+    expected = "ADB command failed; check local Platform Tools diagnostics"
+    assert _clean_error("") == expected
+    assert _clean_error("password=SYNTHETIC_CANARY\ninternal stack\n") == expected
+    assert len(_clean_error("x" * 5000)) < 120
 
 
 def test_parsing_skips_unknown_and_malformed_lines_and_blank_properties():
@@ -78,7 +79,8 @@ def test_adb_version_failure_remains_diagnostic():
     assert report.version is None
     assert report.error is not None
     assert report.error.code == "ADB_VERSION_FAILED"
-    assert report.error.message == "binary failure"
+    assert report.error.message == "ADB command failed; check local Platform Tools diagnostics"
+    assert "binary failure" not in str(report)
     assert report.devices == ()
 
 
@@ -93,7 +95,7 @@ def test_adb_listing_error_does_not_return_fake_devices():
     assert report.version is None
     assert report.devices == ()
     assert report.error is not None
-    assert report.error.message == "ADB returned a non-zero status"
+    assert report.error.message == "ADB command failed; check local Platform Tools diagnostics"
 
 
 def test_explicit_executable_bypasses_locator_and_handles_real_device_state():
@@ -141,3 +143,23 @@ def test_adb_version_also_rejects_unbounded_output(tmp_path):
     report = AdbClient(executable=str(path)).inspect()
     assert report.error is not None
     assert report.error.code == "ADB_OUTPUT_LIMIT"
+
+
+def test_untrusted_adb_version_is_not_propagated_to_tool_clients():
+    assert _version("Version 37.0.1\n") == "37.0.1"
+    assert _version("Version 37.0.1\x1b[31m\n") is None
+    assert _version("Version SECRET=" + "X" * 500 + "\n") is None
+    assert _version("Android Debug Bridge version 1.0.41\n") == "1.0.41"
+
+
+def test_status_never_exposes_adb_stderr_canaries():
+    from android_mcp_host.status import build_status
+
+    canary = "SYNTHETIC-PRIVATE-TOKEN-DO-NOT-USE"
+
+    def runner(argv, timeout):
+        return _result(argv, 1, stderr="device_error: " + canary)
+
+    status = build_status(AdbClient(executable="/fake/adb", runner=runner))
+    assert status["errors"][0]["code"] == "ADB_VERSION_FAILED"
+    assert canary not in str(status)
