@@ -20,6 +20,7 @@ import json
 import sys
 
 from android_mcp_host.server import create_server
+from android_mcp_host.adb_transport import get_transport_output_schema, AdbTransport
 from android_mcp_host.toolchain_inventory import (
     ToolchainInventory,
     get_toolchain_output_schema,
@@ -38,6 +39,8 @@ assert report["schema_version"] == 1
 assert report["runtime"] == "host"
 assert "devices" in report
 assert callable(create_server)
+assert get_transport_output_schema()["$id"] == "urn:android-mcp:adb-transport-inspection:v1"
+assert create_server(adb_transport=AdbTransport()) is not None
 assert get_toolchain_output_schema()["$id"] == "urn:android-mcp:host-toolchain-inventory:v1"
 assert create_server(toolchain_inventory=ToolchainInventory(paths={})) is not None
 assert get_capability_output_schema()["$id"] == "urn:android-mcp:host-capability-profile:v1"
