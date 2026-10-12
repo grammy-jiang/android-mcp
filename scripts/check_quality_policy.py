@@ -51,8 +51,24 @@ def check_policy(root: Path, report_path: Path, policy_path: Path) -> list[str]:
             errors.append(f"Missing coverage report for production module: {name}")
             continue
         summary = evidence.get("summary", {})
-        score = summary.get("percent_covered")
-        if not isinstance(score, (int, float)):
+        counters = (
+            summary.get("covered_lines"),
+            summary.get("num_statements"),
+            summary.get("covered_branches"),
+            summary.get("num_branches"),
+        )
+        if (
+            any(type(count) is not int or count < 0 for count in counters)
+            or counters[0] > counters[1]
+            or counters[2] > counters[3]
+        ):
+            errors.append(f"Invalid coverage evidence for {name}")
+            continue
+        # Package markers can have a docstring but zero executable statements.
+        # Other modules without executable statements do not count as tested.
+        if counters[1] == 0:
+            if name.endswith("/__init__.py") and counters == (0, 0, 0, 0):
+                continue
             errors.append(f"Invalid coverage evidence for {name}")
             continue
         minimum = (
@@ -60,8 +76,17 @@ def check_policy(root: Path, report_path: Path, policy_path: Path) -> list[str]:
             if name in critical
             else policy["coverage_default_minimum"]
         )
-        if score + 0.000001 < minimum:
-            errors.append(f"{name}: coverage {score:.2f}% below {minimum:.2f}%")
+        statement_coverage = 100.0 * counters[0] / counters[1]
+        # No branch decisions: vacuously covered; statements are still required.
+        branch_coverage = 100.0 * counters[2] / counters[3] if counters[3] else 100.0
+        if statement_coverage + 0.000001 < minimum:
+            errors.append(
+                f"{name}: statement coverage {statement_coverage:.2f}% below {minimum:.2f}%"
+            )
+        if branch_coverage + 0.000001 < minimum:
+            errors.append(
+                f"{name}: branch coverage {branch_coverage:.2f}% below {minimum:.2f}%"
+            )
 
     return errors
 

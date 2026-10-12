@@ -27,7 +27,17 @@ def _fixture(tmp_path, score=100, *, include_module=True, max_size=500):
     raw = {
         "meta": {"branch_coverage": True},
         "files": (
-            {"src/android_mcp_host/adb.py": {"summary": {"percent_covered": score}}}
+            {
+                "src/android_mcp_host/adb.py": {
+                    "summary": {
+                        "percent_covered": score,
+                        "num_statements": 1_000_000,
+                        "covered_lines": round(score * 10_000),
+                        "num_branches": 1_000_000,
+                        "covered_branches": round(score * 10_000),
+                    }
+                }
+            }
             if include_module
             else {"src/android_mcp_host/stale.py": {"summary": {"percent_covered": 100}}}
         ),
@@ -113,3 +123,95 @@ def test_nested_security_module_requires_coverage(tmp_path):
     result = _check(tmp_path)
     assert result.returncode == 1
     assert "security/approvals.py" in result.stdout
+
+
+def test_high_combined_percentage_cannot_hide_low_branch_coverage(tmp_path):
+    _fixture(tmp_path)
+    report = tmp_path / "host/.coverage.json"
+    data = json.loads(report.read_text())
+    summary = data["files"]["src/android_mcp_host/adb.py"]["summary"]
+    summary.update(
+        percent_covered=99.0,
+        num_statements=1000,
+        covered_lines=1000,
+        num_branches=24,
+        covered_branches=22,
+    )
+    report.write_text(json.dumps(data))
+    result = _check(tmp_path)
+    assert result.returncode == 1
+    assert "branch coverage" in result.stdout
+    assert "91.67%" in result.stdout
+
+
+def test_statement_coverage_is_independently_enforced(tmp_path):
+    _fixture(tmp_path)
+    report = tmp_path / "host/.coverage.json"
+    data = json.loads(report.read_text())
+    summary = data["files"]["src/android_mcp_host/adb.py"]["summary"]
+    summary.update(num_statements=100, covered_lines=94, num_branches=10, covered_branches=10)
+    report.write_text(json.dumps(data))
+    result = _check(tmp_path)
+    assert result.returncode == 1
+    assert "statement coverage 94.00%" in result.stdout
+
+
+@pytest.mark.parametrize(
+    "patch",
+    [
+        {"num_branches": "not-a-number"},
+        {"covered_branches": 11, "num_branches": 10},
+        {"num_statements": 0, "covered_lines": 0},
+        {"num_branches": -1},
+        {"num_statements": True},
+        {"covered_lines": -1},
+    ],
+)
+def test_malformed_coverage_counters_fail_closed(tmp_path, patch):
+    _fixture(tmp_path)
+    report = tmp_path / "host/.coverage.json"
+    data = json.loads(report.read_text())
+    data["files"]["src/android_mcp_host/adb.py"]["summary"].update(patch)
+    report.write_text(json.dumps(data))
+    result = _check(tmp_path)
+    assert result.returncode == 1
+    assert "Invalid coverage evidence" in result.stdout
+
+
+def test_missing_branch_counter_fails_closed(tmp_path):
+    _fixture(tmp_path)
+    report = tmp_path / "host/.coverage.json"
+    data = json.loads(report.read_text())
+    del data["files"]["src/android_mcp_host/adb.py"]["summary"]["covered_branches"]
+    report.write_text(json.dumps(data))
+    result = _check(tmp_path)
+    assert result.returncode == 1
+    assert "Invalid coverage evidence" in result.stdout
+
+
+def test_branchless_module_requires_statement_coverage(tmp_path):
+    _fixture(tmp_path)
+    report = tmp_path / "host/.coverage.json"
+    data = json.loads(report.read_text())
+    summary = data["files"]["src/android_mcp_host/adb.py"]["summary"]
+    summary.update(num_branches=0, covered_branches=0)
+    report.write_text(json.dumps(data))
+    assert _check(tmp_path).returncode == 0
+
+
+def test_docstring_only_package_marker_needs_no_statement_coverage(tmp_path):
+    src = _fixture(tmp_path)
+    marker = src / "__init__.py"
+    marker.write_text('"""Package documentation."""\n')
+    report = tmp_path / "host/.coverage.json"
+    data = json.loads(report.read_text())
+    data["files"]["src/android_mcp_host/__init__.py"] = {
+        "summary": {
+            "num_statements": 0,
+            "covered_lines": 0,
+            "num_branches": 0,
+            "covered_branches": 0,
+        }
+    }
+    report.write_text(json.dumps(data))
+    assert _check(tmp_path).returncode == 0
