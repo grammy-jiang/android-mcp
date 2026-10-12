@@ -1,6 +1,12 @@
 package org.androidmcp.nativeapp
 
 import io.ktor.server.cio.CIO
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCallPipeline
+import io.ktor.server.request.httpMethod
+import io.ktor.server.request.path
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
@@ -15,6 +21,8 @@ import io.modelcontextprotocol.kotlin.sdk.types.TextContent
 import io.modelcontextprotocol.kotlin.sdk.types.ToolSchema
 import kotlinx.serialization.json.buildJsonObject
 import org.androidmcp.lifecycle.LocalPortOwner
+import org.androidmcp.protocol.LocalHttpRequest
+import org.androidmcp.protocol.NativeLocalCallerGuard
 import org.androidmcp.protocol.NativeLocalStatus
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -41,10 +49,48 @@ internal class LocalMcpGateway {
         // Probe identity is an ephemeral correlation marker, NOT an auth key.
         // An unrelated process on the same TCP port must not satisfy readiness.
         val nonce = UUID.randomUUID().toString().replace("-", "")
+        val localCallerGuard = NativeLocalCallerGuard()
         val probePath = "/_native_internal/ready/$nonce"
         val marker = "android-mcp-native-ready-$nonce"
         try {
             val engine = embeddedServer(CIO, host = "127.0.0.1", port = LOCAL_PORT) {
+                intercept(ApplicationCallPipeline.Call) {
+                    val request = LocalHttpRequest(
+                        method = context.request.httpMethod.value,
+                        path = context.request.path(),
+                        host = context.request.headers[HttpHeaders.Host],
+                        origin = context.request.headers[HttpHeaders.Origin],
+                        remoteHost = context.request.local.remoteHost,
+                        contentLength = context.request.headers[HttpHeaders.ContentLength],
+                        transferEncoding = context.request.headers[HttpHeaders.TransferEncoding],
+                        headerCount = context.request.headers.names().size,
+                        headerBytes = context.request.headers.names().sumOf { name ->
+                            name.length + (context.request.headers.getAll(name)?.sumOf {
+                                it.length + 2
+                            } ?: 0)
+                        },
+                        duplicateSecurityHeaders = listOf(
+                            HttpHeaders.Host, HttpHeaders.Origin, HttpHeaders.ContentLength,
+                            HttpHeaders.TransferEncoding,
+                        ).any { (context.request.headers.getAll(it)?.size ?: 0) > 1 },
+                    )
+                    val ticket = localCallerGuard.begin(request)
+                    try {
+                        if (!ticket.verdict.allowed) {
+                            val response = "{\"error\":\"" + ticket.verdict.code + "\"}"
+                            context.respondText(
+                                response,
+                                ContentType.Application.Json,
+                                HttpStatusCode.fromValue(ticket.verdict.httpStatus),
+                            )
+                            finish()
+                        } else {
+                            proceed()
+                        }
+                    } finally {
+                        ticket.close()
+                    }
+                }
                 routing {
                     get(probePath) {
                         call.respondText(marker)
