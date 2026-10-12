@@ -16,6 +16,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 
 
+class OutputLimitExceeded(Exception):
+    """A subprocess produced more data than its read budget."""
+
+
 @dataclass(frozen=True, slots=True)
 class RunResult:
     returncode: int
@@ -96,3 +100,13 @@ def bounded_run(argv: Sequence[str], timeout_s: float, byte_limit: int) -> RunRe
             process.stdout.close()
         if process.stderr is not None:
             process.stderr.close()
+
+
+def completed_bounded(
+    argv: Sequence[str], timeout_s: float, byte_limit: int
+) -> subprocess.CompletedProcess[str]:
+    """Bound stdout/stderr growth before creating a CompletedProcess facade."""
+    result = bounded_run(argv, timeout_s, byte_limit)
+    if result.truncated:
+        raise OutputLimitExceeded("ADB output exceeded the capture budget")
+    return subprocess.CompletedProcess(list(argv), result.returncode, result.stdout, result.stderr)

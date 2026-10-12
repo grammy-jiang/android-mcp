@@ -37,3 +37,11 @@ A network-exposed MCP endpoint can receive model-generated requests. Android dev
 5. Explicit user approval on operations with lasting/destructive consequences.
 
 Successful mock tests and local HTTP calls do not establish Native lease safety or an authenticated remote MCP. Production high-privilege operations remain disabled until device identity pairing, verified Native lease fencing, authorization and an independent security review are complete.
+
+## Bounded ADB captures (Host candidate)
+
+Host ADB version/discovery and fixed read-only probes use the same bounded,
+process-group-managed subprocess runner as other Host operations. Each command
+has a strict 64 KiB byte capture cap; flooded output must be rejected, never
+silently parsed as complete. Every command uses an argv vector without a host
+shell. Bounded size does not make device diagnostics non-sensitive.

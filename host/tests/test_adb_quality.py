@@ -110,3 +110,34 @@ def test_explicit_executable_bypasses_locator_and_handles_real_device_state():
     assert len(report.devices) == 1
     assert report.devices[0].state == "offline"
     assert isinstance(report.devices[0], Device)
+
+
+def test_adb_discovery_rejects_large_subprocess_output(tmp_path):
+    from pathlib import Path
+
+    path = Path(tmp_path) / "adb"
+    path.write_text(
+        "#!" + sys.executable + "\n"
+        "import sys\n"
+        "if 'version' in sys.argv: print('Version 37.0.1')\n"
+        "else: print('D' * 300000)\n",
+        encoding="utf-8",
+    )
+    path.chmod(0o700)
+    report = AdbClient(executable=str(path)).inspect()
+    assert report.available is False
+    assert report.error is not None
+    assert report.error.code == "ADB_OUTPUT_LIMIT"
+    assert report.devices == ()
+
+
+def test_adb_version_also_rejects_unbounded_output(tmp_path):
+    path = tmp_path / "adb"
+    path.write_text(
+        "#!" + sys.executable + "\nprint('V' * 300000)\n",
+        encoding="utf-8",
+    )
+    path.chmod(0o700)
+    report = AdbClient(executable=str(path)).inspect()
+    assert report.error is not None
+    assert report.error.code == "ADB_OUTPUT_LIMIT"

@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from typing import Any, Protocol, TypeAlias
 
 from android_mcp_host.adb import AdbClient
+from android_mcp_host.command_runner import OutputLimitExceeded, completed_bounded
 from android_mcp_host.device_guard import require_online, valid_device_id
 
 # Names used in the MCP argument schema and the local policy registry.
@@ -68,17 +69,8 @@ class Reader(Protocol):
 
 
 def _run(argv: Sequence[str], timeout_s: float) -> subprocess.CompletedProcess[str]:
-    """Executable arguments, never a constructed host shell command."""
-    return subprocess.run(
-        list(argv),
-        shell=False,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        check=False,
-        timeout=timeout_s,
-    )
+    """Run fixed probe commands with a bounded capture and process-group cleanup."""
+    return completed_bounded(argv, timeout_s, 65536)
 
 
 def _error(code: str, message: str) -> dict[str, str]:
@@ -169,6 +161,12 @@ class ProbeService:
                 argv = [binary, "-s", device_id, *command.argv]
                 try:
                     result = self._reader(argv, self._timeout_s)
+                except OutputLimitExceeded:
+                    response["errors"].append(
+                        _error("OUTPUT_LIMIT", "ADB observation output exceeded its safe budget")
+                    )
+                    response["status"] = "partial" if results else "error"
+                    return response
                 except subprocess.TimeoutExpired:
                     response["errors"].append(
                         _error("PROBE_TIMEOUT", "ADB observation exceeded its timeout")

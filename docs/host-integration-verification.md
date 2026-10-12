@@ -61,3 +61,10 @@ or real-tablet integration are working.
   lint/format/pytest/doctor steps.
 - Hardware-dependent macOS and Linux ADB permissions, reboot and recovery.
 - No privileged operations enabled or deployed until the gates above pass.
+
+## Additional pre-hardware hardening
+
+Host discovery and early probe subprocesses originally used capture_output,
+which allowed arbitrarily large stdout/stderr to consume Host memory. Both
+now use a bounded subprocess runner and reject oversized output with typed
+errors. Fake executables exercise this denial path without a device.
