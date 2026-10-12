@@ -27,20 +27,39 @@ def create_server(
         "android-mcp-host",
         mask_error_details=True,
         instructions=(
-            "Android host device tools are read-only. "
-            "Each observation requires an explicitly selected authorized device. "
-            "Typed Host actions only. Mutations remain disabled without independent "
-            "trusted approval, device lease and audit configuration. "
+            "Android Host tools provide read-only device diagnostics and bounded plans. "
+            "ADB discovery may start the local ADB daemon, so host state can change. "
+            "Every device operation requires an explicit online authorized device. "
+            "Typed engineering actions can describe mutation, but actual mutation "
+            "is denied without independent trusted approval, device lease and audit. "
             "No raw shell, root or remote network access is provided."
         ),
     )
 
-    @server.tool(output_schema=get_output_schema("device_status"))
+    @server.tool(
+        title="Inspect Android Host and ADB",
+        output_schema=get_output_schema("device_status"),
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    )
     def device_status() -> dict[str, object]:
         """Inspect host platform and ADB device states; never change a device."""
         return build_status(client)
 
-    @server.tool(output_schema=get_output_schema("adb_observe"))
+    @server.tool(
+        title="Read Selected Android Device Diagnostics",
+        output_schema=get_output_schema("adb_observe"),
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    )
     async def adb_observe(
         device_id: str,
         probes: Annotated[
@@ -62,7 +81,16 @@ def create_server(
         """
         return await asyncio.to_thread(observer.observe, device_id, probes)
 
-    @server.tool(output_schema=get_output_schema("adb_develop"))
+    @server.tool(
+        title="Typed Android Engineering Diagnostics and Plans",
+        output_schema=get_output_schema("adb_develop"),
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": False,
+        },
+    )
     async def adb_develop(
         device_id: str,
         action: Annotated[
@@ -74,9 +102,12 @@ def create_server(
         ],
         dry_run: bool = False,
     ) -> dict[str, object]:
-        """Perform typed read-only package/logcat diagnostics or preview
-        APK installation and instrumentation. Mutations require trusted host
-        approval, lease and audit gates, absent from this initial server.
+        """Perform typed, bounded package/logcat diagnostics and action planning.
+
+        Instrumentation can be previewed without changing the device. APK
+        installation is refused unless trusted Host directories are configured.
+        Execution of mutation additionally requires independent operator
+        approval, device lease and durable audit; default Host disables it.
         """
         return await asyncio.to_thread(operator.execute, device_id, action, dry_run=dry_run)
 
