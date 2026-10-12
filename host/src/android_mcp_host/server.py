@@ -9,6 +9,7 @@ from fastmcp import FastMCP
 from pydantic import Field
 
 from android_mcp_host.adb import AdbClient
+from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
 from android_mcp_host.operations import OperationService
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
@@ -24,6 +25,7 @@ def create_server(
     probes: ProbeService | None = None,
     operations: OperationService | None = None,
     toolchain_inventory: ToolchainInventory | None = None,
+    capability_profiles: CapabilityProfiles | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -131,5 +133,21 @@ def create_server(
         def host_toolchain_inventory() -> dict[str, object]:
             """Inspect trusted fixed-path CLI versions and SDK; never install or update."""
             return toolchain_inventory.inspect()
+
+    if capability_profiles is not None:
+
+        @server.tool(
+            title="Inspect Approved Host Capability Profile",
+            output_schema=get_capability_output_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        def host_capability_profile() -> dict[str, object]:
+            """Report bounded Host capability states; never grant mutation or leases."""
+            return capability_profiles.snapshot()
 
     return server
