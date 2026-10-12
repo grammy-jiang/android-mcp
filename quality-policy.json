@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "python": {
+    "max_physical_lines_per_module": 500,
+    "coverage_default_minimum": 90.0,
+    "coverage_critical_minimum": 95.0,
+    "coverage_critical_modules": [
+      "src/android_mcp_host/adb.py",
+      "src/android_mcp_host/cli.py"
+    ],
+    "coverage_exempt_entrypoints": [
+      "src/android_mcp_host/__init__.py",
+      "src/android_mcp_host/__main__.py"
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+# Quality and release gates
+
+Adapted from the **principles** of Binnacle's development, testing and quality-gate policies; this is a separate project with distinct scope and no runtime dependency on Binnacle.
+
+## Python Host (enforced now)
+
+| Gate | Current target | Enforcement |
+| --- | --- | --- |
+| Python | 3.11, 3.13, 3.14 on Ubuntu/macOS | GitHub Actions matrix |
+| Deterministic dependencies | `uv.lock`, `uv lock --check --offline` | pre-commit, doctor, CI |
+| Static quality | Ruff check and format, strict mypy | pre-commit, CI |
+| Security static scan | Bandit medium-and-higher | pre-commit, CI |
+| File hygiene and secrets | pre-commit hooks, Gitleaks, actionlint | pre-commit, CI |
+| Unit/contract/failure tests | deterministic pytest + Hypothesis bounded examples | pre-push, CI |
+| Branch coverage | critical Host modules >=95%; all others >=90% **per module** | `quality-policy.json` + fail-closed checker |
+| Module size | <=500 physical lines (production, scripts, tests) | fail-closed checker |
+| Packaging | build sdist and wheel; clean wheel install and CLI smoke | CI packaging job |
+| Dependency CVEs | pip-audit, independent scheduled check | Security workflow |
+
+`quality-policy.json` is the authoritative source of per-module limits. Newly added production modules inherit a 90% floor by default. Critical interfaces (ADB parsing/execution, future auth, privilege broker, mutation policy, device lease) require at least 95%, with explicit additions to the policy when implemented.
+
+Coverage is measured with `--cov-branch`; the checker reads **per-file raw percentages**, validates that every production module has evidence, and rejects stale critical-module entries. A high aggregate percentage cannot hide an uncovered module. Entry-point-only `__main__.py` and package marker `__init__.py` are explicitly exempt. Coverage does not substitute for realistic failure or concurrency tests.
+
+The quality checker itself is covered with negative tests: missing report, weak module, new uncovered module, too-large file and branch coverage disabled.
+
+## Test expectations for every feature
+
+- Positive / negative / edge cases; permission failures, timeouts, disconnected device states, malformed output.
+- Input and output match the versioned JSON Schema. No unwarranted reliance on platform-specific paths.
+- Fuzz/property tests for parsers and authorization logic; explicit state-machine or race tests for shared device leases.
+- Contract compatibility on Host and Native, including unknown optional capabilities and version changes.
+- For high-impact operations, tests must prove fail-closed behavior, correct device selection and a safe stop on ambiguous state.
+- Real hardware and network/auth checks must run separately from mocks; document the device/ROM/firmware and test provenance.
+
+## Kotlin / Android quality policy (design, **not yet enforced**)
+
+- Native implementation: Kotlin and Android SDK, Gradle Kotlin DSL, committed Gradle Wrapper and dependency verification/locking. Toolchain versions must be selected and locked in a dedicated validated M2 bootstrap.
+- Kotlin formatting/lint: ktlint or detekt with reviewed configuration; Android Lint.
+- Unit tests: JUnit + fakes for Android platform boundaries; instrumentation tests for Accessibility, UI actions and lifecycle; emulator matrix plus live dedicated LineageOS tablet gates.
+- UI reliability tests: screen orientation, fonts/scale, dialogs, failed capture, lock screen, process eviction, network loss, reboot, authentication state.
+- Privileged broker: isolated Android process/IPC, explicit grants, denial-path coverage, no root network listener; full threat modeling and approval gates before implementation.
+- Build artifacts: debug APK install test, reproducible release metadata, signed build provenance and no secrets committed.
+
+Do not claim Kotlin CI or emulator coverage until there is buildable Android source and the toolchains are installed in CI.
+
+## Delivery boundaries
+
+Pull requests should show affected tests, CI results, contract compatibility and any security impacts. Independent review is necessary before enabling arbitrary device mutation, remote access, privilege escalation, bootloader/recovery or payment-related workflows. Shipping a Python wheel is not equivalent to deploying an authenticated MCP endpoint.

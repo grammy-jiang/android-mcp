@@ -35,6 +35,7 @@ A host server must start with *zero connected devices*. It must not manufacture 
 Every mutating operation (not yet implemented) must target one explicit `device_id`; multiple devices cannot silently fall back to the first result. USB serial, emulator serial and native installation identity may differ. A future pairing record must bind the host view to the native view without assuming they match byte-for-byte.
 
 Per-device coordination:
+
 - **Observe** may run concurrently when consistent with the device's security policy.
 - **Mutate/UI** requires an exclusive, expiring device lease with a task owner, operation class, expiry and audit trail.
 - **Maintenance** should quiesce the native UI executor before host ADB app reinstall/restart.
