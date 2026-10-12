@@ -19,7 +19,7 @@
                                          └──────────────────────────┘
 ```
 
-This is a diagram of the **target topology**, not a claim that either remote endpoint or the Android APK currently exists.
+This is the **target privileged/remote topology**, not a claim that authenticated remote endpoints or the pictured Android privileged/UI components exist. A minimal Android foreground-only **localhost** APK prototype exists (N1), without the pictured elevated capabilities.
 
 ## Contracts, runtimes, and capabilities
 
@@ -58,10 +58,10 @@ The lease mechanism should not depend on ChatGPT keeping one transport connectio
 
 ## Execution and lifecycle
 
-For current Host MVP, `device_status` is the only MCP tool. `doctor` reports diagnostic state without requiring ADB. Server listens only on localhost. Portable code uses argument-vector subprocess calls and no shell to invoke ADB.
+Current Host MCP registers exactly three tools: `device_status`, `adb_observe`, and `adb_develop`. Diagnostics and allowlisted observations are read-only; executed APK installation/instrumentation is disabled in the default composition. `doctor` does not require ADB to succeed. The Host server listens only on localhost, and subprocess invocation uses bounded argument vectors without a host shell.
 
-For the future Native runtime: lifecycle is controlled by Android components rather than a desktop CLI; network access must be separately authenticated. Native must function without host connectivity. Host can bootstrap/recover native but must never be required for its normal operation.
+The current N1 Native Android prototype starts a loopback-only MCP endpoint when its activity is foregrounded, and stops when that activity stops. A durable Native service, external caller authentication and user-granted UI control are future work. The design requires Native to function independently of Host connectivity; Host recovery remains a separately gated capability.
 
 ## Explicit non-goals of the scaffold
 
-No installed tablet, no Android APK, no root activation, no Device Owner provisioning, no open remote endpoint, no e-commerce account automation, no code or configuration changes to Binnacle.
+No completed Native **real-device APK acceptance**, root activation, Device Owner provisioning, authenticated public endpoint, shopping automation, enabled distributed mutation authority, or changes to Binnacle. Host read-only ADB has been accepted against a real USB tablet on sextant.
