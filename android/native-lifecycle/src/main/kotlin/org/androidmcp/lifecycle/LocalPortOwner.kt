@@ -42,7 +42,11 @@ class LocalPortOwner {
 
     @Synchronized
     fun beginStop(candidate: Any): Boolean {
-        if (owner !== candidate || phase == PortPhase.FREE) return false
+        // A duplicate shutdown cannot be started while an earlier stop is
+        // pending. UNKNOWN remains retryable by the *same* original owner.
+        if (owner !== candidate || phase == PortPhase.FREE || phase == PortPhase.STOPPING) {
+            return false
+        }
         phase = PortPhase.STOPPING
         return true
     }
