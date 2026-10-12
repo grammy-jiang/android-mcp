@@ -47,7 +47,12 @@ def require_virtual_target(flag: str) -> None:
 def get_button_center(xml: str) -> tuple[int, int]:
     matches: list[tuple[int, int]] = []
     for node in ET.fromstring(xml).iter("node"):
-        if node.attrib.get("text") != "Start local read-only MCP":
+        # Android Buttons commonly expose transformed all-caps visual text
+        # through UIAutomator. Compare the complete label case-insensitively.
+        if (
+            node.attrib.get("text", "").strip().casefold()
+            != "start local read-only mcp"
+        ):
             continue
         bound = BOUNDS.fullmatch(node.attrib.get("bounds", ""))
         if bound is None:

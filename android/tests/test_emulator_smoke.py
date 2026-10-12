@@ -37,6 +37,14 @@ def test_verified_kernel_emulator() -> None:
     module.require_virtual_target("1\n")
 
 
+def test_android_all_caps_rendering_does_not_hide_start_button() -> None:
+    xml = (
+        '<hierarchy><node text="START LOCAL READ-ONLY MCP" '
+        'class="android.widget.Button" bounds="[10,20][110,60]"/></hierarchy>'
+    )
+    assert module.get_button_center(xml) == (60, 40)
+
+
 def test_ui_button_center() -> None:
     xml = (
         '<hierarchy><node text="Other" bounds="[1,2][3,4]"/>'

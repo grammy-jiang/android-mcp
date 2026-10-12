@@ -52,12 +52,34 @@ has no Android Platform, Emulator or system image installed and no
 license to be accepted by an authorized user first; do not pipe automatic
 acceptance into `sdkmanager --licenses` without consent.
 
-After that authorization, install `emulator`, `platform-tools`,
-`platforms;android-36`, `build-tools;36.0.0` and
-`system-images;android-36;default;arm64-v8a`; create a fresh named AVD with
-`avdmanager`, launch the headless emulator with Apple's Hypervisor.framework,
-and use exactly the same Python runtime acceptance script against its
-`emulator-XXXX` serial.
+On 2026-10-12 the user **explicitly authorized** accepting the Google SDK
+license; all 8 license prompts were accepted on the MacBook. Android Emulator
+37.2.12, Platform Tools 37.0.1, API 36, Build Tools 36.0.0 and the
+`system-images;android-36;default;arm64-v8a` image were installed in
+`~/Library/Android/sdk`. A dedicated Pixel Tablet AVD named
+`android_mcp_native_api36` was then created and launched with
+`-no-window` using Hypervisor.framework. No physical Android device was
+connected to the MacBook during the validation.
+
+The independent, real on-device MCP acceptance completed successfully using
+an explicitly verified `emulator-5554` target and the Mac-built Debug APK:
+
+```bash
+export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+bash scripts/check-native-apk.sh
+uv run --project host --locked --group dev --python 3.13 python \
+  scripts/smoke-native-emulator.py --serial emulator-5554 \
+  --apk android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Result: `pass` for install, actual MCP HTTP `device_status`, activity Home/stop,
+and user-initiated foreground restart. Kotlin Native executes on Android 16
+ARM64 in a real local AVD, not only on the host JVM. The initial CI runtime
+failure had a narrow UI test cause: Android exposes the Button label in
+all capitals. The selector now matches the exact entire label using a
+case-insensitive comparison, and has an explicit regression test. Further
+Linux GitHub emulator validation remains a separate CI gate.
 
 Before invoking any local test, independently verify the macOS ADB server is
 talking to the intended emulator and not the physical device. Do not use
