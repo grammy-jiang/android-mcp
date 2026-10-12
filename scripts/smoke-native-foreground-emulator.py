@@ -273,6 +273,34 @@ def run_emulator_service_test(serial: str, apk: Path) -> dict[str, object]:
         core.adb(serial, "shell", "am", "force-stop", PACKAGE)
         assert_fully_stopped(serial, port, endpoint)
 
+        # N0.d: revoke the actual OS notification grant WHILE the explicitly
+        # started foreground listener is running. Android may kill the app
+        # when a runtime permission is revoked; regardless, its socket,
+        # Android Service and notification must not survive as an orphan.
+        core.adb(serial, "shell", "am", "start", "-W", "-n", ACTIVITY)
+        open_service_screen(serial)
+        core.tap_ui_label(serial, START_SERVICE_BUTTON)
+        asyncio.run(core.await_running(endpoint))
+        check_service_running(serial)
+        core.verify_emulator(serial)
+        core.adb(serial, "shell", "pm", "revoke", PACKAGE, NOTIFICATION_PERMISSION)
+        assert_fully_stopped(serial, port, endpoint)
+
+        # The now-revoked permission may not be silently reused on a fresh
+        # Activity START. A dialog is allowed; an active service is not.
+        core.adb(serial, "shell", "am", "start", "-W", "-n", ACTIVITY)
+        open_service_screen(serial)
+        core.tap_ui_label(serial, START_SERVICE_BUTTON)
+        time.sleep(0.5)
+        dump = core.adb(serial, "shell", "dumpsys", "activity", "services", PACKAGE)
+        if "NativeMcpForegroundService" in dump:
+            raise AssertionError("Service restarted with revoked notification consent")
+        asyncio.run(core.await_stopped(endpoint))
+        core.adb(serial, "shell", "input", "keyevent", "KEYCODE_BACK")
+        # Restore to this script's explicitly approved disposable-AVD test
+        # state; no physical app's permission may be modified.
+        core.adb(serial, "shell", "pm", "grant", PACKAGE, NOTIFICATION_PERMISSION)
+
         return {
             "result": "pass",
             "environment": "verified_emulator_only",
@@ -292,6 +320,8 @@ def run_emulator_service_test(serial: str, apk: Path) -> dict[str, object]:
                 "android_service_and_notification_removed",
                 "user_stop_closes_listener",
                 "process_force_stop_does_not_restart",
+                "revocation_closes_live_service_and_notification",
+                "revoked_grant_denies_new_user_start",
             ],
         }
     finally:

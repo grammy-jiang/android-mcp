@@ -47,7 +47,16 @@ class NativeMcpForegroundService : Service() {
         }
         latestStartId = startId
         when (intent?.action) {
-            ACTION_START -> requestStart()
+            ACTION_START -> {
+                // Recheck the OS permission state even if Activity had
+                // approved an earlier START. Revocation fails closed and
+                // queues a verified stop if the listener was already live.
+                if (AndroidPermissionReadiness.canStartForeground(this)) {
+                    requestStart()
+                } else {
+                    requestStop()
+                }
+            }
             ACTION_STOP -> requestStop()
             else -> requestStop()
         }

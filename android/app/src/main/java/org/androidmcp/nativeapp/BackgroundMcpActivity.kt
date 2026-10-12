@@ -76,6 +76,12 @@ class BackgroundMcpActivity : Activity() {
             status.text = "Persistent MCP service requires Android 14 (API 34) or later."
             return
         }
+        // A permission callback is not a durable grant: check the actual OS
+        // state again immediately before the user-requested service launch.
+        if (!AndroidPermissionReadiness.canStartForeground(this)) {
+            status.text = "Foreground permission unavailable or revoked; service not started."
+            return
+        }
         try {
             val intent = Intent(this, NativeMcpForegroundService::class.java).apply {
                 action = NativeMcpForegroundService.ACTION_START
