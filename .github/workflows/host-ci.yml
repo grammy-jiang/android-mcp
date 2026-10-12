@@ -24,15 +24,42 @@ jobs:
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           version: "0.12.24"
-      - name: Install Python
+      - name: Install selected Python
         run: uv python install ${{ matrix.python }}
-      - name: Sync locked dev environment
+      - name: Locked environment for selected Python
         run: uv sync --locked --group dev --python ${{ matrix.python }}
-      - name: Ruff lint
-        run: uv run --locked --python ${{ matrix.python }} ruff check src tests
-      - name: Ruff format
-        run: uv run --locked --python ${{ matrix.python }} ruff format --check src tests
-      - name: Pytest (hardware-free)
-        run: uv run --locked --python ${{ matrix.python }} pytest -q
-      - name: CLI doctor (no tablet)
-        run: uv run --locked --python ${{ matrix.python }} android-mcp-host doctor
+      - name: Full Host gate (type, security, branch coverage, policy, doctor)
+        run: HOST_PYTHON="${{ matrix.python }}" bash ../scripts/check-host.sh
+
+  package:
+    name: Clean package installation (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.12.24"
+      - name: Build sdist + wheel and verify clean installation
+        run: HOST_PYTHON=3.13 bash scripts/check-host-package.sh
+
+  security:
+    name: Lockfile dependency vulnerability audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.12.24"
+      - name: Audit complete Host dependency graph
+        run: uv audit --project host --locked
+
+  hygiene:
+    name: Repository formatting, secret and workflow checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.12.24"
+      - name: Pinned pre-commit hooks (including gitleaks/actionlint)
+        run: uv run --project host --locked --group dev pre-commit run --all-files
