@@ -20,6 +20,7 @@ import json
 import sys
 
 from android_mcp_host.server import create_server
+from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
 from android_mcp_host.package_inspector import PackageInspector, get_package_output_schema
 from android_mcp_host.system_snapshot import SystemSnapshot, get_snapshot_output_schema
 from android_mcp_host.adb_transport import get_transport_output_schema, AdbTransport
@@ -41,6 +42,8 @@ assert report["schema_version"] == 1
 assert report["runtime"] == "host"
 assert "devices" in report
 assert callable(create_server)
+assert get_logcat_output_schema()["$id"] == "urn:android-mcp:host-logcat-filters:v1"
+assert create_server(logcat_filter=LogcatFilters()) is not None
 assert get_package_output_schema()["$id"] == "urn:android-mcp:host-package-diagnostics:v1"
 assert create_server(package_inspector=PackageInspector()) is not None
 assert get_snapshot_output_schema()["$id"] == "urn:android-mcp:host-system-snapshot:v1"
