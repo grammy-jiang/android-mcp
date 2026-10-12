@@ -28,14 +28,14 @@ apk="$repo_root/android/app/build/outputs/apk/debug/app-debug.apk"
 test -s "$apk"
 "$apksigner" verify "$apk"
 
-# Fail closed if the APK silently acquires additional Android permissions.
-permissions="$("$aapt" dump permissions "$apk")"
-echo "$permissions" | grep -Fq "android.permission.INTERNET"
-extra="$(echo "$permissions" | grep 'uses-permission' | grep -v 'android.permission.INTERNET' || true)"
-if [[ -n "$extra" ]]; then
-    echo "ERROR: Unexpected manifest permissions:" >&2
-    echo "$extra" >&2
+# Compare the complete APK manifest permission set with the reviewed list.
+raw_permissions="$("$aapt" dump permissions "$apk")"
+actual_permissions="$(printf '%s\n' "$raw_permissions" | sed -n "s/^uses-permission: name='\([^']*\)'.*/\1/p" | LC_ALL=C sort)"
+expected_permissions="$(printf '%s\n'     android.permission.INTERNET     android.permission.FOREGROUND_SERVICE     android.permission.FOREGROUND_SERVICE_SPECIAL_USE     android.permission.POST_NOTIFICATIONS | LC_ALL=C sort)"
+if [[ "$actual_permissions" != "$expected_permissions" ]]; then
+    echo "ERROR: APK permissions differ from the N3 reviewed allowlist." >&2
+    echo "$raw_permissions" >&2
     exit 2
 fi
-echo "Android APK built, signed for debug, linted; only INTERNET permission."
+echo "Android APK built, signed for debug, linted; exactly N3 reviewed permissions."
 shasum -a 256 "$apk"

@@ -23,6 +23,7 @@ android {
 
 dependencies {
     implementation(project(":native-protocol"))
+    implementation(project(":native-lifecycle"))
     implementation("io.modelcontextprotocol:kotlin-sdk-server:0.14.0")
     implementation("io.ktor:ktor-server-cio-jvm:3.4.3")
 }

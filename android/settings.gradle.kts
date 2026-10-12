@@ -16,6 +16,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "android-mcp-native"
 include(":native-protocol")
+include(":native-lifecycle")
 include(":native-mcp-jvm")
 
 // SDK-free JVM tests stay the default. Android app builds opt in explicitly.

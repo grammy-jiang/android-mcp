@@ -18,6 +18,7 @@ import sys
 import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from fastmcp import Client
 from jsonschema import Draft202012Validator, ValidationError
@@ -44,15 +45,16 @@ def require_virtual_target(flag: str) -> None:
         raise ValueError("Android kernel does not identify as an emulator")
 
 
-def get_button_center(xml: str) -> tuple[int, int]:
+def get_button_center(
+    xml: str, label: str = "Start local read-only MCP"
+) -> tuple[int, int]:
+    if not label.strip():
+        raise ValueError("Button label must be nonempty")
     matches: list[tuple[int, int]] = []
     for node in ET.fromstring(xml).iter("node"):
         # Android Buttons commonly expose transformed all-caps visual text
         # through UIAutomator. Compare the complete label case-insensitively.
-        if (
-            node.attrib.get("text", "").strip().casefold()
-            != "start local read-only mcp"
-        ):
+        if node.attrib.get("text", "").strip().casefold() != label.strip().casefold():
             continue
         bound = BOUNDS.fullmatch(node.attrib.get("bounds", ""))
         if bound is None:
@@ -96,16 +98,22 @@ def verify_emulator(serial: str) -> None:
     require_virtual_target(adb(serial, "shell", "getprop", "ro.kernel.qemu"))
 
 
-def click_start(serial: str) -> None:
+def tap_ui_label(serial: str, label: str) -> None:
+    if not label.strip():
+        raise ValueError("Button label must be nonempty")
     for _ in range(12):
         try:
             adb(serial, "shell", "uiautomator", "dump", UI_PATH, timeout=30)
-            x, y = get_button_center(adb(serial, "exec-out", "cat", UI_PATH))
+            x, y = get_button_center(adb(serial, "exec-out", "cat", UI_PATH), label)
             adb(serial, "shell", "input", "tap", str(x), str(y))
             return
         except (RuntimeError, ValueError, ET.ParseError):
             time.sleep(1)
-    raise RuntimeError("Android app did not render its explicit start button")
+    raise RuntimeError("Android app did not render its requested visible button")
+
+
+def click_start(serial: str) -> None:
+    tap_ui_label(serial, "Start local read-only MCP")
 
 
 async def assert_status(url: str) -> None:
@@ -158,18 +166,59 @@ async def await_running(url: str) -> None:
     raise RuntimeError(f"Android MCP never became ready: {last_type}")
 
 
+async def http_server_responds(url: str) -> bool:
+    """Bounded raw HTTP probe avoids noisy SDK teardown at intentional stop."""
+    parsed = urlsplit(url)
+    if (
+        parsed.scheme != "http"
+        or parsed.hostname != "127.0.0.1"
+        or parsed.path != "/mcp"
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.port is None
+    ):
+        raise ValueError("Stop probe must use an explicit localhost MCP endpoint")
+
+    writer: asyncio.StreamWriter | None = None
+    try:
+        reader, writer = await asyncio.wait_for(
+            asyncio.open_connection("127.0.0.1", parsed.port), timeout=2
+        )
+        writer.write(
+            b"POST /mcp HTTP/1.1\r\n"
+            b"Host: 127.0.0.1\r\n"
+            b"Content-Type: application/json\r\n"
+            b"Accept: application/json, text/event-stream\r\n"
+            b"Content-Length: 2\r\n"
+            b"Connection: close\r\n\r\n{}"
+        )
+        await asyncio.wait_for(writer.drain(), timeout=2)
+        # A live MCP listener always returns an HTTP response, including for
+        # malformed requests. A stopped ADB-forward target closes without one.
+        return bool(await asyncio.wait_for(reader.read(1), timeout=2))
+    except (OSError, TimeoutError):
+        return False
+    finally:
+        if writer is not None:
+            writer.close()
+            try:
+                await writer.wait_closed()
+            except OSError:
+                pass
+
+
 async def await_stopped(url: str) -> None:
-    # Open a fresh MCP session each attempt: a persistent old session could
-    # accidentally mask the shutdown of the server's listening socket.
-    for _ in range(18):
-        try:
-            await asyncio.wait_for(assert_status(url), timeout=2)
-        except Exception as exc:  # Disconnected MCP sessions vary by transport
-            if isinstance(exc, (AssertionError, ValueError, ValidationError)):
-                raise
-            return
-        await asyncio.sleep(0.5)
-    raise AssertionError("Android MCP still responds after Activity.onStop")
+    """Require three consecutive failed HTTP probes before declaring stopped."""
+    consecutive_closed = 0
+    for _ in range(24):
+        if await http_server_responds(url):
+            consecutive_closed = 0
+        else:
+            consecutive_closed += 1
+            if consecutive_closed >= 3:
+                return
+        await asyncio.sleep(0.4)
+    raise AssertionError("Android MCP listener still responds after stop")
 
 
 def free_local_port() -> int:
