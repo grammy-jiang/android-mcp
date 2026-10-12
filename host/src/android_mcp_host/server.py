@@ -9,7 +9,7 @@ from fastmcp import FastMCP
 from pydantic import Field
 
 from android_mcp_host.adb import AdbClient
-from android_mcp_host.mcp_boundary import get_output_schema
+from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
 from android_mcp_host.operations import OperationService
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.status import build_status
@@ -62,9 +62,17 @@ def create_server(
         """
         return await asyncio.to_thread(observer.observe, device_id, probes)
 
-    @server.tool
+    @server.tool(output_schema=get_output_schema("adb_develop"))
     async def adb_develop(
-        device_id: str, action: dict[str, object], dry_run: bool = False
+        device_id: str,
+        action: Annotated[
+            dict[str, object],
+            Field(
+                description="One of four typed, allowlisted Android engineering actions.",
+                json_schema_extra=get_development_action_field_schema(),
+            ),
+        ],
+        dry_run: bool = False,
     ) -> dict[str, object]:
         """Perform typed read-only package/logcat diagnostics or preview
         APK installation and instrumentation. Mutations require trusted host
