@@ -63,6 +63,6 @@ The host and native servers are separately addressable MCP endpoints, with capab
 
 This repository is **independent of Binnacle**, and must not mutate Binnacle's repository or deployment. Later modules may cover the Android software lifecycle (APK deployment, logs, tests, performance, system maintenance, recovery) and a shopping automation adapter for Taobao, Goofish, and JD. Those domains must remain isolated from the core Android device transport.
 
-See [Host/Native coordination design](docs/host-native-coordination.md), [architecture](docs/architecture.md), [development](docs/development.md), [quality](docs/quality.md), [testing](docs/testing.md), [compatibility](docs/compatibility.md), [security](docs/security.md), [contracts](docs/contracts.md), and [milestones](docs/roadmap.md).
+See [Host integration verification](docs/host-integration-verification.md), [Host/Native coordination design](docs/host-native-coordination.md), [architecture](docs/architecture.md), [development](docs/development.md), [quality](docs/quality.md), [testing](docs/testing.md), [compatibility](docs/compatibility.md), [security](docs/security.md), [contracts](docs/contracts.md), and [milestones](docs/roadmap.md).
 
 中文概览：这是一个 Monorepo、两个独立 MCP Runtime。Host 已实现只读 ADB 观察与受限开发命令规划，以及默认关闭的高权限执行原型；尚未连接真实平板，也没有 Android Native APK、Root、购物适配器或公网服务。
