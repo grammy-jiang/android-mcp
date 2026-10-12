@@ -7,6 +7,7 @@ import asyncio
 from fastmcp import FastMCP
 
 from android_mcp_host.adb import AdbClient
+from android_mcp_host.mcp_boundary import get_output_schema
 from android_mcp_host.operations import OperationService
 from android_mcp_host.probes import ProbeService
 from android_mcp_host.status import build_status
@@ -32,7 +33,7 @@ def create_server(
         ),
     )
 
-    @server.tool
+    @server.tool(output_schema=get_output_schema("device_status"))
     def device_status() -> dict[str, object]:
         """Inspect host platform and ADB device states; never change a device."""
         return build_status(client)
