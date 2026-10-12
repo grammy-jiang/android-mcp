@@ -8,6 +8,7 @@ import platform
 from typing import Any
 
 from android_mcp_host.adb import AdbClient
+from android_mcp_host.adb_transport import AdbTransport
 from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.server import create_server
@@ -38,6 +39,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Opt in to bounded, read-only ADB device discovery.",
     )
+    serve.add_argument(
+        "--adb-transport-inspect",
+        action="store_true",
+        help="Opt in to bounded, read-only exact-target transport inspection.",
+    )
     args = parser.parse_args(argv)
 
     if args.command == "doctor":
@@ -64,6 +70,8 @@ def main(argv: list[str] | None = None) -> int:
         )
     if args.adb_devices_list:
         kwargs["adb_discovery"] = DeviceDiscovery()
+    if args.adb_transport_inspect:
+        kwargs["adb_transport"] = AdbTransport()
     server = create_server(**kwargs)
     server.run(transport="http", host=args.host, port=args.port)
     return 0
