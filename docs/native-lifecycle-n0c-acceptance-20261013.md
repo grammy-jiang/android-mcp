@@ -55,3 +55,14 @@ not a distributed Host/Native lease. Android OEM power-management and
 physical-device process eviction are untested and remain deferred.
 Draft Native PR #39 is a separate earlier N3 contention audit and is
 neither rebased nor modified by this N0.c work.
+
+## Rotation cleanup regression and resolution
+
+The first API 34/36 rotation runs appeared successful but left the Android
+WindowManager in locked mode. Reading only Settings values without verifying
+WindowManager's effective state was insufficient. On API 33+ the fixture now
+uses the supported WindowManager user-rotation lock/free command. When the
+original mode was automatic, it frees rotation first and then restores the
+previous angle. API 30 retains the Settings-based fallback. Both the saved
+Settings values and effective WindowManager mode must match before reporting
+successful cleanup. Independent synthetic tests prove a mismatch is detected.

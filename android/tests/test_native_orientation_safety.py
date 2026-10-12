@@ -131,3 +131,103 @@ def test_rotation_restored_on_failed_emulator_acceptance(
     assert events.index("rotation-failed") < events.index("restored")
     assert any("force-stop" in item for item in events)
     assert any("forward --remove" in item for item in events)
+
+
+def test_restore_requires_readback_before_reporting_cleanup(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    actions: list[tuple[str, ...]] = []
+
+    def adb(_serial: str, *args: str) -> str:
+        actions.append(args)
+        return "30" if args[-1] == "ro.build.version.sdk" else ""
+
+    monkeypatch.setattr(m.core, "adb", adb)
+    monkeypatch.setattr(m, "original_rotation_settings", lambda *_: ("0", "0"))
+    monkeypatch.setattr(m.time, "sleep", lambda *_: None)
+    with pytest.raises(AssertionError, match="not restored"):
+        m.restore_rotation("emulator-5554", ("1", "0"))
+    assert actions[1][-2:] == ("user_rotation", "0")
+    assert actions[2][-2:] == ("accelerometer_rotation", "1")
+
+
+def test_restore_accepts_only_matching_original_preferences(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    actions: list[tuple[str, ...]] = []
+
+    def adb(_serial: str, *args: str) -> str:
+        actions.append(args)
+        return "30" if args[-1] == "ro.build.version.sdk" else ""
+
+    monkeypatch.setattr(m.core, "adb", adb)
+    monkeypatch.setattr(m, "original_rotation_settings", lambda *_: ("1", "0"))
+    m.restore_rotation("emulator-5554", ("1", "0"))
+    assert len(actions) == 3
+
+
+def test_android13_plus_rotation_dispatches_to_window_manager(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    actions: list[tuple[str, ...]] = []
+
+    def adb(_serial: str, *args: str) -> str:
+        actions.append(args)
+        return "34" if args[-1] == "ro.build.version.sdk" else ""
+
+    monkeypatch.setattr(m.core, "adb", adb)
+    m.set_rotation("emulator-5556", 1)
+    assert actions[-1] == ("shell", "cmd", "window", "user-rotation", "lock", "1")
+    assert not any("settings" in action for action in actions)
+
+
+def test_android11_rotation_uses_supported_settings_fallback(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    actions: list[tuple[str, ...]] = []
+
+    def adb(_serial: str, *args: str) -> str:
+        actions.append(args)
+        return "30" if args[-1] == "ro.build.version.sdk" else ""
+
+    monkeypatch.setattr(m.core, "adb", adb)
+    m.set_rotation("emulator-5560", 1)
+    assert actions[1][-2:] == ("accelerometer_rotation", "0")
+    assert actions[2][-2:] == ("user_rotation", "1")
+
+
+def test_modern_restore_frees_window_mode_then_restores_user_angle(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    actions: list[tuple[str, ...]] = []
+
+    def adb(_serial: str, *args: str) -> str:
+        actions.append(args)
+        if args[-1] == "ro.build.version.sdk":
+            return "36"
+        if args == ("shell", "cmd", "window", "user-rotation"):
+            return "free"
+        return ""
+
+    monkeypatch.setattr(m.core, "adb", adb)
+    monkeypatch.setattr(m, "original_rotation_settings", lambda *_: ("1", "0"))
+    m.restore_rotation("emulator-5554", ("1", "0"))
+    assert ("shell", "cmd", "window", "user-rotation", "free") in actions
+    assert ("shell", "settings", "put", "system", "user_rotation", "0") in actions
+
+
+def test_modern_restore_fails_when_window_manager_remains_locked(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def adb(_serial: str, *args: str) -> str:
+        if args[-1] == "ro.build.version.sdk":
+            return "34"
+        if args == ("shell", "cmd", "window", "user-rotation"):
+            return "lock 1"
+        return ""
+
+    monkeypatch.setattr(m.core, "adb", adb)
+    monkeypatch.setattr(m, "original_rotation_settings", lambda *_: ("1", "0"))
+    monkeypatch.setattr(m.time, "sleep", lambda *_: None)
+    with pytest.raises(AssertionError, match="window mode"):
+        m.restore_rotation("emulator-5556", ("1", "0"))

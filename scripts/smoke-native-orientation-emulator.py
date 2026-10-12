@@ -73,22 +73,64 @@ def original_rotation_settings(serial: str) -> tuple[str, str]:
     return auto, user
 
 
+def supports_window_rotation_command(serial: str) -> bool:
+    # Android 11's WindowManager command lacks user-rotation. On API 33+
+    # the WindowManager service, not merely the Settings database, owns the
+    # effective lock/free mode. Query only on a preverified disposable AVD.
+    api = core.adb(serial, "shell", "getprop", "ro.build.version.sdk").strip()
+    if api not in {"30", "33", "34", "36"}:
+        raise ValueError("Unexpected API before emulator rotation")
+    return int(api) >= 33
+
+
 def set_rotation(serial: str, target: int) -> None:
     if target not in (0, 1, 2, 3):
         raise ValueError("Cannot set unrecognized screen orientation")
-    core.adb(
-        serial, "shell", "settings", "put", "system", "accelerometer_rotation", "0"
-    )
-    core.adb(serial, "shell", "settings", "put", "system", "user_rotation", str(target))
+    if supports_window_rotation_command(serial):
+        core.adb(serial, "shell", "cmd", "window", "user-rotation", "lock", str(target))
+    else:
+        core.adb(
+            serial, "shell", "settings", "put", "system", "accelerometer_rotation", "0"
+        )
+        core.adb(
+            serial, "shell", "settings", "put", "system", "user_rotation", str(target)
+        )
 
 
 def restore_rotation(serial: str, original: tuple[str, str]) -> None:
     auto, user = original
-    # Restore both settings rather than leaving landscape/user-rotation locks.
-    core.adb(serial, "shell", "settings", "put", "system", "user_rotation", user)
-    core.adb(
-        serial, "shell", "settings", "put", "system", "accelerometer_rotation", auto
-    )
+    use_window = supports_window_rotation_command(serial)
+    if use_window:
+        if auto == "1":
+            core.adb(serial, "shell", "cmd", "window", "user-rotation", "free")
+            # Freeing WindowManager auto-rotation leaves the previous locked
+            # user_rotation value in Settings. Restore it only *after* free;
+            # this Settings write does not reactivate the rotation lock.
+            core.adb(
+                serial, "shell", "settings", "put", "system", "user_rotation", user
+            )
+        else:
+            core.adb(serial, "shell", "cmd", "window", "user-rotation", "lock", user)
+    else:
+        core.adb(serial, "shell", "settings", "put", "system", "user_rotation", user)
+        core.adb(
+            serial, "shell", "settings", "put", "system", "accelerometer_rotation", auto
+        )
+
+    # A successful Settings put does not necessarily reset the active lock.
+    # Require BOTH settings readback and the WindowManager effective mode.
+    expected_mode = "free" if auto == "1" else f"lock {user}"
+    for _ in range(12):
+        current = original_rotation_settings(serial)
+        mode = (
+            core.adb(serial, "shell", "cmd", "window", "user-rotation").strip()
+            if use_window
+            else expected_mode
+        )
+        if current == original and mode == expected_mode:
+            return
+        time.sleep(0.25)
+    raise AssertionError("AVD rotation preferences or window mode were not restored")
 
 
 def run(serial: str, api: int, apk: Path) -> dict[str, object]:
