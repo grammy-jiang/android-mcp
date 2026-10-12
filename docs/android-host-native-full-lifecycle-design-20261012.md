@@ -166,6 +166,8 @@ wrappers for every OS subcommand.
 | Connections | `adb_transport_inspect`, `adb_transport_pair`, `adb_forward_inspect`, `adb_forward_manage` | Safe connection setup/repair | D0/W2, pairing owner |
 | Recovery | `fastboot_inspect`, `recovery_plan`, `recovery_artifacts_verify` | Preflight and physically supervised repair | D0/D1, maintenance profile |
 | AOSP development | `aosp_source_status`, `aosp_build_plan`, `aosp_build_run`, `aosp_test_run` | Source-to-ROM/CTS/VTS lifecycle | W3, build-worker profile |
+| NDK/native debug | ndk_toolchain_inventory, native_build_plan, native_build_run, native_crash_symbolize | Reproduce C/C++ Android builds and symbolized native crashes | D0/W3, pinned project and tools |
+| App distribution | release_track_list, release_draft_plan, release_artifact_upload, release_commit, release_halt | Tester distribution, approved staged rollout and release monitoring | D1/W3, separately connected provider with account-scoped grants |
 
 For **Native**, the proposed primary Tools are
 `native_device_status` (existing),
@@ -342,7 +344,8 @@ Official command catalog + real tool versions + Native source audit
              Tool selection & fallback contract
                        │
               Host SDK/build/artifacts  ── Native health continued
-                       │
+                       │                └── Optional distribution (Stage 9;
+                       │                    separate provider authorization)
             Emulator/test/deployment plan
                        │
               UI/media/file overlap
@@ -406,7 +409,7 @@ measured separately if both are accepted target surfaces.
 | App distribution | Separate opt-in Firebase/Play provider, read before write and no default publishing | External account connection, release policy and human approval required |
 | Android SDK CLI | Prefer modern `android` CLI only after exact installed/version support proof; fallback to legacy with tests | Installed Java-dependent wrappers currently fail in Mac session |
 | Security gates | Zero-paid local matrices, device/Native permission and independent high-risk review | Paying for GitHub Hosted Actions is not required/authorized |
-| Implementation order | Stage 0 safety then Stages 1–5, privileged Stages 6–8 afterward | Some read-only Fastboot work may occur earlier |
+| Implementation order | Stage 0 safety, routine Stages 1–5, gated Stages 6–9; Stage 9 follows build/artifact evidence | Read-only Fastboot can occur earlier; distribution does not depend on ROM flashing |
 
 ## 12. Questions that need evidence, not guesses
 
