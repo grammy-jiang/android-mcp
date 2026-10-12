@@ -24,6 +24,8 @@ fi
 
 echo "== Live local Python <-> Kotlin MCP and shared schema acceptance =="
 uv run --project host --locked --python 3.13 python scripts/smoke-native-jvm.py
+echo "== N0.b Kotlin/JVM hostile localhost Host/Origin/HTTP denial smoke =="
+uv run --project host --locked --python 3.13 python scripts/smoke-native-local-guard.py
 echo "== Emulator-only guard and UI selection tests (no Android SDK) =="
 uv run --project host --locked --group dev --python 3.13 pytest -q android/tests
 
