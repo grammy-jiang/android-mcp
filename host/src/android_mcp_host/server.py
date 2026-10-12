@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import asyncio
+import threading
 from typing import Annotated
 
 from fastmcp import FastMCP
 from pydantic import Field
 
 from android_mcp_host.adb import AdbClient
+from android_mcp_host.adb_transport import AdbTransport, get_transport_output_schema
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
@@ -28,6 +30,7 @@ def create_server(
     toolchain_inventory: ToolchainInventory | None = None,
     capability_profiles: CapabilityProfiles | None = None,
     adb_discovery: DeviceDiscovery | None = None,
+    adb_transport: AdbTransport | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -167,5 +170,49 @@ def create_server(
         def adb_devices_list() -> dict[str, object]:
             """List ADB device states and transport IDs; never connect or select a device."""
             return adb_discovery.list_devices()
+
+    if adb_transport is not None:
+
+        @server.tool(
+            title="Inspect Exact Android ADB Transport",
+            output_schema=get_transport_output_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        async def adb_transport_inspect(
+            device_id: str,
+            transport_id: str,
+            target_state: str = "device",
+            wait_seconds: float = 0.0,
+            include_routes: bool = False,
+            include_mdns: bool = False,
+            mdns_endpoint: str | None = None,
+        ) -> dict[str, object]:
+            """Inspect an exact serial + transport ID, with bounded state wait.
+
+            Optionally list only TCP port numbers and count valid mDNS services.
+            No pairing, connect/disconnect, forwarding setup, or raw address
+            disclosure. This Tool does not authorize subsequent device actions.
+            """
+            cancel = threading.Event()
+            try:
+                return await asyncio.to_thread(
+                    adb_transport.inspect,
+                    device_id=device_id,
+                    transport_id=transport_id,
+                    target_state=target_state,
+                    wait_seconds=wait_seconds,
+                    include_routes=include_routes,
+                    include_mdns=include_mdns,
+                    mdns_endpoint=mdns_endpoint,
+                    cancel=cancel,
+                )
+            except asyncio.CancelledError:
+                cancel.set()
+                raise
 
     return server
