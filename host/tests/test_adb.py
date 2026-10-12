@@ -80,7 +80,8 @@ def test_adb_listing_failure_keeps_adb_available_with_error():
     assert report.available
     assert report.error is not None
     assert report.error.code == "ADB_LIST_FAILED"
-    assert report.error.message == "cannot connect to daemon: unavailable"
+    assert "cannot connect to daemon" not in report.error.message
+    assert report.error.message == "ADB command failed; check local Platform Tools diagnostics"
 
 
 def test_timeout_and_spawn_failure():
@@ -102,3 +103,18 @@ def test_timeout_and_spawn_failure():
 def test_timeout_cannot_be_nonpositive():
     with pytest.raises(ValueError, match="positive"):
         AdbClient(timeout_s=0)
+
+
+def test_adb_listing_rejects_untrusted_device_serial_and_properties():
+    listing = (
+        "List of devices attached\n"
+        "NORMAL device model:OnePlus\x1b[31m product:Safe transport_id:3\n"
+        "BAD\x1b[31m device model:bad\n"
+        "SAFE device dangerous:CTRL\x00VALUE app:com.example icon:star\n"
+    )
+    devices = parse_device_listing(listing)
+    assert [device.device_id for device in devices] == ["NORMAL", "SAFE"]
+    assert devices[0].properties == {"product": "Safe", "transport_id": "3"}
+    assert devices[1].properties == {"app": "com.example", "icon": "star"}
+    assert "\x1b" not in str(devices)
+    assert "\x00" not in str(devices)

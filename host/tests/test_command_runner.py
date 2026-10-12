@@ -127,6 +127,51 @@ def test_deadline_expiring_just_after_both_pipes_finish(monkeypatch):
 
     import android_mcp_host.command_runner as runner
 
+    # Simulate both EOF events in one selector iteration. A real subprocess
+    # may deliver those events in different iterations depending on OS load,
+    # making a synthetic-clock coverage test flaky across CI runners.
+    class Pipe:
+        def __init__(self, fd):
+            self.fd = fd
+            self.closed = False
+
+        def fileno(self):
+            return self.fd
+
+        def close(self):
+            self.closed = True
+
+    class Process:
+        def __init__(self):
+            self.stdout = Pipe(100)
+            self.stderr = Pipe(101)
+            self.pid = 12345
+
+    class Selector:
+        def __init__(self):
+            self.keys = {}
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return None
+
+        def register(self, stream, _events, name):
+            fd = stream.fileno()
+            self.keys[fd] = types.SimpleNamespace(fd=fd, fileobj=stream, data=name)
+
+        def get_map(self):
+            return self.keys
+
+        def select(self, _timeout):
+            return [(key, None) for key in self.keys.values()]
+
+        def unregister(self, stream):
+            del self.keys[stream.fileno()]
+
+    process = Process()
+    cleaned = []
     clock_reads = 0
 
     def monotonic():
@@ -134,10 +179,15 @@ def test_deadline_expiring_just_after_both_pipes_finish(monkeypatch):
         clock_reads += 1
         return 0.0 if clock_reads <= 2 else 2.0
 
+    monkeypatch.setattr(runner.subprocess, "Popen", lambda *args, **kwargs: process)
+    monkeypatch.setattr(runner.selectors, "DefaultSelector", Selector)
+    monkeypatch.setattr(runner.os, "set_blocking", lambda *args: None)
+    monkeypatch.setattr(runner.os, "read", lambda *args: b"")
     monkeypatch.setattr(runner, "time", types.SimpleNamespace(monotonic=monotonic))
-    # The synthetic deadline is injected after process EOF; no process needs
-    # killing, and the real process-group cleanup has separate tests.
-    monkeypatch.setattr(runner, "_end_process", lambda process: process.wait(timeout=2))
+    monkeypatch.setattr(runner, "_end_process", lambda obj: cleaned.append(obj))
+
     with pytest.raises(subprocess.TimeoutExpired):
-        bounded_run([sys.executable, "-c", "pass"], 1.0, 4096)
-    assert clock_reads >= 3
+        bounded_run(["synthetic-command"], 1.0, 4096)
+    assert clock_reads == 3
+    assert cleaned == [process]
+    assert process.stdout.closed and process.stderr.closed
