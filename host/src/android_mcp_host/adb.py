@@ -6,6 +6,7 @@ background daemon. Future mutations will require explicit device selection.
 
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 from collections.abc import Callable
@@ -24,6 +25,19 @@ ALLOWED_STATES = {
     "rescue",
     "no_permissions",
 }
+
+# These values are returned through device_status and must not carry terminal
+# escapes, long arbitrary strings or malformed identifiers from ADB stdout.
+_DEVICE_SERIAL = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:\-]{0,127}\Z", re.ASCII)
+_PROPERTY_KEY = re.compile(r"[A-Za-z0-9_]{1,40}\Z", re.ASCII)
+_PROPERTY_VALUE = re.compile(r"[A-Za-z0-9_.:+/@-]{1,128}\Z", re.ASCII)
+_VERSION = re.compile(r"[0-9][0-9A-Za-z.+-]{0,63}\Z", re.ASCII)
+
+
+def valid_device_serial(value: object) -> bool:
+    """Use the same strict serial grammar for discovery and tool selection."""
+    return isinstance(value, str) and _DEVICE_SERIAL.fullmatch(value) is not None
+
 
 Runner = Callable[[list[str], float], subprocess.CompletedProcess[str]]
 Locator = Callable[[str], str | None]
@@ -65,7 +79,7 @@ def parse_device_listing(stdout: str) -> tuple[Device, ...]:
         if not line or line.startswith(("List of devices attached", "*")):
             continue
         parts = line.split()
-        if len(parts) < 2:
+        if len(parts) < 2 or not valid_device_serial(parts[0]):
             continue
         state = parts[1]
         properties_start = 2
@@ -78,7 +92,7 @@ def parse_device_listing(stdout: str) -> tuple[Device, ...]:
         for part in parts[properties_start:]:
             if ":" in part:
                 name, value = part.split(":", 1)
-                if name and value:
+                if _PROPERTY_KEY.fullmatch(name) and _PROPERTY_VALUE.fullmatch(value):
                     properties[name] = value
         devices.append(Device(device_id=parts[0], state=state, properties=properties))
     return tuple(devices)
@@ -89,20 +103,20 @@ def _execute(argv: list[str], timeout_s: float) -> subprocess.CompletedProcess[s
 
 
 def _version(stdout: str) -> str | None:
-    for line in stdout.splitlines():
-        stripped = line.strip()
-        if stripped.startswith("Version "):
-            return stripped.removeprefix("Version ")
-    for line in stdout.splitlines():
-        stripped = line.strip()
-        if stripped.startswith("Android Debug Bridge version "):
-            return stripped.removeprefix("Android Debug Bridge version ")
+    for prefix in ("Version ", "Android Debug Bridge version "):
+        for line in stdout.splitlines():
+            stripped = line.strip()
+            if stripped.startswith(prefix):
+                candidate = stripped.removeprefix(prefix)
+                if _VERSION.fullmatch(candidate):
+                    return candidate
     return None
 
 
-def _clean_error(stderr: str) -> str:
-    # Avoid returning uncontrolled command output: diagnostics must be bounded.
-    return (stderr.strip().splitlines() or ["ADB returned a non-zero status"])[0][:240]
+def _clean_error(_stderr: str) -> str:
+    # Device/daemon stderr is attacker-controlled diagnostic material. Never
+    # copy even its first line into publicly returned MCP tool results.
+    return "ADB command failed; check local Platform Tools diagnostics"
 
 
 class AdbClient:
