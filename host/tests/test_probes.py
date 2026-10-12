@@ -70,6 +70,24 @@ def test_good_device_runs_only_whitelisted_commands_and_preserves_order():
     assert adb.calls == 1
 
 
+def test_compatibility_probe_uses_only_fixed_readonly_properties():
+    service, _, calls = _service(on_run=lambda argv, timeout: _cp(argv, stdout="a-b-12\n"))
+    result = service.observe("SAMPLE-42", ["compatibility"])
+    assert result["status"] == "ok"
+    assert result["results"][0]["fields"] == {
+        "primary_abi": "a-b-12",
+        "security_patch": "a-b-12",
+        "soc_model": "a-b-12",
+        "kernel_release": "a-b-12",
+    }
+    assert [call[0][3:] for call in calls] == [
+        ["shell", "getprop", "ro.product.cpu.abi"],
+        ["shell", "getprop", "ro.build.version.security_patch"],
+        ["shell", "getprop", "ro.soc.model"],
+        ["shell", "uname", "-r"],
+    ]
+
+
 @pytest.mark.parametrize("state", ["unauthorized", "offline", "recovery", "bootloader"])
 def test_not_ready_is_reported_without_running_any_shell(state):
     service, _, calls = _service(state=state)
@@ -225,6 +243,7 @@ def test_output_limit_fails_closed_without_infinite_logging():
 def test_readonly_registry_contains_no_root_su_or_user_arguments():
     assert set(PROBES) == {
         "identity",
+        "compatibility",
         "boot",
         "battery",
         "display",

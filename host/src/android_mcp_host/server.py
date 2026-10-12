@@ -39,7 +39,7 @@ def create_server(
     @server.tool
     async def adb_observe(device_id: str, probes: list[str]) -> dict[str, object]:
         """Read selected device diagnostics: identity, boot, battery, display,
-        storage, selinux, shell_identity, third_party_packages. Read-only.
+        storage, selinux, shell_identity, third_party_packages, compatibility. Read-only.
         The serial must match one online, authorized device from device_status.
         """
         return await asyncio.to_thread(observer.observe, device_id, probes)

@@ -39,6 +39,12 @@ PROBES: Mapping[str, tuple[CommandSpec, ...]] = {
         CommandSpec("build_type", ("shell", "getprop", "ro.build.type")),
         CommandSpec("lineage_version", ("shell", "getprop", "ro.lineage.version")),
     ),
+    "compatibility": (
+        CommandSpec("primary_abi", ("shell", "getprop", "ro.product.cpu.abi")),
+        CommandSpec("security_patch", ("shell", "getprop", "ro.build.version.security_patch")),
+        CommandSpec("soc_model", ("shell", "getprop", "ro.soc.model")),
+        CommandSpec("kernel_release", ("shell", "uname", "-r")),
+    ),
     "boot": (
         CommandSpec("boot_completed", ("shell", "getprop", "sys.boot_completed")),
         CommandSpec("debuggable", ("shell", "getprop", "ro.debuggable")),
