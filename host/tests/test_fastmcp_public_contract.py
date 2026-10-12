@@ -119,7 +119,7 @@ def test_required_status_envelope_and_read_only_observation():
         assert status.structured_content["schema_version"] == 1
         assert status.structured_content["runtime"] == "host"
         for key in ("host", "capabilities", "adb", "devices", "errors"):
-            assert key in status.data
+            assert key in status.structured_content
         assert [d["device_id"] for d in status.structured_content["devices"]] == [DEVICE]
 
         seen = await client.call_tool("adb_observe", {"device_id": DEVICE, "probes": ["selinux"]})
