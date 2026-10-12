@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 import platform
-import sys
 
 from android_mcp_host.adb import AdbClient
 from android_mcp_host.server import create_server
@@ -33,7 +32,3 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("Host runtime supports only macOS and Linux.")
     create_server().run(transport="http", host=args.host, port=args.port)
     return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())

@@ -2,7 +2,7 @@
 
 ## Current status (2026-10-12)
 
-**M0** foundational repository only. The Android tablet is not attached. The new host MCP has read-only discovery, a CLI/doctor, isolated ADB subprocess provider, contract fixtures, cross-platform automated tests, and documentation. Everything beyond that is a roadmap, not an implemented claim.
+**M0** foundational repository, Host quality-gate infrastructure and development standards only. The Android tablet is not attached. The new host MCP has read-only discovery, a CLI/doctor, isolated ADB subprocess provider, contract fixtures, cross-platform automated tests, and documentation. Everything beyond that is a roadmap, not an implemented claim.
 
 ## Parallel workstreams with explicit I/O
 
@@ -17,7 +17,7 @@
 
 ### Milestones
 
-- **M0** (this scaffold): private repository, Host read-only status, no-device tests, Mac/Linux CI, draft Android architecture and security.
+- **M0** (this scaffold): private repository, Host read-only status, no-device tests, Mac/Linux CI, draft Android architecture and security; locked lint/type/coverage checks, Git hooks, developer doctor, package smoke and scheduled audits.
 - **M1**: gated Host ADB capabilities: explicit serial, validated read-only diagnostic operations, stable errors/timeouts, Linux USB permission guidance; separate tests.
 - **M2**: minimal Kotlin Android Native MCP (no root), real UI/screenshot observation, App lifecycle.
 - **M3**: independently authenticated MCP endpoints tested in ChatGPT ordinary Chat; return rendered screenshots and real UI info.
@@ -28,7 +28,7 @@
 
 ## Test execution policy
 
-Run affected unit tests for each workstream change. At merge/release gates, run all unit tests, format/lint, contract tests and cross-platform CI. Real-device tests remain separately gated, and cannot be replaced by mock-only claims.
+Run affected unit tests for each workstream change. At merge/release gates, run locked Ruff, strict mypy, Bandit, branch coverage policy, contract and fault tests, distribution smoke, secret scanning and the cross-platform CI matrix. Real-device tests remain separately gated, and cannot be replaced by mock-only claims.
 
 ## First device session checklist
 

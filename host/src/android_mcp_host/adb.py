@@ -60,7 +60,7 @@ def parse_device_listing(stdout: str) -> tuple[Device, ...]:
     devices: list[Device] = []
     for original in stdout.splitlines():
         line = original.strip()
-        if not line or line.startswith("List of devices attached") or line.startswith("*"):
+        if not line or line.startswith(("List of devices attached", "*")):
             continue
         parts = line.split()
         if len(parts) < 2:

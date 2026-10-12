@@ -14,18 +14,21 @@ The runtimes share *contracts*, security rules, release intent, and tests—not 
 Prerequisites: macOS or Linux, Python 3.11–3.14, and [uv](https://docs.astral.sh/uv/). ADB is optional for starting the server; without it, status explicitly reports the missing dependency.
 
 ```bash
-uv sync --project host --locked --group dev
+python3 scripts/dev.py bootstrap
+python3 scripts/dev.py doctor --require-hooks
 uv run --project host --locked android-mcp-host doctor
 uv run --project host --locked android-mcp-host serve
 ```
 
 The host MCP endpoint is **localhost-only**: `http://127.0.0.1:8765/mcp/`. It has **no built-in remote access/authentication in this scaffold**. Do not expose it directly to a network or the public internet.
 
-To run the host checks:
+To run the complete Host checks (lint, strict types, security, branch coverage and contract tests):
 
 ```bash
-./scripts/check-host.sh
+python3 scripts/dev.py check
 ```
+
+The quality policy is fail-closed for every production module. CI covers Ubuntu/macOS and Python 3.11/3.13/3.14. Hardware-free tests do not need Android Platform Tools or a physical device.
 
 Current MCP tool:
 
@@ -59,6 +62,6 @@ The host and native servers are separately addressable MCP endpoints, with capab
 
 This repository is **independent of Binnacle**, and must not mutate Binnacle's repository or deployment. Later modules may cover the Android software lifecycle (APK deployment, logs, tests, performance, system maintenance, recovery) and a shopping automation adapter for Taobao, Goofish, and JD. Those domains must remain isolated from the core Android device transport.
 
-See [architecture](docs/architecture.md), [compatibility](docs/compatibility.md), [security](docs/security.md), [contracts](docs/contracts.md), and [milestones](docs/roadmap.md).
+See [architecture](docs/architecture.md), [development](docs/development.md), [quality](docs/quality.md), [testing](docs/testing.md), [compatibility](docs/compatibility.md), [security](docs/security.md), [contracts](docs/contracts.md), and [milestones](docs/roadmap.md).
 
 中文概览：这是一个 Monorepo、两个 MCP Runtime；电脑端专注 ADB/Fastboot，安卓端专注本机交互与可选高权限能力。当前仅实现电脑端只读诊断骨架，尚未接入实际平板、Root 或电商应用。

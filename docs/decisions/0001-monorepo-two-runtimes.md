@@ -10,6 +10,7 @@ Android engineering spans UI automation within the device and ADB/Fastboot opera
 ## Decision
 
 Maintain one `android-mcp` repository with:
+
 - `host/`: Python/FastMCP, macOS and Linux, Android Platform Tools.
 - `android/`: Android/Kotlin runtime, to be implemented.
 - `contracts/`: platform-neutral capabilities and message schemas.
