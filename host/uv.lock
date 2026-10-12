@@ -25,6 +25,7 @@ name = "android-mcp-host"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "cryptography" },
     { name = "fastmcp" },
 ]
 
@@ -44,7 +45,10 @@ security = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "fastmcp", specifier = "==4.1.0" }]
+requires-dist = [
+    { name = "cryptography", specifier = ">=46,<51" },
+    { name = "fastmcp", specifier = "==4.1.0" },
+]
 
 [package.metadata.requires-dev]
 dev = [

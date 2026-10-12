@@ -4,11 +4,13 @@
 
 A network-exposed MCP endpoint can receive model-generated requests. Android devices may hold app credentials, photos, notifications, address details, payments or development secrets. ADB/Root and native Accessibility are highly privileged automation surfaces.
 
-## Defaults of the first scaffold
+## Defaults of the integrated Host candidate
 
-- One **read-only** MCP operation: `device_status`.
+- Three public Host tools: `device_status`, `adb_observe`, `adb_develop`. The latter two require explicit device IDs and registered ADB devices.
 - `serve` binds to `127.0.0.1` only and rejects other listen addresses.
-- No root, arbitrary shell/ADB command, APK install, live device mutation, or Android credentials.
+- No root, arbitrary shell/ADB command, executed APK install, executed instrumentation, live device mutation, or Android credentials. Signed-grant and Host lease components are prototypes but **not enabled by production server composition**.
+- The legacy boolean approval/lease hooks have been removed; a mutating operation can only reach an injected secure coordinator, which itself requires an independently trusted signed grant and unimplemented Native lease bridge.
+- Logcat and package diagnostics may expose sensitive app data. Keep the server loopback-only, do not persist raw captures in audit records, and apply narrowly scoped capture limits.
 - No remotely accessible service or tunnel is created by repository setup.
 - No screenshots, UI dumps, secrets or serial numbers included in CI logs.
 
@@ -34,4 +36,4 @@ A network-exposed MCP endpoint can receive model-generated requests. Android dev
 4. Timeout/lease/recovery tests for state-changing actions.
 5. Explicit user approval on operations with lasting/destructive consequences.
 
-Nothing in the initial scaffold is a security audit of a production remote MCP implementation.
+Successful mock tests and local HTTP calls do not establish Native lease safety or an authenticated remote MCP. Production high-privilege operations remain disabled until device identity pairing, verified Native lease fencing, authorization and an independent security review are complete.

@@ -36,7 +36,7 @@ def check_policy(root: Path, report_path: Path, policy_path: Path) -> list[str]:
     }
     exempt = set(policy["coverage_exempt_entrypoints"])
     production = {
-        "src/android_mcp_host/" + path.name for path in source.glob("*.py")
+        path.relative_to(root / "host").as_posix() for path in source.rglob("*.py")
     } - exempt
     if not production:
         errors.append("No production modules found for the coverage gate")

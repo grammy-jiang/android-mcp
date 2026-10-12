@@ -7,7 +7,7 @@ A **single repository with two independent MCP runtimes** for Android engineerin
 
 The runtimes share *contracts*, security rules, release intent, and tests—not a mandatory live network dependency. The host can recover the tablet if the native service is down; the native service can operate without the host.
 
-> **Status:** early scaffold. The only implemented MCP operation is **read-only host/device discovery**. No device-changing commands, Android APK, shopping adapters, root broker, or remote authentication are implemented yet.
+> **Status (2026-10-12):** Host H1/H2/H3 integration candidate. Three Host MCP tools are available; observe/package/logcat operations require a connected authorized Android device. Install/instrument commands can be planned but are **disabled for actual execution** until a trusted operator grant, durable audit and Host↔Native joint lease are implemented and independently verified. There is no Android APK, shopping adapter, root broker or remote authentication yet.
 
 ## Host quick start
 
@@ -35,7 +35,8 @@ Current MCP tool:
 | Tool | Status | Purpose |
 | --- | --- | --- |
 | `device_status` | Implemented, read-only | Host OS/architecture, ADB availability, connected device states, and diagnosed errors |
-| Typed ADB operations | Planned | Scoped, explicit-device actions; never unrestricted shell by default |
+| `adb_observe` | Implemented; device required | Allowlisted system/boot/battery/display/storage/SELinux/identity/package observations |
+| `adb_develop` | Implemented; device required | Bounded package diagnostics, Logcat snapshots, preview of APK install/instrumentation (actual mutations blocked by default) |
 | Native UI/privileged tools | Planned | Android-only services with separate permission controls |
 
 ## Repository map
@@ -62,6 +63,6 @@ The host and native servers are separately addressable MCP endpoints, with capab
 
 This repository is **independent of Binnacle**, and must not mutate Binnacle's repository or deployment. Later modules may cover the Android software lifecycle (APK deployment, logs, tests, performance, system maintenance, recovery) and a shopping automation adapter for Taobao, Goofish, and JD. Those domains must remain isolated from the core Android device transport.
 
-See [architecture](docs/architecture.md), [development](docs/development.md), [quality](docs/quality.md), [testing](docs/testing.md), [compatibility](docs/compatibility.md), [security](docs/security.md), [contracts](docs/contracts.md), and [milestones](docs/roadmap.md).
+See [Host integration verification](docs/host-integration-verification.md), [Host/Native coordination design](docs/host-native-coordination.md), [architecture](docs/architecture.md), [development](docs/development.md), [quality](docs/quality.md), [testing](docs/testing.md), [compatibility](docs/compatibility.md), [security](docs/security.md), [contracts](docs/contracts.md), and [milestones](docs/roadmap.md).
 
-中文概览：这是一个 Monorepo、两个 MCP Runtime；电脑端专注 ADB/Fastboot，安卓端专注本机交互与可选高权限能力。当前仅实现电脑端只读诊断骨架，尚未接入实际平板、Root 或电商应用。
+中文概览：这是一个 Monorepo、两个独立 MCP Runtime。Host 已实现只读 ADB 观察与受限开发命令规划，以及默认关闭的高权限执行原型；尚未连接真实平板，也没有 Android Native APK、Root、购物适配器或公网服务。

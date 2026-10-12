@@ -7,7 +7,7 @@ name = "android-mcp-host"
 version = "0.1.0"
 description = "Cross-platform macOS/Linux ADB host runtime for Android MCP."
 requires-python = ">=3.11,<3.15"
-dependencies = ["fastmcp==4.1.0"]
+dependencies = ["fastmcp==4.1.0", "cryptography>=46,<51"]
 
 [project.scripts]
 android-mcp-host = "android_mcp_host.cli:main"

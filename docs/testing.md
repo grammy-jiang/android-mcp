@@ -4,7 +4,7 @@
 
 1. **Pure unit tests (Host, current):** ADB parsing, error handling, platform normalization, CLI guards, capability logic; no ADB daemon or Android device required.
 2. **Contract tests (current):** JSON Schema fixtures and the FastMCP local in-process client; detect drift of shared data formats and tool lists.
-3. **Host-process integration (planned with new commands):** launch localhost Streamable HTTP, inspect actual MCP tool round trips; fake ADB executable in PATH for deterministic outcomes.
+3. **Host-process integration (implemented, hardware-free):** launch the actual Host CLI over localhost Streamable HTTP; exercise device discovery, allowlisted probes, typed Logcat and mutation denial through an executable synthetic ADB in PATH. See `host/tests/test_host_http_fake_adb.py`.
 4. **Android JVM tests (future):** Kotlin adapters, durable state and privilege-policy fakes, no emulator required.
 5. **Android instrumentation/emulator (future):** AccessibilityService, screenshots, UI actions, process death, background limits.
 6. **Real hardware E2E (future):** Mac/Linux over USB and native HTTP separately, then coordination. Dedicated tablet required; opt-in and never implicitly run in CI.
