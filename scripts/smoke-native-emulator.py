@@ -25,6 +25,11 @@ from jsonschema import Draft202012Validator, ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 STATUS_SCHEMA = ROOT / "contracts/device-status.v1.schema.json"
+STATUS_GOLDEN = ROOT / "android/tests/fixtures/native-status-v1.json"
+STATUS_TOOL_DESCRIPTION = (
+    "Local read-only Native MCP availability, no device data or control."
+)
+
 PACKAGE = "org.androidmcp.nativeapp"
 ACTIVITY = f"{PACKAGE}/.NativeMcpActivity"
 AVD_SERIAL = re.compile(r"emulator-[0-9]{4,6}\Z")
@@ -121,32 +126,53 @@ async def assert_status(url: str) -> None:
         tools = await client.list_tools()
         if [tool.name for tool in tools] != ["device_status"]:
             raise AssertionError("Unexpected Native MCP tool catalog")
+        status_tool = tools[0]
+        schema = status_tool.input_schema
+        if (
+            status_tool.description != STATUS_TOOL_DESCRIPTION
+            or not isinstance(schema, dict)
+            or schema.get("type") != "object"
+            or schema.get("properties") != {}
+            or schema.get("required", []) != []
+        ):
+            raise AssertionError("Native v1 status Tool schema/metadata drifted")
+        # The Kotlin SDK rejects list_resources when no resources are
+        # advertised. Inspect the negotiated server capability instead:
+        # exposing Resources would be a baseline-breaking contract change.
+        capabilities = client.server_capabilities
+        if capabilities is None or capabilities.resources is not None:
+            raise AssertionError("Unexpected Native MCP Resources advertised")
         result = await client.call_tool("device_status", {})
         if result.is_error or len(result.content) != 1:
             raise AssertionError("On-device status tool failed")
         text = getattr(result.content[0], "text", None)
-        if not isinstance(text, str) or len(text) > CAPTURE_LIMIT:
+        if not isinstance(text, str) or len(text.encode("utf-8")) > CAPTURE_LIMIT:
             raise AssertionError("On-device status output malformed or oversized")
         payload = json.loads(text)
         Draft202012Validator(json.loads(STATUS_SCHEMA.read_text())).validate(payload)
-        caps = payload["capabilities"]
-        if (
-            payload["runtime"] != "android"
-            or payload["devices"]
-            or payload["errors"]
-            or caps.get("android.native.loopback_status") is not True
-            or any(
-                caps.get(key) is not False
-                for key in (
-                    "android.accessibility.observe",
-                    "android.accessibility.act",
-                    "android.privileged",
-                )
+        expected = json.loads(STATUS_GOLDEN.read_text(encoding="utf-8"))
+        # JSON canonicalization preserves value types (unlike Python == where
+        # True == 1) while allowing harmless object-key ordering differences.
+        canonical = lambda value: json.dumps(
+            value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+        )
+        if canonical(payload) != canonical(expected):
+            raise AssertionError("Native v1 golden status contract drifted")
+        try:
+            denied = await client.call_tool(
+                "__native_contract_unknown_tool__", {}, raise_on_error=False
             )
-        ):
-            raise AssertionError(
-                "Native MCP status capability/privacy contract drifted"
-            )
+        except Exception as error:
+            # A standard JSON-RPC Tool-not-found exception also proves denial.
+            message = str(error).lower()
+            if not any(
+                fragment in message
+                for fragment in ("not found", "unknown tool", "-32602")
+            ):
+                raise
+        else:
+            if not denied.is_error:
+                raise AssertionError("Unknown Native Tool unexpectedly succeeded")
 
 
 async def await_running(url: str) -> None:
@@ -159,7 +185,9 @@ async def await_running(url: str) -> None:
             Exception
         ) as exc:  # Startup failures can be SDK-specific exception groups
             # Never retry semantic/schema failures: transient transport only.
-            if isinstance(exc, (AssertionError, ValueError, ValidationError)):
+            if isinstance(exc, (AssertionError, ValueError, ValidationError)) or (
+                type(exc).__name__ == "MCPError"
+            ):
                 raise
             last_type = type(exc).__name__
             await asyncio.sleep(0.5)

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "runtime": "android",
+  "capabilities": {
+    "android.native.loopback_status": true,
+    "android.accessibility.observe": false,
+    "android.accessibility.act": false,
+    "android.privileged": false
+  },
+  "devices": [],
+  "errors": []
+}
