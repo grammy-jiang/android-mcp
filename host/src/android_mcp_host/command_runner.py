@@ -12,7 +12,7 @@ import selectors
 import signal
 import subprocess
 import time
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 
@@ -38,7 +38,13 @@ def _end_process(process: subprocess.Popen[bytes]) -> None:
     process.wait(timeout=2.0)
 
 
-def bounded_run(argv: Sequence[str], timeout_s: float, byte_limit: int) -> RunResult:
+def bounded_run(
+    argv: Sequence[str],
+    timeout_s: float,
+    byte_limit: int,
+    *,
+    env: Mapping[str, str] | None = None,
+) -> RunResult:
     """Capture limited bytes, killing the command if it exceeds resource limits."""
     if not 0 < timeout_s <= 180 or not 1024 <= byte_limit <= 262144:
         raise ValueError("Invalid execution limit")
@@ -48,6 +54,7 @@ def bounded_run(argv: Sequence[str], timeout_s: float, byte_limit: int) -> RunRe
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         start_new_session=True,
+        env=env,
     )
     captured: dict[str, bytearray] = {"stdout": bytearray(), "stderr": bytearray()}
     deadline = time.monotonic() + timeout_s

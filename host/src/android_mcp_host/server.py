@@ -23,6 +23,7 @@ from android_mcp_host.package_inspector import (
     get_package_output_schema,
 )
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
+from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
 from android_mcp_host.status import build_status
 from android_mcp_host.system_snapshot import SystemSnapshot, get_snapshot_output_schema
 from android_mcp_host.toolchain_inventory import (
@@ -43,6 +44,7 @@ def create_server(
     package_inspector: PackageInspector | None = None,
     logcat_filter: LogcatFilters | None = None,
     fastboot_inventory: FastbootInventory | None = None,
+    sdk_ndk_inventory: SdkNdkInventory | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -332,5 +334,26 @@ def create_server(
             mode switch, ADB fallback or inferred device authorization.
             """
             return await asyncio.to_thread(fastboot_inventory.discover)
+
+    if sdk_ndk_inventory is not None:
+
+        @server.tool(
+            title="Inspect Fixed Android Host SDK/NDK Workstation",
+            output_schema=get_sdk_ndk_output_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        async def host_sdk_ndk_inventory() -> dict[str, object]:
+            """Inspect fixed local SDK/JDK/NDK/Gradle prerequisites only.
+
+            No SDK installation, update, license agreement acceptance,
+            Gradle task execution, Android device operation or build grant.
+            Availability is not authorization or proof of accepted licenses.
+            """
+            return await asyncio.to_thread(sdk_ndk_inventory.inspect)
 
     return server
