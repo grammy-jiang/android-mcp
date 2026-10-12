@@ -1,0 +1,337 @@
+{
+  "counts": {
+    "prompts": 0,
+    "resource_templates": 0,
+    "resources": 0,
+    "tools": 3
+  },
+  "generated_utc": "2026-10-12T08:07:17.027118+00:00",
+  "provenance": "FastMCP Client in-process with synthetic ADB; no actual device or ADB subprocess",
+  "responses": [
+    {
+      "app_codes": [],
+      "app_dry_run": null,
+      "app_mutating": null,
+      "app_status": null,
+      "input": {},
+      "keys": [
+        "adb",
+        "capabilities",
+        "devices",
+        "errors",
+        "host",
+        "runtime",
+        "schema_version"
+      ],
+      "mcp_is_error": false,
+      "tool": "device_status"
+    },
+    {
+      "app_codes": [],
+      "app_dry_run": null,
+      "app_mutating": null,
+      "app_status": "ok",
+      "input": {
+        "device_id": "SYNTHETIC-01",
+        "probes": [
+          "selinux"
+        ]
+      },
+      "keys": [
+        "device_id",
+        "errors",
+        "results",
+        "runtime",
+        "schema_version",
+        "status"
+      ],
+      "mcp_is_error": false,
+      "tool": "adb_observe"
+    },
+    {
+      "app_codes": [
+        "INVALID_PROBE"
+      ],
+      "app_dry_run": null,
+      "app_mutating": null,
+      "app_status": "error",
+      "input": {
+        "device_id": "SYNTHETIC-01",
+        "probes": [
+          "unknown_probe"
+        ]
+      },
+      "keys": [
+        "device_id",
+        "errors",
+        "results",
+        "runtime",
+        "schema_version",
+        "status"
+      ],
+      "mcp_is_error": false,
+      "tool": "adb_observe"
+    },
+    {
+      "app_codes": [
+        "INVALID_DEVICE_ID"
+      ],
+      "app_dry_run": null,
+      "app_mutating": null,
+      "app_status": "error",
+      "input": {
+        "device_id": "BAD SERIAL",
+        "probes": [
+          "selinux"
+        ]
+      },
+      "keys": [
+        "device_id",
+        "errors",
+        "results",
+        "runtime",
+        "schema_version",
+        "status"
+      ],
+      "mcp_is_error": false,
+      "tool": "adb_observe"
+    },
+    {
+      "app_codes": [],
+      "app_dry_run": false,
+      "app_mutating": false,
+      "app_status": "ok",
+      "input": {
+        "action": {
+          "package": "com.example.test",
+          "type": "package_details"
+        },
+        "device_id": "SYNTHETIC-01"
+      },
+      "keys": [
+        "command",
+        "device_id",
+        "dry_run",
+        "errors",
+        "mutating",
+        "operation",
+        "result",
+        "runtime",
+        "schema_version",
+        "status"
+      ],
+      "mcp_is_error": false,
+      "tool": "adb_develop"
+    },
+    {
+      "app_codes": [
+        "MUTATION_DISABLED"
+      ],
+      "app_dry_run": false,
+      "app_mutating": true,
+      "app_status": "error",
+      "input": {
+        "action": {
+          "package": "com.example.test",
+          "runner": "com.example.Runner",
+          "type": "instrument_test"
+        },
+        "device_id": "SYNTHETIC-01"
+      },
+      "keys": [
+        "command",
+        "device_id",
+        "dry_run",
+        "errors",
+        "mutating",
+        "operation",
+        "result",
+        "runtime",
+        "schema_version",
+        "status"
+      ],
+      "mcp_is_error": false,
+      "tool": "adb_develop"
+    },
+    {
+      "app_codes": [],
+      "app_dry_run": true,
+      "app_mutating": true,
+      "app_status": "planned",
+      "input": {
+        "action": {
+          "package": "com.example.test",
+          "runner": "com.example.Runner",
+          "type": "instrument_test"
+        },
+        "device_id": "SYNTHETIC-01",
+        "dry_run": true
+      },
+      "keys": [
+        "command",
+        "device_id",
+        "dry_run",
+        "errors",
+        "mutating",
+        "operation",
+        "result",
+        "runtime",
+        "schema_version",
+        "status"
+      ],
+      "mcp_is_error": false,
+      "tool": "adb_develop"
+    },
+    {
+      "app_codes": [],
+      "app_dry_run": true,
+      "app_mutating": false,
+      "app_status": "planned",
+      "input": {
+        "action": {
+          "type": "logcat_snapshot"
+        },
+        "device_id": "SYNTHETIC-01",
+        "dry_run": "true"
+      },
+      "keys": [
+        "command",
+        "device_id",
+        "dry_run",
+        "errors",
+        "mutating",
+        "operation",
+        "result",
+        "runtime",
+        "schema_version",
+        "status"
+      ],
+      "mcp_is_error": false,
+      "tool": "adb_develop"
+    },
+    {
+      "app_codes": [
+        "UNKNOWN_OPERATION"
+      ],
+      "app_dry_run": false,
+      "app_mutating": false,
+      "app_status": "error",
+      "input": {
+        "action": {
+          "type": "arbitrary_shell"
+        },
+        "device_id": "SYNTHETIC-01"
+      },
+      "keys": [
+        "command",
+        "device_id",
+        "dry_run",
+        "errors",
+        "mutating",
+        "operation",
+        "result",
+        "runtime",
+        "schema_version",
+        "status"
+      ],
+      "mcp_is_error": false,
+      "tool": "adb_develop"
+    },
+    {
+      "app_codes": [],
+      "app_status": null,
+      "input": {
+        "device_id": "SYNTHETIC-01",
+        "probes": "selinux"
+      },
+      "keys": [],
+      "mcp_is_error": true,
+      "tool": "adb_observe"
+    }
+  ],
+  "synthetic_adb_executed_commands_count": 1,
+  "synthetic_adb_inspect_calls": 6,
+  "tools": [
+    {
+      "annotations": null,
+      "description": "Inspect host platform and ADB device states; never change a device.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      },
+      "name": "device_status",
+      "output_schema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Device Status"
+    },
+    {
+      "annotations": null,
+      "description": "Read selected device diagnostics: identity, boot, battery, display,\nstorage, selinux, shell_identity, third_party_packages, compatibility. Read-only.\nThe serial must match one online, authorized device from device_status.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "device_id": {
+            "type": "string"
+          },
+          "probes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "device_id",
+          "probes"
+        ],
+        "type": "object"
+      },
+      "name": "adb_observe",
+      "output_schema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Adb Observe"
+    },
+    {
+      "annotations": null,
+      "description": "Perform typed read-only package/logcat diagnostics or preview\nAPK installation and instrumentation. Mutations require trusted host\napproval, lease and audit gates, absent from this initial server.",
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "device_id": {
+            "type": "string"
+          },
+          "dry_run": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "device_id",
+          "action"
+        ],
+        "type": "object"
+      },
+      "name": "adb_develop",
+      "output_schema": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Adb Develop"
+    }
+  ],
+  "versions": {
+    "fastmcp": "4.1.0",
+    "mcp": "2.3.0",
+    "pydantic": "2.14.1",
+    "python": "3.13.16"
+  }
+}
