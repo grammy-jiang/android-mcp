@@ -13,6 +13,7 @@ from android_mcp_host.adb import AdbClient
 from android_mcp_host.adb_transport import AdbTransport, get_transport_output_schema
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
+from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
 from android_mcp_host.operations import OperationService
 from android_mcp_host.package_inspector import (
@@ -39,6 +40,7 @@ def create_server(
     adb_transport: AdbTransport | None = None,
     system_snapshot: SystemSnapshot | None = None,
     package_inspector: PackageInspector | None = None,
+    logcat_filter: LogcatFilters | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -271,6 +273,42 @@ def create_server(
                 package,
                 include_permissions=include_permissions,
                 permission_limit=permission_limit,
+            )
+
+    if logcat_filter is not None:
+
+        @server.tool(
+            title="Capture Bounded Redacted Android Logcat",
+            output_schema=get_logcat_output_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        async def adb_logcat_filter(
+            device_id: str,
+            lines: int = 100,
+            tag: str | None = None,
+            package: str | None = None,
+            severity: str | None = None,
+            timeout_s: float = 5.0,
+        ) -> dict[str, object]:
+            """Inspect device-pinned, bounded Logcat messages with best-effort redaction.
+
+            Logs can contain sensitive personal or application data. Never use
+            this Tool for unconsented collection; no arbitrary shell, file
+            capture, unbounded streaming or device modification is supported.
+            """
+            return await asyncio.to_thread(
+                logcat_filter.capture,
+                device_id,
+                lines=lines,
+                tag=tag,
+                package=package,
+                severity=severity,
+                timeout_s=timeout_s,
             )
 
     return server
