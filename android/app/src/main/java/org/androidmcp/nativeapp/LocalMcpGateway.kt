@@ -93,9 +93,13 @@ internal class LocalMcpGateway {
         // the listening port has been freed. Probe the Android kernel bind
         // state before releasing the process-local port owner.
         val released = awaitPortReleased()
-        if (!portOwner.confirmStopped(this, released)) {
+        // An exception in Ktor shutdown may indicate other engine resources
+        // were not released even if the kernel socket is now bindable.
+        // Require BOTH a clean engine stop and independently verified port
+        // closure before another mode can acquire the singleton listener.
+        if (!portOwner.confirmStopped(this, released && stopFailure == null)) {
             val failure = IllegalStateException(
-                "Native MCP listener shutdown unconfirmed; port owner retained"
+                "Native MCP shutdown not fully confirmed; port owner retained"
             )
             stopFailure?.let(failure::addSuppressed)
             throw failure
