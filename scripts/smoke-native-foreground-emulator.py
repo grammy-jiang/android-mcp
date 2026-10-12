@@ -34,6 +34,29 @@ assert spec is not None and spec.loader is not None
 core = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(core)
 
+ROTATION_SCRIPT = ROOT / "scripts/smoke-native-orientation-emulator.py"
+rotation_spec = importlib.util.spec_from_file_location(
+    "native_n0c_fgs_rotation", ROTATION_SCRIPT
+)
+assert rotation_spec is not None and rotation_spec.loader is not None
+rotation = importlib.util.module_from_spec(rotation_spec)
+rotation_spec.loader.exec_module(rotation)
+
+
+def assert_fgs_survives_real_orientation_change(serial: str, endpoint: str) -> None:
+    """User-visible FGS must remain alive across real AVD display rotation."""
+    api = int(core.adb(serial, "shell", "getprop", "ro.build.version.sdk").strip())
+    rotation.validate_target(serial, api)
+    original = rotation.original_rotation_settings(serial)
+    before = rotation.actual_orientation(serial)
+    try:
+        rotation.set_rotation(serial, (before + 1) % 4)
+        rotation.wait_orientation(serial, (before + 1) % 4)
+        asyncio.run(core.assert_status(endpoint))
+        check_service_running(serial)
+    finally:
+        rotation.restore_rotation(serial, original)
+
 
 def check_service_running(serial: str) -> None:
     """Confirm actual Android Service existence, not merely an open port."""
@@ -216,6 +239,7 @@ def run_emulator_service_test(serial: str, apk: Path) -> dict[str, object]:
 
         asyncio.run(core.await_running(endpoint))
         check_service_running(serial)
+        assert_fgs_survives_real_orientation_change(serial, endpoint)
 
         # Unlike N2 Activity-only mode, the foreground service deliberately
         # stays alive with its notification when the app goes to background.
@@ -260,6 +284,7 @@ def run_emulator_service_test(serial: str, apk: Path) -> dict[str, object]:
                 "notification_permission_denial",
                 "explicit_user_start",
                 "foreground_notification_service",
+                "orientation_preserves_foreground_service",
                 "mcp_status",
                 "home_keeps_running",
                 "competing_local_mode_rejected",
