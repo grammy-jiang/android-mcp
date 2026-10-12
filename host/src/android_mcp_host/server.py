@@ -13,6 +13,7 @@ from android_mcp_host.adb import AdbClient
 from android_mcp_host.adb_transport import AdbTransport, get_transport_output_schema
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
+from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
 from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
 from android_mcp_host.operations import OperationService
@@ -41,6 +42,7 @@ def create_server(
     system_snapshot: SystemSnapshot | None = None,
     package_inspector: PackageInspector | None = None,
     logcat_filter: LogcatFilters | None = None,
+    fastboot_inventory: FastbootInventory | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -310,5 +312,25 @@ def create_server(
                 severity=severity,
                 timeout_s=timeout_s,
             )
+
+    if fastboot_inventory is not None:
+
+        @server.tool(
+            title="Discover Read-Only Fastboot Transports",
+            output_schema=get_fastboot_output_schema(),
+            annotations={
+                "readOnlyHint": True,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        async def fastboot_devices_list() -> dict[str, object]:
+            """Read fixed Fastboot version and device transport listing only.
+
+            No getvar, flash, unlock, erase, reboot, recovery state change,
+            mode switch, ADB fallback or inferred device authorization.
+            """
+            return await asyncio.to_thread(fastboot_inventory.discover)
 
     return server

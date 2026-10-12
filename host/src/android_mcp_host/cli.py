@@ -11,6 +11,7 @@ from android_mcp_host.adb import AdbClient
 from android_mcp_host.adb_transport import AdbTransport
 from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.device_discovery import DeviceDiscovery
+from android_mcp_host.fastboot_inventory import FastbootInventory
 from android_mcp_host.logcat_filters import LogcatFilters
 from android_mcp_host.package_inspector import PackageInspector
 from android_mcp_host.server import create_server
@@ -62,6 +63,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Opt in to bounded Logcat capture with filtering and best-effort redaction.",
     )
+    serve.add_argument(
+        "--fastboot-inventory",
+        action="store_true",
+        help="Opt in to bounded Fastboot version and bootloader transport discovery only.",
+    )
     args = parser.parse_args(argv)
 
     if args.command == "doctor":
@@ -96,6 +102,8 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["package_inspector"] = PackageInspector()
     if args.adb_logcat_filter:
         kwargs["logcat_filter"] = LogcatFilters()
+    if args.fastboot_inventory:
+        kwargs["fastboot_inventory"] = FastbootInventory()
     server = create_server(**kwargs)
     server.run(transport="http", host=args.host, port=args.port)
     return 0
