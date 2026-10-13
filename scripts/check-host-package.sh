@@ -27,6 +27,7 @@ from android_mcp_host.server import create_server
 from android_mcp_host.durable_jobs import DurableJobStore, get_job_status_schema
 from android_mcp_host.emulator_lifecycle import EmulatorLifecycle, get_emulator_lifecycle_schema
 from android_mcp_host.emulator_instrumentation_jobs import InstrumentationJobs, get_instrumentation_schema
+from android_mcp_host.emulator_debug_deployment import DebugDeployment, get_debug_deploy_schema
 from android_mcp_host.emulator_snapshot_manager import (
     EmulatorSnapshotManager,
     get_snapshot_output_schema as get_emulator_snapshot_output_schema,
@@ -66,6 +67,7 @@ assert get_avd_output_schema()["$id"] == "urn:android-mcp:host-avd-inventory:v1"
 assert get_avd_provision_schema()["$id"] == "urn:android-mcp:host-avd-provision:v1"
 assert get_emulator_lifecycle_schema()["$id"] == "urn:android-mcp:host-emulator-lifecycle:v1"
 assert get_instrumentation_schema()["$id"] == "urn:android-mcp:host-emulator-instrumentation:v1"
+assert get_debug_deploy_schema()["$id"] == "urn:android-mcp:host-emulator-debug-deploy:v1"
 assert get_emulator_snapshot_output_schema()["$id"] == "urn:android-mcp:host-emulator-snapshot:v1"
 assert create_server(avd_inventory=AvdInventory(
     Path.home() / ".android" / "avd", Path.home() / "absent-synthetic-emulator"
@@ -92,6 +94,11 @@ with TemporaryDirectory() as owner_tmp:
     assert create_server(instrumentation_jobs=InstrumentationJobs(
         avd_provisioner, inert_lifecycle, inert_jobs, inert_artifacts,
         owner="synthetic-owner", artifact_owner="synthetic-artifacts",
+    )) is not None
+    assert create_server(debug_deployment=DebugDeployment(
+        avd_provisioner, inert_lifecycle, inert_jobs, inert_artifacts,
+        owner="synthetic-owner", artifact_owner="synthetic-artifacts",
+        expected_package="org.example.synthetic.debug",
     )) is not None
 assert get_archive_output_schema()["$id"] == "urn:android-mcp:host-archive-inspection:v1"
 assert get_build_job_schema()["$id"] == "urn:android-mcp:host-controlled-build-job:v1"

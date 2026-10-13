@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-emulator-debug-deploy:v1",
+  "title": "Synthetic-only disposable emulator debug deploy receipt v1",
+  "type": "object", "additionalProperties": false,
+  "required": [
+    "schema_version", "runtime", "status", "install_state", "avd_name",
+    "avd_handle", "package_id", "apk_sha256", "job_id", "report_handle",
+    "report_sha256", "signature_provenance", "target", "synthetic_fixture_only",
+    "real_deployment_enabled", "physical_device_writes_enabled", "errors"
+  ],
+  "properties": {
+    "schema_version": {"const": 1}, "runtime": {"const": "host"},
+    "status": {"enum": ["planned", "simulated", "failed", "blocked", "uncertain"]},
+    "install_state": {"enum": ["none", "synthetic_installed", "synthetic_launched",
+      "synthetic_removed", "unknown"]},
+    "avd_name": {"type": ["string", "null"], "pattern": "^mcp_[A-Za-z0-9][A-Za-z0-9_-]{2,43}$"},
+    "avd_handle": {"type": ["string", "null"], "pattern": "^mcpavd_[A-Za-z0-9_-]{32}$"},
+    "package_id": {"type": ["string", "null"], "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*){2,6}$"},
+    "apk_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "job_id": {"type": ["string", "null"], "pattern": "^job_[A-Za-z0-9_-]{32}$"},
+    "report_handle": {"type": ["string", "null"], "pattern": "^art_[A-Za-z0-9_-]{32}$"},
+    "report_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "signature_provenance": {"const": "synthetic_hmac_fixture_only"},
+    "target": {"const": "disposable_emulator_only"},
+    "synthetic_fixture_only": {"const": true},
+    "real_deployment_enabled": {"const": false},
+    "physical_device_writes_enabled": {"const": false},
+    "errors": {"type": "array", "maxItems": 1, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": {"enum": ["INVALID_ACTION", "INVALID_INPUT", "NOT_OWNED",
+          "BAD_APK", "UNVERIFIED_TARGET", "EXECUTION_DISABLED", "NOT_INSTALLED",
+          "RECOVERY_REQUIRED", "JOB_UNAVAILABLE", "IDEMPOTENCY_CONFLICT",
+          "FIXTURE_FAILED", "OUTPUT_INVALID", "TIMEOUT", "RUNNER_FAILED"]},
+        "message": {"type": "string", "maxLength": 96}
+      }
+    }}
+  }
+}
