@@ -221,6 +221,46 @@ class AvdProvisioner:
                 raise OwnedAvdError("STORAGE_FAILURE") from error
             return _response("deleted", self._metadata(name, handle))
 
+    @property
+    def private_root(self) -> Path:
+        """Trusted Host-internal root only; never returned by an MCP Tool."""
+        return self._root
+
+    @property
+    def trusted_owner(self) -> str:
+        """Host-internal provisioning owner; never exported to MCP callers."""
+        return self._owner
+
+    def verify_owned(self, name: str, handle: str) -> dict[str, Any] | None:
+        """Confirm exact image and HMAC owner before any synthetic fixture job."""
+        if (
+            not isinstance(name, str)
+            or _NAME.fullmatch(name) is None
+            or not isinstance(handle, str)
+            or _HANDLE.fullmatch(handle) is None
+        ):
+            return None
+        if not image_preflight(
+            self._sdk,
+            self._api,
+            self._abi,
+            self._source_digest,
+            self._image_digest,
+            self._license_digest,
+        ):
+            return None
+        try:
+            secret = root_key(self._root, create=False)
+            if secret is None:
+                return None
+            with provision_lock(self._root):
+                record = self._record(name, secret)
+                if record is None or record["handle"] != handle:
+                    return None
+                return self._metadata(name, handle)
+        except OwnedAvdError:
+            return None
+
     def provision(self, action: str, name: str, handle: str | None = None) -> dict[str, Any]:
         """Only operator-scoped synthetic local files; no emulator runs or installs."""
         if action not in ("plan", "create", "delete"):
