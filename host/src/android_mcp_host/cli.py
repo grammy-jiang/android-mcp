@@ -13,6 +13,7 @@ from android_mcp_host.adb_transport import AdbTransport
 from android_mcp_host.android_build_preflight import AndroidBuildPreflight
 from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.device_discovery import DeviceDiscovery
+from android_mcp_host.durable_jobs import DurableJobStore
 from android_mcp_host.fastboot_inventory import FastbootInventory
 from android_mcp_host.logcat_filters import LogcatFilters
 from android_mcp_host.package_inspector import PackageInspector
@@ -114,6 +115,22 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Trusted Host owner scope; never selectable by an MCP caller.",
     )
+    serve.add_argument(
+        "--durable-job-status",
+        action="store_true",
+        help="Opt in to read-only owner-scoped persisted job status.",
+    )
+    serve.add_argument(
+        "--job-root",
+        type=Path,
+        default=None,
+        help="Host-operator-selected private job record directory.",
+    )
+    serve.add_argument(
+        "--job-owner",
+        default=None,
+        help="Trusted Host owner scope for job metadata only.",
+    )
     args = parser.parse_args(argv)
 
     if args.command == "doctor":
@@ -171,6 +188,17 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["artifact_owner"] = args.artifact_owner
     elif args.artifact_root is not None or args.artifact_owner is not None:
         parser.error("Private artifact options require --artifact-metadata.")
+    if args.durable_job_status:
+        if (
+            args.job_root is None
+            or not args.job_root.is_absolute()
+            or not DurableJobStore.validate_owner(args.job_owner)
+        ):
+            parser.error("--durable-job-status requires an absolute root and valid owner.")
+        kwargs["durable_jobs"] = DurableJobStore(args.job_root)
+        kwargs["job_owner"] = args.job_owner
+    elif args.job_root is not None or args.job_owner is not None:
+        parser.error("Job store options require --durable-job-status.")
     server = create_server(**kwargs)
     server.run(transport="http", host=args.host, port=args.port)
     return 0

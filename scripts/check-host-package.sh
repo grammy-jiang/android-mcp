@@ -20,6 +20,7 @@ import json
 import sys
 
 from android_mcp_host.server import create_server
+from android_mcp_host.durable_jobs import DurableJobStore, get_job_status_schema
 from android_mcp_host.private_artifact_store import (
     PrivateArtifactStore,
     get_artifact_metadata_schema,
@@ -50,6 +51,11 @@ assert report["schema_version"] == 1
 assert report["runtime"] == "host"
 assert "devices" in report
 assert callable(create_server)
+assert get_job_status_schema()["$id"] == "urn:android-mcp:host-durable-job-status:v1"
+from tempfile import TemporaryDirectory
+with TemporaryDirectory() as job_tmp:
+    private_jobs = DurableJobStore(Path(job_tmp).resolve(strict=True) / "private-jobs")
+    assert create_server(durable_jobs=private_jobs, job_owner="package-fixture") is not None
 assert get_artifact_metadata_schema()["$id"] == "urn:android-mcp:host-private-artifact-metadata:v1"
 from tempfile import TemporaryDirectory
 with TemporaryDirectory() as private_tmp:

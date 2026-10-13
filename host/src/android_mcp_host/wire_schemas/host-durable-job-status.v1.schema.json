@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-durable-job-status:v1",
+  "title": "Private Host owner-scoped durable job status v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "status", "job", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok", "not_found"]},
+    "job": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "job_id", "state", "plan_digest", "result_digest", "created_at",
+            "updated_at", "finished_at", "attempts", "generation",
+            "cancel_requested", "execution_enabled"
+          ],
+          "properties": {
+            "job_id": {"type": "string", "pattern": "^job_[A-Za-z0-9_-]{32}$"},
+            "state": {"enum": ["prepared", "queued", "running", "succeeded", "failed", "cancelled", "uncertain"]},
+            "plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "result_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+            "created_at": {"type": "number", "minimum": 0},
+            "updated_at": {"type": "number", "minimum": 0},
+            "finished_at": {"type": ["number", "null"], "minimum": 0},
+            "attempts": {"type": "integer", "minimum": 0},
+            "generation": {"type": "integer", "minimum": 0},
+            "cancel_requested": {"type": "boolean"},
+            "execution_enabled": {"const": false}
+          }
+        }
+      ]
+    },
+    "errors": {
+      "type": "array", "maxItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"enum": ["NOT_FOUND"]},
+          "message": {"const": "Job is unavailable"}
+        }
+      }
+    }
+  }
+}
