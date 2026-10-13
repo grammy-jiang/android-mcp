@@ -81,8 +81,8 @@ def test_n6a_04_reboot_replay_and_data_clear_must_not_grant_pairing() -> None:
 
 def test_n6a_05_default_android_mcp_registry_and_permissions_unchanged() -> None:
     boundary = BOUNDARY.read_text()
-    assert '"pairing_enabled\\":false' in boundary
-    assert '"mutation_enabled\\":false' in boundary
+    assert '"pairing_enabled":false' in boundary
+    assert '"mutation_enabled":false' in boundary
     gateway = GATEWAY.read_text()
     assert gateway.count("server.addTool(") == 1
     assert 'name = "device_status"' in gateway
