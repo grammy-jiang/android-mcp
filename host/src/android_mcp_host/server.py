@@ -21,10 +21,13 @@ from android_mcp_host.avd_provision_tool import register_avd_provision_tool
 from android_mcp_host.avd_provisioning import AvdProvisioner
 from android_mcp_host.avd_tool_registration import register_avd_inventory_tool
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
-from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_build_job_schema
+from android_mcp_host.controlled_build_jobs import ControlledBuildJobs
+from android_mcp_host.controlled_build_tool import register_build_tool
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 from android_mcp_host.durable_job_tool import register_job_status_tool
 from android_mcp_host.durable_jobs import DurableJobStore
+from android_mcp_host.emulator_debug_deployment import DebugDeployment
+from android_mcp_host.emulator_debug_tool import register_debug_deployment_tool
 from android_mcp_host.emulator_instrumentation_jobs import InstrumentationJobs
 from android_mcp_host.emulator_instrumentation_tool import register_instrumentation_tool
 from android_mcp_host.emulator_lifecycle import EmulatorLifecycle
@@ -76,6 +79,7 @@ def create_server(
     avd_provisioner: AvdProvisioner | None = None,
     emulator_lifecycle: EmulatorLifecycle | None = None,
     instrumentation_jobs: InstrumentationJobs | None = None,
+    debug_deployment: DebugDeployment | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -465,27 +469,13 @@ def create_server(
         register_emulator_lifecycle_tool(server, emulator_lifecycle)
     if instrumentation_jobs is not None:
         register_instrumentation_tool(server, instrumentation_jobs)
+    if debug_deployment is not None:
+        register_debug_deployment_tool(server, debug_deployment)
     if snapshot_manager is not None:
         register_snapshot_tool(server, snapshot_manager)
 
     if build_jobs is not None:
-
-        @server.tool(
-            title="Run Operator-Approved Offline Gradle Job",
-            output_schema=get_build_job_schema(),
-            annotations={
-                "readOnlyHint": False,
-                "destructiveHint": True,
-                "idempotentHint": True,
-                "openWorldHint": True,
-            },
-        )
-        async def host_gradle_build(
-            action: Literal["assemble_debug", "lint_debug", "test_jvm"],
-            request_id: str,
-        ) -> dict[str, object]:
-            """Run a finite approved offline Gradle action; never mutate devices."""
-            return await asyncio.to_thread(build_jobs.submit, action, request_id)
+        register_build_tool(server, build_jobs)
 
     if (durable_jobs is None) != (job_owner is None):
         raise ValueError("Durable job status needs a trusted store and owner")
