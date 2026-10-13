@@ -19,6 +19,7 @@ uv pip install --python "$tmpdir/clean-venv/bin/python" "$wheel"
 import json
 import sys
 
+from android_mcp_host.archive_inspector import ArchiveInspector, get_archive_output_schema
 from android_mcp_host.server import create_server
 from android_mcp_host.durable_jobs import DurableJobStore, get_job_status_schema
 from android_mcp_host.private_artifact_store import (
@@ -51,6 +52,7 @@ assert report["schema_version"] == 1
 assert report["runtime"] == "host"
 assert "devices" in report
 assert callable(create_server)
+assert get_archive_output_schema()["$id"] == "urn:android-mcp:host-archive-inspection:v1"
 assert get_job_status_schema()["$id"] == "urn:android-mcp:host-durable-job-status:v1"
 from tempfile import TemporaryDirectory
 with TemporaryDirectory() as job_tmp:
@@ -63,6 +65,9 @@ with TemporaryDirectory() as private_tmp:
     private_record = private_store.put("packaging-test", b"synthetic", mime_type="application/octet-stream")
     assert private_store.public_metadata("packaging-test", private_record["handle"])["status"] == "ok"
     assert create_server(artifact_store=private_store, artifact_owner="packaging-test") is not None
+    assert create_server(
+        archive_inspector=ArchiveInspector(private_store, "packaging-test")
+    ) is not None
 assert get_build_preflight_output_schema()["$id"] == "urn:android-mcp:host-android-build-preflight:v1"
 assert create_server(build_preflight=AndroidBuildPreflight(Path.home() / "Projects" / "missing")) is not None
 assert get_sdk_ndk_output_schema()["$id"] == "urn:android-mcp:host-sdk-ndk-inventory:v1"

@@ -26,6 +26,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
+    { name = "defusedxml" },
     { name = "fastmcp" },
 ]
 
@@ -47,6 +48,7 @@ security = [
 [package.metadata]
 requires-dist = [
     { name = "cryptography", specifier = ">=46,<51" },
+    { name = "defusedxml", specifier = "==0.7.1" },
     { name = "fastmcp", specifier = "==4.1.0" },
 ]
 
