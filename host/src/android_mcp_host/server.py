@@ -50,6 +50,8 @@ from android_mcp_host.private_artifact_store import (
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
 from android_mcp_host.status import build_status
+from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
+from android_mcp_host.synthetic_screenshot_tool import register_screenshot_tool
 from android_mcp_host.system_snapshot import SystemSnapshot, get_snapshot_output_schema
 from android_mcp_host.toolchain_inventory import (
     ToolchainInventory,
@@ -80,6 +82,7 @@ def create_server(
     emulator_lifecycle: EmulatorLifecycle | None = None,
     instrumentation_jobs: InstrumentationJobs | None = None,
     debug_deployment: DebugDeployment | None = None,
+    screenshot_worker: ScreenshotArtifacts | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -471,6 +474,8 @@ def create_server(
         register_instrumentation_tool(server, instrumentation_jobs)
     if debug_deployment is not None:
         register_debug_deployment_tool(server, debug_deployment)
+    if screenshot_worker is not None:
+        register_screenshot_tool(server, screenshot_worker)
     if snapshot_manager is not None:
         register_snapshot_tool(server, snapshot_manager)
 
