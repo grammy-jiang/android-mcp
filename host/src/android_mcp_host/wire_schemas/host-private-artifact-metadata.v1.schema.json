@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-private-artifact-metadata:v1",
+  "title": "Owner-scoped Host private artifact metadata result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "status", "artifact", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok", "not_found"]},
+    "artifact": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["handle", "sha256", "mime_type", "size_bytes", "created_at", "expires_at"],
+          "properties": {
+            "handle": {"type": "string", "pattern": "^art_[A-Za-z0-9_-]{32}$"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "mime_type": {
+              "enum": [
+                "application/octet-stream", "application/json", "text/plain",
+                "application/zip", "application/vnd.android.package-archive",
+                "application/vnd.android.aab", "application/pdf",
+                "image/png", "image/jpeg"
+              ]
+            },
+            "size_bytes": {"type": "integer", "minimum": 1, "maximum": 67108864},
+            "created_at": {"type": "number", "minimum": 0},
+            "expires_at": {"type": "number", "minimum": 0}
+          }
+        }
+      ]
+    },
+    "errors": {
+      "type": "array", "maxItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"enum": ["NOT_FOUND"]},
+          "message": {"const": "Artifact is unavailable"}
+        }
+      }
+    }
+  }
+}
