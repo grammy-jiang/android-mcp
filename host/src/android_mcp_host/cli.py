@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import platform
+import re
 from pathlib import Path
 from typing import Any
 
@@ -12,7 +14,9 @@ from android_mcp_host.adb import AdbClient
 from android_mcp_host.adb_transport import AdbTransport
 from android_mcp_host.android_build_preflight import AndroidBuildPreflight
 from android_mcp_host.archive_inspector import ArchiveInspector
+from android_mcp_host.avd_inventory import AvdInventory
 from android_mcp_host.capability_profiles import CapabilityProfiles
+from android_mcp_host.controlled_build_jobs import ControlledBuildJobs
 from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.durable_jobs import DurableJobStore
 from android_mcp_host.fastboot_inventory import FastbootInventory
@@ -101,6 +105,34 @@ def main(argv: list[str] | None = None) -> int:
         help="Host-operator-approved full Gradle wrapper jar SHA-256; otherwise denies.",
     )
     serve.add_argument(
+        "--avd-inventory",
+        action="store_true",
+        help="Opt in to read-only operator-pinned AVD enumeration and metadata.",
+    )
+    serve.add_argument(
+        "--avd-root",
+        type=Path,
+        default=None,
+        help="Optional trusted absolute AVD store directory; no creation.",
+    )
+    serve.add_argument(
+        "--avd-emulator",
+        type=Path,
+        default=None,
+        help="Optional trusted absolute emulator executable; no startup.",
+    )
+    serve.add_argument(
+        "--controlled-build",
+        action="store_true",
+        help="Opt in to bounded offline Gradle jobs using pinned private Host resources.",
+    )
+    serve.add_argument(
+        "--build-timeout-seconds",
+        type=float,
+        default=None,
+        help="Finite timeout 0-120 seconds; only for opt-in controlled builds.",
+    )
+    serve.add_argument(
         "--artifact-metadata",
         action="store_true",
         help="Opt in to owner-scoped, metadata-only private artifact inspection.",
@@ -173,6 +205,32 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--port must be between 1 and 65535.")
     if host_platform_name(platform.system()) == "unsupported":
         parser.error("Host runtime supports only macOS and Linux.")
+    if args.controlled_build:
+        if args.build_timeout_seconds is not None and (
+            not math.isfinite(args.build_timeout_seconds)
+            or not 0 < args.build_timeout_seconds <= 120
+        ):
+            parser.error("--build-timeout-seconds must be within (0,120].")
+        if (
+            args.build_approved_revision is None
+            or re.fullmatch(r"[0-9a-f]{40,64}", args.build_approved_revision) is None
+            or args.build_wrapper_sha256 is None
+            or re.fullmatch(r"[0-9a-f]{64}", args.build_wrapper_sha256) is None
+        ):
+            parser.error("--controlled-build requires valid pinned revision and wrapper SHA-256.")
+        if (
+            not args.build_preflight
+            or args.build_root is None
+            or not args.build_root.is_absolute()
+            or args.build_approved_revision is None
+            or args.build_wrapper_sha256 is None
+            or not args.artifact_metadata
+            or not args.durable_job_status
+        ):
+            parser.error(
+                "--controlled-build requires --build-preflight and explicit pinned "
+                "build root/revision/wrapper, artifact store and durable job store."
+            )
     inventory = (
         ToolchainInventory() if args.toolchain_inventory or args.capability_profile else None
     )
@@ -199,7 +257,21 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["fastboot_inventory"] = FastbootInventory()
     if args.sdk_ndk_inventory:
         kwargs["sdk_ndk_inventory"] = SdkNdkInventory()
+    if args.avd_inventory:
+        root = args.avd_root or (Path.home() / ".android" / "avd")
+        emulator = args.avd_emulator or (
+            Path.home() / "Library" / "Android" / "sdk" / "emulator" / "emulator"
+            if platform.system() == "Darwin"
+            else Path.home() / "Android" / "Sdk" / "emulator" / "emulator"
+        )
+        if not root.is_absolute() or not emulator.is_absolute():
+            parser.error("AVD root and emulator must be absolute trusted Host paths.")
+        kwargs["avd_inventory"] = AvdInventory(root, emulator)
+    elif args.avd_root is not None or args.avd_emulator is not None:
+        parser.error("AVD store and emulator options require --avd-inventory.")
     if args.build_preflight:
+        if args.build_root is not None and not args.build_root.is_absolute():
+            parser.error("--build-root must be an absolute trusted Host project path.")
         kwargs["build_preflight"] = AndroidBuildPreflight(
             root=args.build_root or (Path.home() / "Projects" / "android-mcp"),
             expected_revision=args.build_approved_revision,
@@ -246,10 +318,29 @@ def main(argv: list[str] | None = None) -> int:
             or not DurableJobStore.validate_owner(args.job_owner)
         ):
             parser.error("--durable-job-status requires an absolute root and valid owner.")
-        kwargs["durable_jobs"] = DurableJobStore(args.job_root)
+        kwargs["durable_jobs"] = DurableJobStore(
+            args.job_root,
+            lease_seconds=180.0 if args.controlled_build else 30.0,
+        )
         kwargs["job_owner"] = args.job_owner
     elif args.job_root is not None or args.job_owner is not None:
         parser.error("Job store options require --durable-job-status.")
+    if args.controlled_build:
+        kwargs["build_jobs"] = ControlledBuildJobs(
+            preflight=kwargs["build_preflight"],
+            jobs=kwargs["durable_jobs"],
+            artifacts=kwargs["artifact_store"],
+            root=args.build_root,
+            approved_revision=args.build_approved_revision,
+            wrapper_sha256=args.build_wrapper_sha256,
+            owner=args.job_owner,
+            artifact_owner=args.artifact_owner,
+            timeout_s=args.build_timeout_seconds
+            if args.build_timeout_seconds is not None
+            else 90.0,
+        )
+    elif args.build_timeout_seconds is not None:
+        parser.error("--build-timeout-seconds requires --controlled-build.")
     server = create_server(**kwargs)
     server.run(transport="http", host=args.host, port=args.port)
     return 0

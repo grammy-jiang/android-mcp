@@ -16,7 +16,10 @@ from android_mcp_host.android_build_preflight import (
     get_build_preflight_output_schema,
 )
 from android_mcp_host.archive_inspector import ArchiveInspector, get_archive_output_schema
+from android_mcp_host.avd_inventory import AvdInventory
+from android_mcp_host.avd_tool_registration import register_avd_inventory_tool
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
+from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_build_job_schema
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 from android_mcp_host.durable_jobs import DurableJobStore, get_job_status_schema
 from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
@@ -59,6 +62,8 @@ def create_server(
     artifact_store: PrivateArtifactStore | None = None,
     artifact_owner: str | None = None,
     archive_inspector: ArchiveInspector | None = None,
+    build_jobs: ControlledBuildJobs | None = None,
+    avd_inventory: AvdInventory | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
 ) -> FastMCP:
@@ -440,6 +445,32 @@ def create_server(
             The caller cannot select paths, owner, binaries, commands or devices.
             """
             return await asyncio.to_thread(archive_inspector.inspect, handle)
+
+    if avd_inventory is not None:
+        register_avd_inventory_tool(server, avd_inventory)
+
+    if build_jobs is not None:
+
+        @server.tool(
+            title="Run Operator-Approved Offline Gradle Job",
+            output_schema=get_build_job_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": True,
+                "idempotentHint": True,
+                "openWorldHint": True,
+            },
+        )
+        async def host_gradle_build(
+            action: Literal["assemble_debug", "lint_debug", "test_jvm"],
+            request_id: str,
+        ) -> dict[str, object]:
+            """Run only a preapproved finite offline Gradle action by idempotency key.
+
+            Does not authorize installs, USB access or physical-device mutation.
+            Operator pins source commit, wrapper digest, roots and owner context.
+            """
+            return await asyncio.to_thread(build_jobs.submit, action, request_id)
 
     if (durable_jobs is None) != (job_owner is None):
         raise ValueError("Durable job status needs a trusted store and owner")

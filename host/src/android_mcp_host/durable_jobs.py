@@ -28,6 +28,7 @@ from android_mcp_host.durable_job_support import (
     _WORKER,
     JobStoreError,
     _job_find,
+    _job_lookup_request,
     _job_visible,
 )
 from android_mcp_host.durable_job_support import (
@@ -130,6 +131,10 @@ class DurableJobStore:
             raise JobStoreError("STORAGE_FAILURE") from error
         self.recover()
 
+    @property
+    def private_root(self) -> Path:
+        return self._root
+
     @staticmethod
     def validate_owner(owner: str) -> bool:
         return (
@@ -191,11 +196,7 @@ class DurableJobStore:
     _find = staticmethod(_job_find)
 
     def _checked(
-        self,
-        db: sqlite3.Connection,
-        owner: str,
-        job_id: str,
-        identity: str,
+        self, db: sqlite3.Connection, owner: str, job_id: str, identity: str
     ) -> sqlite3.Row:
         if not isinstance(identity, str) or _IDENTITY.fullmatch(identity) is None:
             raise JobStoreError("STALE_IDENTITY")
@@ -261,6 +262,13 @@ class DurableJobStore:
             self._event(db, job_id, "prepared", now)
             row = self._find(db, owner_key, job_id)
             return self._visible(row)
+
+    def lookup_request(
+        self, owner: str, request_id: str, plan_digest: str, identity: str
+    ) -> dict[str, Any] | None:
+        owner_key = self._owner(owner)
+        with self._connect() as db:
+            return _job_lookup_request(db, owner_key, request_id, plan_digest, identity, self._key)
 
     def queue(
         self, owner: str, job_id: str, *, identity: str, authorized: bool = False

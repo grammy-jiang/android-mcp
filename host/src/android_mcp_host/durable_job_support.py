@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 import sqlite3
+from collections.abc import Callable
 from importlib.resources import files
 from typing import Any, cast
 
@@ -59,3 +60,29 @@ def _job_find(db: sqlite3.Connection, owner_key: str, job_id: str) -> sqlite3.Ro
     if row is None:
         raise JobStoreError("NOT_FOUND")
     return cast(sqlite3.Row, row)
+
+
+def _job_lookup_request(
+    db: sqlite3.Connection,
+    owner_key: str,
+    request_id: str,
+    plan_digest: str,
+    identity: str,
+    key: Callable[[str], str],
+) -> dict[str, Any] | None:
+    """Owner-scoped, read-only idempotency lookup without reserving a new job."""
+    if not isinstance(request_id, str) or _REQUEST_ID.fullmatch(request_id) is None:
+        raise JobStoreError("INVALID_REQUEST")
+    if not isinstance(plan_digest, str) or _DIGEST.fullmatch(plan_digest) is None:
+        raise JobStoreError("INVALID_PLAN")
+    if not isinstance(identity, str) or _IDENTITY.fullmatch(identity) is None:
+        raise JobStoreError("INVALID_IDENTITY")
+    row = db.execute(
+        "SELECT * FROM jobs WHERE owner_key=? AND request_key=?",
+        (owner_key, key(owner_key + ":" + request_id)),
+    ).fetchone()
+    if row is None:
+        return None
+    if row["plan_digest"] != plan_digest or row["identity_key"] != key(identity):
+        raise JobStoreError("IDEMPOTENCY_CONFLICT")
+    return _job_visible(row)
