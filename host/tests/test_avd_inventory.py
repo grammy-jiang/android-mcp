@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -47,11 +48,29 @@ def fake_avd(
         encoding="utf-8",
     )
     if snapshot:
-        (data_root / "snapshots" / "quickboot").mkdir(parents=True)
-        (data_root / "snapshots" / "quickboot" / "snapshot.pb").write_bytes(b"stub")
+        # H3.a private metadata fixtures must be portable across runner umasks.
+        # Keep production trusted_dir() strict: the fixture must meet its contract.
+        snapshots = data_root / "snapshots"
+        snapshots.mkdir(mode=0o700)
+        quickboot = snapshots / "quickboot"
+        quickboot.mkdir(mode=0o700)
+        (quickboot / "snapshot.pb").write_bytes(b"stub")
     if pid is not None:
         (data_root / "hardware-qemu.ini.lock").write_bytes(pid)
     return avd_root, binary
+
+
+def test_h3a_private_fixture_permissions_do_not_depend_on_ci_umask(tmp_path: Path) -> None:
+    from android_mcp_host.avd_inventory import AvdInventory
+
+    previous = os.umask(0o022)
+    try:
+        root, binary = fake_avd(tmp_path)
+    finally:
+        os.umask(previous)
+    assert (root / f"{AVD}.avd" / "snapshots").stat().st_mode & 0o777 == 0o700
+    assert (root / f"{AVD}.avd" / "snapshots" / "quickboot").stat().st_mode & 0o777 == 0o700
+    assert AvdInventory(root, binary, runner=runner_list(AVD)).inspect()["status"] == "ok"
 
 
 def runner_list(names: str) -> Any:
