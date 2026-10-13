@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-archive-inspection:v1",
+  "title": "Private local APK/AAB inspection result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "status", "archive", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok", "partial", "invalid", "not_found"]},
+    "archive": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handle", "mime_type", "sha256", "size_bytes", "package_id",
+            "version_name", "version_code", "permissions", "abis",
+            "resources_present", "member_count", "signature"
+          ],
+          "properties": {
+            "handle": {"type": "string", "pattern": "^art_[A-Za-z0-9_-]{32}$"},
+            "mime_type": {"enum": [
+              "application/vnd.android.package-archive",
+              "application/vnd.android.aab"
+            ]},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "size_bytes": {"type": "integer", "minimum": 1, "maximum": 67108864},
+            "package_id": {"type": ["string", "null"], "maxLength": 128},
+            "version_name": {"type": ["string", "null"], "maxLength": 64},
+            "version_code": {"type": ["integer", "null"], "minimum": 1, "maximum": 2147483647},
+            "permissions": {
+              "type": "array", "maxItems": 64, "uniqueItems": true,
+              "items": {"type": "string", "maxLength": 128}
+            },
+            "abis": {
+              "type": "array", "maxItems": 16, "uniqueItems": true,
+              "items": {"type": "string", "maxLength": 32}
+            },
+            "resources_present": {"type": "boolean"},
+            "member_count": {"type": "integer", "minimum": 1, "maximum": 512},
+            "signature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["state", "tool", "reason"],
+              "properties": {
+                "state": {"enum": ["verified", "unavailable", "rejected"]},
+                "tool": {"enum": ["apksigner", "jarsigner"]},
+                "reason": {"enum": [
+                  "VERIFIED", "NOT_CONFIGURED", "TIMEOUT", "FAILED",
+                  "OUTPUT_LIMIT", "NOT_VERIFIED"
+                ]}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "errors": {
+      "type": "array", "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"enum": [
+            "NOT_FOUND", "UNSUPPORTED_MIME", "INVALID_ARCHIVE",
+            "UNTRUSTED_ARCHIVE_PATH", "DUPLICATE_ARCHIVE_PATH",
+            "RESOURCE_LIMIT", "COMPRESSION_LIMIT", "MANIFEST_UNAVAILABLE",
+            "SIGNATURE_UNAVAILABLE", "SIGNATURE_REJECTED", "VERIFY_TIMEOUT",
+            "VERIFY_OUTPUT_LIMIT", "VERIFY_FAILED", "INSPECTION_FAILED"
+          ]},
+          "message": {"type": "string", "maxLength": 80}
+        }
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@ from typing import Any
 from android_mcp_host.adb import AdbClient
 from android_mcp_host.adb_transport import AdbTransport
 from android_mcp_host.android_build_preflight import AndroidBuildPreflight
+from android_mcp_host.archive_inspector import ArchiveInspector
 from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.durable_jobs import DurableJobStore
@@ -116,6 +117,35 @@ def main(argv: list[str] | None = None) -> int:
         help="Trusted Host owner scope; never selectable by an MCP caller.",
     )
     serve.add_argument(
+        "--archive-inspect",
+        action="store_true",
+        help="Opt in to owner-scoped private APK/AAB structure and signature status.",
+    )
+    serve.add_argument(
+        "--apk-verifier",
+        type=Path,
+        default=None,
+        help="Host-operator-pinned absolute apksigner executable; never caller-selected.",
+    )
+    serve.add_argument(
+        "--aab-verifier",
+        type=Path,
+        default=None,
+        help="Host-operator-pinned absolute jarsigner executable; never caller-selected.",
+    )
+    serve.add_argument(
+        "--apk-metadata-tool",
+        type=Path,
+        default=None,
+        help="Host-operator-pinned aapt2 binary for compiled APK manifest reads.",
+    )
+    serve.add_argument(
+        "--aab-metadata-tool",
+        type=Path,
+        default=None,
+        help="Host-operator-pinned bundletool wrapper for compiled AAB manifest reads.",
+    )
+    serve.add_argument(
         "--durable-job-status",
         action="store_true",
         help="Opt in to read-only owner-scoped persisted job status.",
@@ -188,6 +218,27 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["artifact_owner"] = args.artifact_owner
     elif args.artifact_root is not None or args.artifact_owner is not None:
         parser.error("Private artifact options require --artifact-metadata.")
+    if args.archive_inspect:
+        if not args.artifact_metadata:
+            parser.error("--archive-inspect requires --artifact-metadata.")
+        kwargs["archive_inspector"] = ArchiveInspector(
+            kwargs["artifact_store"],
+            args.artifact_owner,
+            apk_verifier=args.apk_verifier,
+            aab_verifier=args.aab_verifier,
+            apk_metadata_tool=args.apk_metadata_tool,
+            aab_metadata_tool=args.aab_metadata_tool,
+        )
+    elif any(
+        option is not None
+        for option in (
+            args.apk_verifier,
+            args.aab_verifier,
+            args.apk_metadata_tool,
+            args.aab_metadata_tool,
+        )
+    ):
+        parser.error("Verifier options require --archive-inspect.")
     if args.durable_job_status:
         if (
             args.job_root is None
