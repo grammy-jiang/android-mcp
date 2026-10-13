@@ -20,6 +20,8 @@ import json
 import sys
 
 from android_mcp_host.server import create_server
+from android_mcp_host.android_build_preflight import AndroidBuildPreflight, get_build_preflight_output_schema
+from pathlib import Path
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
 from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
 from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
@@ -44,6 +46,8 @@ assert report["schema_version"] == 1
 assert report["runtime"] == "host"
 assert "devices" in report
 assert callable(create_server)
+assert get_build_preflight_output_schema()["$id"] == "urn:android-mcp:host-android-build-preflight:v1"
+assert create_server(build_preflight=AndroidBuildPreflight(Path.home() / "Projects" / "missing")) is not None
 assert get_sdk_ndk_output_schema()["$id"] == "urn:android-mcp:host-sdk-ndk-inventory:v1"
 assert create_server(sdk_ndk_inventory=SdkNdkInventory(fixed_binaries={})) is not None
 assert get_fastboot_output_schema()["$id"] == "urn:android-mcp:host-fastboot-inventory:v1"
