@@ -176,6 +176,23 @@ class NativeSafGrantPolicyTest {
     }
 
     @Test
+    fun scopedGrantCannotReadAnotherDocumentEvenOnTheSameAuthority() {
+        clock.set(1000)
+        policy().use { owner ->
+            val receipt = owner.recognizeFake(result(owner))
+            val handle = receipt.handle!!
+            assertTrue(owner.matchesSelectedUri(handle, doc, SafAccessMode.READ))
+            assertFalse(owner.matchesSelectedUri(handle,
+                "content://$trustedAuthority/document/msf%3A101", SafAccessMode.READ))
+            assertFalse(owner.matchesSelectedUri(handle, doc, SafAccessMode.WRITE))
+            assertFalse(owner.matchesSelectedUri(handle,
+                "content://com.other.app/document/msf%3A100", SafAccessMode.READ))
+            owner.revoke(handle)
+            assertFalse(owner.matchesSelectedUri(handle, doc, SafAccessMode.READ))
+        }
+    }
+
+    @Test
     fun tN4C06UriStringNeverGrantsOtherAppStorageOrPublicToolAccess() {
         policy().use { owner ->
             val granted = owner.recognizeFake(result(owner))
