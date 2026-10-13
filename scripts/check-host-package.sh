@@ -26,6 +26,7 @@ from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_buil
 from android_mcp_host.server import create_server
 from android_mcp_host.durable_jobs import DurableJobStore, get_job_status_schema
 from android_mcp_host.emulator_lifecycle import EmulatorLifecycle, get_emulator_lifecycle_schema
+from android_mcp_host.emulator_instrumentation_jobs import InstrumentationJobs, get_instrumentation_schema
 from android_mcp_host.emulator_snapshot_manager import (
     EmulatorSnapshotManager,
     get_snapshot_output_schema as get_emulator_snapshot_output_schema,
@@ -64,6 +65,7 @@ assert callable(create_server)
 assert get_avd_output_schema()["$id"] == "urn:android-mcp:host-avd-inventory:v1"
 assert get_avd_provision_schema()["$id"] == "urn:android-mcp:host-avd-provision:v1"
 assert get_emulator_lifecycle_schema()["$id"] == "urn:android-mcp:host-emulator-lifecycle:v1"
+assert get_instrumentation_schema()["$id"] == "urn:android-mcp:host-emulator-instrumentation:v1"
 assert get_emulator_snapshot_output_schema()["$id"] == "urn:android-mcp:host-emulator-snapshot:v1"
 assert create_server(avd_inventory=AvdInventory(
     Path.home() / ".android" / "avd", Path.home() / "absent-synthetic-emulator"
@@ -84,6 +86,12 @@ with TemporaryDirectory() as owner_tmp:
     )) is not None
     assert create_server(snapshot_manager=EmulatorSnapshotManager(
         avd_provisioner, inert_jobs, owner="synthetic-owner"
+    )) is not None
+    inert_lifecycle = EmulatorLifecycle(avd_provisioner, inert_jobs, owner="synthetic-owner")
+    inert_artifacts = PrivateArtifactStore(owner_base / "inert-test-artifacts")
+    assert create_server(instrumentation_jobs=InstrumentationJobs(
+        avd_provisioner, inert_lifecycle, inert_jobs, inert_artifacts,
+        owner="synthetic-owner", artifact_owner="synthetic-artifacts",
     )) is not None
 assert get_archive_output_schema()["$id"] == "urn:android-mcp:host-archive-inspection:v1"
 assert get_build_job_schema()["$id"] == "urn:android-mcp:host-controlled-build-job:v1"

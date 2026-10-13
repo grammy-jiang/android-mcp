@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-emulator-instrumentation:v1",
+  "title": "Synthetic emulator instrumentation job result v1",
+  "type": "object", "additionalProperties": false,
+  "required": [
+    "schema_version", "runtime", "status", "state", "avd_name", "avd_handle",
+    "apk_sha256", "job_id", "report_handle", "report_sha256", "passed", "failed",
+    "target", "synthetic_fixture_only", "real_instrumentation_enabled",
+    "physical_device_writes_enabled", "errors"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["planned", "ok", "failed", "blocked", "uncertain"]},
+    "state": {"enum": ["planned", "succeeded", "failed", "blocked", "uncertain", null]},
+    "avd_name": {"type": ["string", "null"], "pattern": "^mcp_[A-Za-z0-9][A-Za-z0-9_-]{2,43}$"},
+    "avd_handle": {"type": ["string", "null"], "pattern": "^mcpavd_[A-Za-z0-9_-]{32}$"},
+    "apk_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "job_id": {"type": ["string", "null"], "pattern": "^job_[A-Za-z0-9_-]{32}$"},
+    "report_handle": {"type": ["string", "null"], "pattern": "^art_[A-Za-z0-9_-]{32}$"},
+    "report_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "passed": {"type": ["integer", "null"], "minimum": 0, "maximum": 256},
+    "failed": {"type": ["integer", "null"], "minimum": 0, "maximum": 256},
+    "target": {"const": "disposable_emulator_only"},
+    "synthetic_fixture_only": {"const": true},
+    "real_instrumentation_enabled": {"const": false},
+    "physical_device_writes_enabled": {"const": false},
+    "errors": {"type": "array", "maxItems": 1, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": {"enum": [
+          "INVALID_ACTION", "INVALID_INPUT", "NOT_OWNED", "UNVERIFIED_EMULATOR",
+          "BAD_ARTIFACT", "EXECUTION_DISABLED", "RECOVERY_REQUIRED",
+          "IDEMPOTENCY_CONFLICT", "JOB_UNAVAILABLE", "TEST_FAILED",
+          "OUTPUT_INVALID", "TIMEOUT", "RUNNER_FAILED", "ARTIFACT_FAILED"
+        ]},
+        "message": {"type": "string", "maxLength": 96}
+      }
+    }}
+  }
+}
