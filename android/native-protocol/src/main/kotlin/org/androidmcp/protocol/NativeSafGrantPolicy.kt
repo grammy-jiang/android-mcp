@@ -1,6 +1,7 @@
 package org.androidmcp.protocol
 
 import java.net.URI
+import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.Base64
 import java.util.UUID
@@ -81,6 +82,7 @@ class NativeSafGrantPolicy(
     private data class Entry(
         val mode: SafAccessMode,
         val expires: Long,
+        val selectedUriHash: ByteArray,
     )
 
     private val authorities = providerAuthorities
@@ -129,7 +131,9 @@ class NativeSafGrantPolicy(
         }
         val handle = newHandle()
         seenNonces.add(result.nonce)
-        active[handle] = Entry(result.requestedMode, now + GRANT_TTL_MS)
+        active[handle] = Entry(
+            result.requestedMode, now + GRANT_TTL_MS, uriDigest(uri),
+        )
         return SafGrantReceipt(
             SafGrantStatus.SIMULATED_ONLY, handle, result.requestedMode,
             persisted, now + GRANT_TTL_MS,
@@ -148,6 +152,20 @@ class NativeSafGrantPolicy(
         }
         if (entry.mode != mode) return SafGrantStatus.DENIED
         return SafGrantStatus.SIMULATED_ONLY
+    }
+
+    /**
+     * A synthetic grant is bound to the EXACT URI selected by the fake user.
+     * Same-provider aliases and differently encoded document IDs are never
+     * interchangeable. No raw URI is retained, logged or exposed.
+     */
+    @Synchronized
+    fun matchesSelectedUri(handle: String, uri: String, mode: SafAccessMode): Boolean {
+        if (check(handle, mode) != SafGrantStatus.SIMULATED_ONLY ||
+            !validPickedUri(uri)
+        ) return false
+        val entry = active[handle] ?: return false
+        return MessageDigest.isEqual(entry.selectedUriHash, uriDigest(uri))
     }
 
     @Synchronized
@@ -184,6 +202,9 @@ class NativeSafGrantPolicy(
         }
         active.entries.removeIf { now >= it.value.expires }
     }
+
+    private fun uriDigest(uri: String): ByteArray =
+        MessageDigest.getInstance("SHA-256").digest(uri.toByteArray(Charsets.UTF_8))
 
     private fun validPickedUri(text: String): Boolean {
         if (text.length !in 32..512 || text.any { it.code < 0x20 || it.code == 0x7f }) {
