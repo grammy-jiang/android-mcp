@@ -19,6 +19,7 @@ uv pip install --python "$tmpdir/clean-venv/bin/python" "$wheel"
 import json
 import sys
 
+from android_mcp_host.avd_inventory import AvdInventory, get_avd_output_schema
 from android_mcp_host.archive_inspector import ArchiveInspector, get_archive_output_schema
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_build_job_schema
 from android_mcp_host.server import create_server
@@ -53,6 +54,10 @@ assert report["schema_version"] == 1
 assert report["runtime"] == "host"
 assert "devices" in report
 assert callable(create_server)
+assert get_avd_output_schema()["$id"] == "urn:android-mcp:host-avd-inventory:v1"
+assert create_server(avd_inventory=AvdInventory(
+    Path.home() / ".android" / "avd", Path.home() / "absent-synthetic-emulator"
+)) is not None
 assert get_archive_output_schema()["$id"] == "urn:android-mcp:host-archive-inspection:v1"
 assert get_build_job_schema()["$id"] == "urn:android-mcp:host-controlled-build-job:v1"
 assert get_job_status_schema()["$id"] == "urn:android-mcp:host-durable-job-status:v1"

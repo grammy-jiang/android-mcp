@@ -14,6 +14,7 @@ from android_mcp_host.adb import AdbClient
 from android_mcp_host.adb_transport import AdbTransport
 from android_mcp_host.android_build_preflight import AndroidBuildPreflight
 from android_mcp_host.archive_inspector import ArchiveInspector
+from android_mcp_host.avd_inventory import AvdInventory
 from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs
 from android_mcp_host.device_discovery import DeviceDiscovery
@@ -102,6 +103,23 @@ def main(argv: list[str] | None = None) -> int:
         "--build-wrapper-sha256",
         default=None,
         help="Host-operator-approved full Gradle wrapper jar SHA-256; otherwise denies.",
+    )
+    serve.add_argument(
+        "--avd-inventory",
+        action="store_true",
+        help="Opt in to read-only operator-pinned AVD enumeration and metadata.",
+    )
+    serve.add_argument(
+        "--avd-root",
+        type=Path,
+        default=None,
+        help="Optional trusted absolute AVD store directory; no creation.",
+    )
+    serve.add_argument(
+        "--avd-emulator",
+        type=Path,
+        default=None,
+        help="Optional trusted absolute emulator executable; no startup.",
     )
     serve.add_argument(
         "--controlled-build",
@@ -239,6 +257,18 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["fastboot_inventory"] = FastbootInventory()
     if args.sdk_ndk_inventory:
         kwargs["sdk_ndk_inventory"] = SdkNdkInventory()
+    if args.avd_inventory:
+        root = args.avd_root or (Path.home() / ".android" / "avd")
+        emulator = args.avd_emulator or (
+            Path.home() / "Library" / "Android" / "sdk" / "emulator" / "emulator"
+            if platform.system() == "Darwin"
+            else Path.home() / "Android" / "Sdk" / "emulator" / "emulator"
+        )
+        if not root.is_absolute() or not emulator.is_absolute():
+            parser.error("AVD root and emulator must be absolute trusted Host paths.")
+        kwargs["avd_inventory"] = AvdInventory(root, emulator)
+    elif args.avd_root is not None or args.avd_emulator is not None:
+        parser.error("AVD store and emulator options require --avd-inventory.")
     if args.build_preflight:
         if args.build_root is not None and not args.build_root.is_absolute():
             parser.error("--build-root must be an absolute trusted Host project path.")

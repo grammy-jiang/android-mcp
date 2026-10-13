@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-avd-inventory:v1",
+  "title": "Read-only Host AVD inventory v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "status", "avds", "errors"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok", "partial", "unavailable", "invalid", "not_found"]},
+    "avds": {
+      "type": "array", "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name", "api", "abi", "snapshot_count",
+          "snapshot_state", "running_state"
+        ],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"},
+          "api": {"type": "integer", "minimum": 16, "maximum": 40},
+          "abi": {"enum": ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"]},
+          "snapshot_count": {"type": "integer", "minimum": 0, "maximum": 16},
+          "snapshot_state": {"enum": ["none", "present_unverified"]},
+          "running_state": {"enum": ["verified_running", "stale_or_unverified"]}
+        }
+      }
+    },
+    "errors": {
+      "type": "array", "maxItems": 3,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"enum": [
+            "INVALID_NAME", "AVD_NOT_FOUND", "EMULATOR_UNAVAILABLE",
+            "AVD_ROOT_UNAVAILABLE", "EMULATOR_TIMEOUT", "EMULATOR_FAILED",
+            "EMULATOR_LIST_INVALID", "METADATA_INVALID"
+          ]},
+          "message": {"type": "string", "maxLength": 80}
+        }
+      }
+    }
+  }
+}
