@@ -24,6 +24,8 @@ from android_mcp_host.capability_profiles import CapabilityProfiles, get_capabil
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_build_job_schema
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 from android_mcp_host.durable_jobs import DurableJobStore, get_job_status_schema
+from android_mcp_host.emulator_lifecycle import EmulatorLifecycle
+from android_mcp_host.emulator_lifecycle_tool import register_emulator_lifecycle_tool
 from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
 from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
@@ -67,6 +69,7 @@ def create_server(
     build_jobs: ControlledBuildJobs | None = None,
     avd_inventory: AvdInventory | None = None,
     avd_provisioner: AvdProvisioner | None = None,
+    emulator_lifecycle: EmulatorLifecycle | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
 ) -> FastMCP:
@@ -451,6 +454,8 @@ def create_server(
         register_avd_inventory_tool(server, avd_inventory)
     if avd_provisioner is not None:
         register_avd_provision_tool(server, avd_provisioner)
+    if emulator_lifecycle is not None:
+        register_emulator_lifecycle_tool(server, emulator_lifecycle)
 
     if build_jobs is not None:
 
@@ -468,11 +473,7 @@ def create_server(
             action: Literal["assemble_debug", "lint_debug", "test_jvm"],
             request_id: str,
         ) -> dict[str, object]:
-            """Run only a preapproved finite offline Gradle action by idempotency key.
-
-            Does not authorize installs, USB access or physical-device mutation.
-            Operator pins source commit, wrapper digest, roots and owner context.
-            """
+            """Run a finite approved offline Gradle action; never mutate devices."""
             return await asyncio.to_thread(build_jobs.submit, action, request_id)
 
     if (durable_jobs is None) != (job_owner is None):

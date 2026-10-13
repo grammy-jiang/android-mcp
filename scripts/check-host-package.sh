@@ -25,6 +25,7 @@ from android_mcp_host.archive_inspector import ArchiveInspector, get_archive_out
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_build_job_schema
 from android_mcp_host.server import create_server
 from android_mcp_host.durable_jobs import DurableJobStore, get_job_status_schema
+from android_mcp_host.emulator_lifecycle import EmulatorLifecycle, get_emulator_lifecycle_schema
 from android_mcp_host.private_artifact_store import (
     PrivateArtifactStore,
     get_artifact_metadata_schema,
@@ -58,6 +59,7 @@ assert "devices" in report
 assert callable(create_server)
 assert get_avd_output_schema()["$id"] == "urn:android-mcp:host-avd-inventory:v1"
 assert get_avd_provision_schema()["$id"] == "urn:android-mcp:host-avd-provision:v1"
+assert get_emulator_lifecycle_schema()["$id"] == "urn:android-mcp:host-emulator-lifecycle:v1"
 assert create_server(avd_inventory=AvdInventory(
     Path.home() / ".android" / "avd", Path.home() / "absent-synthetic-emulator"
 )) is not None
@@ -71,6 +73,10 @@ with TemporaryDirectory() as owner_tmp:
         license_sha256="b" * 64,
     )
     assert create_server(avd_provisioner=avd_provisioner) is not None
+    inert_jobs = DurableJobStore(owner_base / "inert-emulator-jobs")
+    assert create_server(emulator_lifecycle=EmulatorLifecycle(
+        avd_provisioner, inert_jobs, owner="synthetic-owner"
+    )) is not None
 assert get_archive_output_schema()["$id"] == "urn:android-mcp:host-archive-inspection:v1"
 assert get_build_job_schema()["$id"] == "urn:android-mcp:host-controlled-build-job:v1"
 assert get_job_status_schema()["$id"] == "urn:android-mcp:host-durable-job-status:v1"

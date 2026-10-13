@@ -20,6 +20,7 @@ from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs
 from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.durable_jobs import DurableJobStore
+from android_mcp_host.emulator_lifecycle import EmulatorLifecycle
 from android_mcp_host.fastboot_inventory import FastbootInventory
 from android_mcp_host.logcat_filters import LogcatFilters
 from android_mcp_host.package_inspector import PackageInspector
@@ -104,6 +105,11 @@ def main(argv: list[str] | None = None) -> int:
         "--build-wrapper-sha256",
         default=None,
         help="Host-operator-approved full Gradle wrapper jar SHA-256; otherwise denies.",
+    )
+    serve.add_argument(
+        "--emulator-lifecycle-plan",
+        action="store_true",
+        help="Opt in to plan/status-only owned emulator Tool; real launch/stop disabled.",
     )
     serve.add_argument(
         "--avd-provision",
@@ -285,6 +291,13 @@ def main(argv: list[str] | None = None) -> int:
         args.avd_system_image_sha256,
         args.avd_license_sha256,
     )
+    if args.emulator_lifecycle_plan and (
+        not args.avd_provision or not args.durable_job_status or args.avd_owner != args.job_owner
+    ):
+        parser.error(
+            "--emulator-lifecycle-plan needs pinned AVD provisioning and job status "
+            "with an identical trusted owner; real emulator execution remains disabled."
+        )
     if args.avd_provision:
         if (
             any(value is None for value in owned_config)
@@ -377,6 +390,12 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["job_owner"] = args.job_owner
     elif args.job_root is not None or args.job_owner is not None:
         parser.error("Job store options require --durable-job-status.")
+    if args.emulator_lifecycle_plan:
+        kwargs["emulator_lifecycle"] = EmulatorLifecycle(
+            kwargs["avd_provisioner"],
+            kwargs["durable_jobs"],
+            owner=args.avd_owner,
+        )
     if args.controlled_build:
         kwargs["build_jobs"] = ControlledBuildJobs(
             preflight=kwargs["build_preflight"],
