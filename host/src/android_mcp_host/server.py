@@ -26,6 +26,10 @@ from android_mcp_host.package_inspector import (
     PackageInspector,
     get_package_output_schema,
 )
+from android_mcp_host.private_artifact_store import (
+    PrivateArtifactStore,
+    get_artifact_metadata_schema,
+)
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
 from android_mcp_host.status import build_status
@@ -50,6 +54,8 @@ def create_server(
     fastboot_inventory: FastbootInventory | None = None,
     sdk_ndk_inventory: SdkNdkInventory | None = None,
     build_preflight: AndroidBuildPreflight | None = None,
+    artifact_store: PrivateArtifactStore | None = None,
+    artifact_owner: str | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -384,5 +390,29 @@ def create_server(
             Only Host operator config can supply root and approved SHA pins.
             """
             return await asyncio.to_thread(build_preflight.plan, action, variant)
+
+    if (artifact_store is None) != (artifact_owner is None):
+        raise ValueError("Artifact metadata needs a trusted store and owner")
+    if artifact_store is not None and artifact_owner is not None:
+        if not artifact_store.validate_owner(artifact_owner):
+            raise ValueError("Invalid Host artifact owner")
+
+        @server.tool(
+            title="Inspect Private Artifact Metadata",
+            output_schema=get_artifact_metadata_schema(),
+            annotations={
+                "readOnlyHint": True,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        async def host_artifact_metadata(handle: str) -> dict[str, object]:
+            """Get opaque owner-scoped metadata; never read or return raw content.
+
+            Ownership is bound to this trusted Host service, not chosen by a
+            remote MCP client. No download, upload, install or signing action.
+            """
+            return await asyncio.to_thread(artifact_store.public_metadata, artifact_owner, handle)
 
     return server
