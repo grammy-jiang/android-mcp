@@ -15,6 +15,7 @@ from android_mcp_host.android_build_preflight import (
     AndroidBuildPreflight,
     get_build_preflight_output_schema,
 )
+from android_mcp_host.archive_inspector import ArchiveInspector, get_archive_output_schema
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 from android_mcp_host.durable_jobs import DurableJobStore, get_job_status_schema
@@ -57,6 +58,7 @@ def create_server(
     build_preflight: AndroidBuildPreflight | None = None,
     artifact_store: PrivateArtifactStore | None = None,
     artifact_owner: str | None = None,
+    archive_inspector: ArchiveInspector | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
 ) -> FastMCP:
@@ -417,6 +419,27 @@ def create_server(
             remote MCP client. No download, upload, install or signing action.
             """
             return await asyncio.to_thread(artifact_store.public_metadata, artifact_owner, handle)
+
+    if archive_inspector is not None:
+
+        @server.tool(
+            title="Inspect Private APK or AAB Archive",
+            output_schema=get_archive_output_schema(),
+            annotations={
+                "readOnlyHint": True,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        async def host_archive_inspect(handle: str) -> dict[str, object]:
+            """Inspect only operator-scoped private APK/AAB metadata by opaque handle.
+
+            Read-only ZIP inspection; a cryptographic signature is reported
+            verified only when a preconfigured trusted vendor verifier succeeds.
+            The caller cannot select paths, owner, binaries, commands or devices.
+            """
+            return await asyncio.to_thread(archive_inspector.inspect, handle)
 
     if (durable_jobs is None) != (job_owner is None):
         raise ValueError("Durable job status needs a trusted store and owner")
