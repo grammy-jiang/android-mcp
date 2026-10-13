@@ -37,6 +37,7 @@ from android_mcp_host.emulator_snapshot_tool import register_snapshot_tool
 from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
 from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
+from android_mcp_host.media_tool_registration import register_media_tools
 from android_mcp_host.operations import OperationService
 from android_mcp_host.package_inspector import (
     MAX_PERMISSIONS,
@@ -50,10 +51,9 @@ from android_mcp_host.private_artifact_store import (
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
 from android_mcp_host.status import build_status
+from android_mcp_host.synthetic_screenrecord import ScreenRecordService
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
-from android_mcp_host.synthetic_screenshot_tool import register_screenshot_tool
 from android_mcp_host.synthetic_ui_hierarchy import UiHierarchyService
-from android_mcp_host.synthetic_ui_tool import register_ui_hierarchy_tool
 from android_mcp_host.system_snapshot import SystemSnapshot, get_snapshot_output_schema
 from android_mcp_host.toolchain_inventory import (
     ToolchainInventory,
@@ -86,6 +86,7 @@ def create_server(
     debug_deployment: DebugDeployment | None = None,
     screenshot_worker: ScreenshotArtifacts | None = None,
     ui_hierarchy_worker: UiHierarchyService | None = None,
+    screenrecord_worker: ScreenRecordService | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -477,10 +478,7 @@ def create_server(
         register_instrumentation_tool(server, instrumentation_jobs)
     if debug_deployment is not None:
         register_debug_deployment_tool(server, debug_deployment)
-    if screenshot_worker is not None:
-        register_screenshot_tool(server, screenshot_worker)
-    if ui_hierarchy_worker is not None:
-        register_ui_hierarchy_tool(server, ui_hierarchy_worker)
+    register_media_tools(server, screenshot_worker, ui_hierarchy_worker, screenrecord_worker)
     if snapshot_manager is not None:
         register_snapshot_tool(server, snapshot_manager)
 
