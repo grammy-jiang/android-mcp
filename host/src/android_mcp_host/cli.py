@@ -17,11 +17,14 @@ from android_mcp_host.archive_inspector import ArchiveInspector
 from android_mcp_host.avd_inventory import AvdInventory
 from android_mcp_host.avd_provisioning import AvdProvisioner
 from android_mcp_host.capability_profiles import CapabilityProfiles
+from android_mcp_host.cli_capture_options import (
+    add_capture_flags,
+    register_capture_workers,
+    validate_capture_flags,
+)
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs
 from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.durable_jobs import DurableJobStore
-from android_mcp_host.emulator_debug_deployment import DebugDeployment
-from android_mcp_host.emulator_debug_support import valid_package
 from android_mcp_host.emulator_instrumentation_jobs import InstrumentationJobs
 from android_mcp_host.emulator_lifecycle import EmulatorLifecycle
 from android_mcp_host.emulator_snapshot_manager import EmulatorSnapshotManager
@@ -110,16 +113,7 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Host-operator-approved full Gradle wrapper jar SHA-256; otherwise denies.",
     )
-    serve.add_argument(
-        "--emulator-debug-plan",
-        action="store_true",
-        help="Opt in to fake-only debug package planning; real ADB install stays disabled.",
-    )
-    serve.add_argument(
-        "--debug-package-id",
-        default=None,
-        help="Operator-pinned synthetic debug package; never supplied by device discovery.",
-    )
+    add_capture_flags(serve)
     serve.add_argument(
         "--emulator-instrumentation-plan",
         action="store_true",
@@ -315,22 +309,7 @@ def main(argv: list[str] | None = None) -> int:
         args.avd_system_image_sha256,
         args.avd_license_sha256,
     )
-    if args.emulator_debug_plan and (
-        not args.emulator_lifecycle_plan
-        or not args.avd_provision
-        or not args.durable_job_status
-        or not args.artifact_metadata
-        or args.avd_owner != args.job_owner
-        or not isinstance(args.debug_package_id, str)
-        or not args.debug_package_id.startswith("org.example.synthetic.")
-        or not valid_package(args.debug_package_id)
-    ):
-        parser.error(
-            "--emulator-debug-plan requires pinned owner-scoped AVD, lifecycle, "
-            "private artifacts, jobs and synthetic debug package. No real install."
-        )
-    if not args.emulator_debug_plan and args.debug_package_id is not None:
-        parser.error("--debug-package-id requires --emulator-debug-plan.")
+    validate_capture_flags(args, parser)
     if args.emulator_instrumentation_plan and (
         not args.emulator_lifecycle_plan
         or not args.avd_provision
@@ -460,16 +439,7 @@ def main(argv: list[str] | None = None) -> int:
             kwargs["durable_jobs"],
             owner=args.avd_owner,
         )
-    if args.emulator_debug_plan:
-        kwargs["debug_deployment"] = DebugDeployment(
-            kwargs["avd_provisioner"],
-            kwargs["emulator_lifecycle"],
-            kwargs["durable_jobs"],
-            kwargs["artifact_store"],
-            owner=args.avd_owner,
-            artifact_owner=args.artifact_owner,
-            expected_package=args.debug_package_id,
-        )
+    register_capture_workers(args, kwargs)
     if args.emulator_instrumentation_plan:
         kwargs["instrumentation_jobs"] = InstrumentationJobs(
             kwargs["avd_provisioner"],

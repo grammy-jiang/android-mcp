@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-synthetic-screenshot:v1",
+  "title": "Private synthetic screenshot artifact receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "runtime",
+    "status",
+    "capture_state",
+    "avd_name",
+    "avd_handle",
+    "lifecycle_job_id",
+    "job_id",
+    "artifact_handle",
+    "sha256",
+    "size_bytes",
+    "width",
+    "height",
+    "privacy_class",
+    "target",
+    "synthetic_fixture_only",
+    "real_capture_enabled",
+    "physical_device_writes_enabled",
+    "errors"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "runtime": {
+      "const": "host"
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "ok",
+        "blocked",
+        "failed",
+        "uncertain"
+      ]
+    },
+    "capture_state": {
+      "enum": [
+        "none",
+        "captured_synthetic",
+        "unknown"
+      ]
+    },
+    "avd_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcp_[A-Za-z0-9][A-Za-z0-9_-]{2,43}$"
+    },
+    "avd_handle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcpavd_[A-Za-z0-9_-]{32}$"
+    },
+    "lifecycle_job_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^job_[A-Za-z0-9_-]{32}$"
+    },
+    "job_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^job_[A-Za-z0-9_-]{32}$"
+    },
+    "artifact_handle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^art_[A-Za-z0-9_-]{32}$"
+    },
+    "sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "size_bytes": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 4194304
+    },
+    "width": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 2048
+    },
+    "height": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 2048
+    },
+    "privacy_class": {
+      "const": "sensitive_private"
+    },
+    "target": {
+      "const": "disposable_emulator_only"
+    },
+    "synthetic_fixture_only": {
+      "const": true
+    },
+    "real_capture_enabled": {
+      "const": false
+    },
+    "physical_device_writes_enabled": {
+      "const": false
+    },
+    "errors": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "enum": [
+              "INVALID_ACTION",
+              "INVALID_INPUT",
+              "NOT_OWNED",
+              "CONSENT_REQUIRED",
+              "EXECUTION_DISABLED",
+              "UNVERIFIED_TARGET",
+              "RECOVERY_REQUIRED",
+              "IDEMPOTENCY_CONFLICT",
+              "JOB_UNAVAILABLE",
+              "BAD_FRAME",
+              "SECURE_CONTENT",
+              "TIMEOUT",
+              "CAPTURE_FAILED",
+              "ARTIFACT_EXPIRED"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 96
+          }
+        }
+      }
+    }
+  }
+}
