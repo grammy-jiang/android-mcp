@@ -15,6 +15,7 @@ from android_mcp_host.adb_transport import AdbTransport
 from android_mcp_host.android_build_preflight import AndroidBuildPreflight
 from android_mcp_host.archive_inspector import ArchiveInspector
 from android_mcp_host.avd_inventory import AvdInventory
+from android_mcp_host.avd_provisioning import AvdProvisioner
 from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs
 from android_mcp_host.device_discovery import DeviceDiscovery
@@ -104,6 +105,23 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Host-operator-approved full Gradle wrapper jar SHA-256; otherwise denies.",
     )
+    serve.add_argument(
+        "--avd-provision",
+        action="store_true",
+        help="Opt in to creating/deleting only dedicated MCP-owned synthetic AVD files.",
+    )
+    serve.add_argument("--avd-provision-root", type=Path, default=None)
+    serve.add_argument("--avd-sdk-root", type=Path, default=None)
+    serve.add_argument("--avd-owner", default=None)
+    serve.add_argument("--avd-api", type=int, default=None)
+    serve.add_argument(
+        "--avd-abi",
+        choices=("arm64-v8a", "armeabi-v7a", "x86", "x86_64"),
+        default=None,
+    )
+    serve.add_argument("--avd-image-sha256", default=None)
+    serve.add_argument("--avd-system-image-sha256", default=None)
+    serve.add_argument("--avd-license-sha256", default=None)
     serve.add_argument(
         "--avd-inventory",
         action="store_true",
@@ -257,6 +275,40 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["fastboot_inventory"] = FastbootInventory()
     if args.sdk_ndk_inventory:
         kwargs["sdk_ndk_inventory"] = SdkNdkInventory()
+    owned_config = (
+        args.avd_provision_root,
+        args.avd_sdk_root,
+        args.avd_owner,
+        args.avd_api,
+        args.avd_abi,
+        args.avd_image_sha256,
+        args.avd_system_image_sha256,
+        args.avd_license_sha256,
+    )
+    if args.avd_provision:
+        if (
+            any(value is None for value in owned_config)
+            or not args.avd_provision_root.is_absolute()
+            or not args.avd_sdk_root.is_absolute()
+            or not PrivateArtifactStore.validate_owner(args.avd_owner)
+            or not 16 <= args.avd_api <= 40
+            or re.fullmatch(r"[0-9a-f]{64}", args.avd_image_sha256) is None
+            or re.fullmatch(r"[0-9a-f]{64}", args.avd_system_image_sha256) is None
+            or re.fullmatch(r"[0-9a-f]{64}", args.avd_license_sha256) is None
+        ):
+            parser.error("--avd-provision requires complete trusted absolute roots and SHA pins.")
+        kwargs["avd_provisioner"] = AvdProvisioner(
+            args.avd_provision_root,
+            args.avd_sdk_root,
+            args.avd_owner,
+            api=args.avd_api,
+            abi=args.avd_abi,
+            source_properties_sha256=args.avd_image_sha256,
+            system_image_sha256=args.avd_system_image_sha256,
+            license_sha256=args.avd_license_sha256,
+        )
+    elif any(value is not None for value in owned_config):
+        parser.error("Owned AVD provisioning options require --avd-provision.")
     if args.avd_inventory:
         root = args.avd_root or (Path.home() / ".android" / "avd")
         emulator = args.avd_emulator or (
