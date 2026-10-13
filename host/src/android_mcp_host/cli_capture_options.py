@@ -11,6 +11,7 @@ from typing import Any
 from android_mcp_host.emulator_debug_deployment import DebugDeployment
 from android_mcp_host.emulator_debug_support import valid_package
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
+from android_mcp_host.synthetic_ui_hierarchy import UiHierarchyService
 
 
 def add_capture_flags(serve: argparse.ArgumentParser) -> None:
@@ -28,6 +29,11 @@ def add_capture_flags(serve: argparse.ArgumentParser) -> None:
         "--screenshot-plan",
         action="store_true",
         help="Plan private synthetic screenshot capture; real capture remains disabled.",
+    )
+    serve.add_argument(
+        "--ui-hierarchy-plan",
+        action="store_true",
+        help="Plan bounded redacted synthetic UI inspection; real UI access remains disabled.",
     )
 
 
@@ -48,6 +54,13 @@ def validate_capture_flags(args: argparse.Namespace, parser: argparse.ArgumentPa
         )
     if not args.emulator_debug_plan and args.debug_package_id is not None:
         parser.error("--debug-package-id requires --emulator-debug-plan.")
+    if args.ui_hierarchy_plan and (
+        not args.emulator_lifecycle_plan
+        or not args.avd_provision
+        or not args.durable_job_status
+        or args.avd_owner != args.job_owner
+    ):
+        parser.error("--ui-hierarchy-plan requires trusted owned AVD, lifecycle and job store.")
     if args.screenshot_plan and (
         not args.emulator_lifecycle_plan
         or not args.avd_provision
@@ -70,6 +83,13 @@ def register_capture_workers(args: argparse.Namespace, kwargs: dict[str, Any]) -
             owner=args.avd_owner,
             artifact_owner=args.artifact_owner,
             expected_package=args.debug_package_id,
+        )
+    if args.ui_hierarchy_plan:
+        kwargs["ui_hierarchy_worker"] = UiHierarchyService(
+            kwargs["avd_provisioner"],
+            kwargs["emulator_lifecycle"],
+            kwargs["durable_jobs"],
+            owner=args.avd_owner,
         )
     if args.screenshot_plan:
         kwargs["screenshot_worker"] = ScreenshotArtifacts(

@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-ui-hierarchy:v1",
+  "title": "Private synthetic bounded and redacted Android UI hierarchy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "runtime",
+    "status",
+    "avd_name",
+    "avd_handle",
+    "lifecycle_job_id",
+    "window_id",
+    "focused_node_id",
+    "rotation",
+    "node_count",
+    "nodes",
+    "target",
+    "sensitivity_class",
+    "synthetic_fixture_only",
+    "real_ui_access_enabled",
+    "accessibility_bypass_enabled",
+    "physical_device_writes_enabled",
+    "raw_xml_returned",
+    "errors"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "runtime": {
+      "const": "host"
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "ok",
+        "blocked",
+        "unavailable",
+        "uncertain"
+      ]
+    },
+    "avd_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcp_[A-Za-z0-9][A-Za-z0-9_-]{2,43}$"
+    },
+    "avd_handle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcpavd_[A-Za-z0-9_-]{32}$"
+    },
+    "lifecycle_job_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^job_[A-Za-z0-9_-]{32}$"
+    },
+    "window_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^win_[A-Za-z0-9_-]{1,64}$"
+    },
+    "focused_node_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^node_[A-Za-z0-9_-]{1,40}$"
+    },
+    "rotation": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 3
+    },
+    "node_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 96
+    },
+    "nodes": {
+      "type": "array",
+      "maxItems": 96,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "parent_id",
+          "class_name",
+          "resource_id",
+          "text",
+          "content_description",
+          "focused",
+          "password"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^node_[A-Za-z0-9_-]{1,40}$"
+          },
+          "parent_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^node_[A-Za-z0-9_-]{1,40}$"
+          },
+          "class_name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "resource_id": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "content_description": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "focused": {
+            "type": "boolean"
+          },
+          "password": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "target": {
+      "const": "disposable_emulator_only"
+    },
+    "sensitivity_class": {
+      "const": "redacted_ui"
+    },
+    "synthetic_fixture_only": {
+      "const": true
+    },
+    "real_ui_access_enabled": {
+      "const": false
+    },
+    "accessibility_bypass_enabled": {
+      "const": false
+    },
+    "physical_device_writes_enabled": {
+      "const": false
+    },
+    "raw_xml_returned": {
+      "const": false
+    },
+    "errors": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "enum": [
+              "INVALID_ACTION",
+              "INVALID_INPUT",
+              "NOT_OWNED",
+              "CONSENT_REQUIRED",
+              "EXECUTION_DISABLED",
+              "UNVERIFIED_TARGET",
+              "BUSY",
+              "CAPABILITY_UNAVAILABLE",
+              "WINDOW_PROTECTED",
+              "MODE_CHANGED",
+              "BAD_FRAME",
+              "INVALID_XML",
+              "TIMEOUT",
+              "RUNNER_FAILED"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 112
+          }
+        }
+      }
+    }
+  }
+}
