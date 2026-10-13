@@ -107,19 +107,23 @@ class EmulatorSnapshotManager:
         self._owner = owner
 
     @staticmethod
-    def _plan_digest(action: str, avd: dict[str, Any], snapshot_name: str) -> str:
-        return hashlib.sha256(
-            _canonical(
-                {
-                    "schema_version": 1,
-                    "action": action,
-                    "name": avd["name"],
-                    "avd_handle": avd["handle"],
-                    "image_sha256": avd["artifact_sha256"],
-                    "snapshot": snapshot_name,
-                }
-            )
-        ).hexdigest()
+    def _plan_digest(
+        action: str,
+        avd: dict[str, Any],
+        snapshot_name: str,
+        snapshot_handle: str | None = None,
+    ) -> str:
+        plan = {
+            "schema_version": 1,
+            "action": action,
+            "name": avd["name"],
+            "avd_handle": avd["handle"],
+            "image_sha256": avd["artifact_sha256"],
+            "snapshot": snapshot_name,
+        }
+        if action in {"restore", "delete"}:
+            plan["snapshot_handle"] = snapshot_handle
+        return hashlib.sha256(_canonical(plan)).hexdigest()
 
     def _owner_locked(self, avd: dict[str, Any], secret: bytes) -> bool:
         record = self.provisioner._record(avd["name"], secret)
@@ -252,7 +256,7 @@ class EmulatorSnapshotManager:
         snapshot_handle: str | None,
         request_id: str,
     ) -> dict[str, Any]:
-        digest = self._plan_digest(action, avd, name)
+        digest = self._plan_digest(action, avd, name, snapshot_handle)
         try:
             prior = self._jobs.lookup_request(self._owner, request_id, digest, avd["handle"])
             if prior is not None:
@@ -351,6 +355,12 @@ class EmulatorSnapshotManager:
             not isinstance(snapshot_handle, str) or _HANDLE.fullmatch(snapshot_handle) is None
         ):
             return _response("blocked", action, error="INVALID_HANDLE")
+        if (
+            action == "cancel"
+            and snapshot_handle is not None
+            and (not isinstance(snapshot_handle, str) or _HANDLE.fullmatch(snapshot_handle) is None)
+        ):
+            return _response("blocked", action, error="INVALID_HANDLE")
         if action in {"create", "restore", "delete"} and (
             not isinstance(request_id, str) or _REQUEST.fullmatch(request_id) is None
         ):
@@ -372,7 +382,24 @@ class EmulatorSnapshotManager:
                 if action == "list":
                     return self._list(avd, secret)
                 if action == "cancel":
-                    if not isinstance(job_id, str):
+                    if not isinstance(job_id, str) or snapshot_name is None:
+                        return _response("blocked", action, avd=avd, error="JOB_UNAVAILABLE")
+                    # A snapshot cancellation may never alter a Host build,
+                    # lifecycle, or unrelated snapshot job sharing this owner.
+                    state = self._jobs.status(self._owner, job_id)
+                    if state["status"] != "ok":
+                        return _response("blocked", action, avd=avd, error="JOB_UNAVAILABLE")
+                    possible = {self._plan_digest("create", avd, snapshot_name)}
+                    if snapshot_handle is not None:
+                        possible.update(
+                            {
+                                self._plan_digest(kind, avd, snapshot_name, snapshot_handle)
+                                for kind in ("restore", "delete")
+                            }
+                        )
+                    if state["job"]["plan_digest"] not in possible:
+                        return _response("blocked", action, avd=avd, error="JOB_UNAVAILABLE")
+                    if state["job"]["state"] in {"succeeded", "failed"}:
                         return _response("blocked", action, avd=avd, error="JOB_UNAVAILABLE")
                     try:
                         self._jobs.cancel(

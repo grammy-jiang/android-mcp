@@ -44,7 +44,11 @@ never recursively removes snapshot directories or another AVD's
 files and does not interpret actual emulator snapshot binaries.
 
 Create, simulated restore, and delete are bound to H2.d durable job
-idempotency and a single worker claim. Duplicate completed requests
+idempotency and a single worker claim. Restore/delete request plans also
+bind the exact opaque snapshot handle, so changing that handle on replay
+cannot reuse a successful job. Snapshot cancellation checks the
+originating snapshot-plan digest before touching any job; it cannot
+cancel emulator lifecycle or other Host jobs sharing the same AVD owner. Duplicate completed requests
 replay metadata; unresolved or uncertain operations fence all new
 mutating snapshot jobs. Storage errors and post-write journal failures
 are reported as failed or uncertain according to whether a write may
