@@ -1,0 +1,571 @@
+{
+  "schema_version": 1,
+  "snapshot_main_sha": "f3c2771668fa1fe91396e77c5f507b9bf0312d64",
+  "roadmap_packages_merged": 38,
+  "specified_test_case_ids": 228,
+  "specified_test_case_ids_are_not_an_executed_test_count": true,
+  "production_public_native_tools": [
+    "device_status"
+  ],
+  "status_semantics": "merged_verified is limited to actual status/lifecycle emulator evidence; inert_merged/plan_only/blocked/unsupported do not enable sensitive hardware operations",
+  "capabilities": [
+    {
+      "id": "N01",
+      "name": "Native local MCP status and health",
+      "work_packages": [
+        "N0.a",
+        "N0.c",
+        "N1.c"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N0.a",
+          "pr": 45,
+          "merge_sha": "c126c226b7c2af3eaaafab218feb21a6917598a5"
+        },
+        {
+          "package": "N0.c",
+          "pr": 51,
+          "merge_sha": "9f443a16548a5faf5f06feb76150396b63006b40"
+        },
+        {
+          "package": "N1.c",
+          "pr": 58,
+          "merge_sha": "6053192fd627cfe734e5ae7464a4604aa43be1f9"
+        }
+      ],
+      "source_file": "android/app/src/main/java/org/androidmcp/nativeapp/LocalMcpGateway.kt",
+      "android_api_or_boundary": "Ktor loopback MCP, opt-in app lifecycle",
+      "required_permission_or_review_gate": "INTERNET and foreground lifecycle",
+      "status": "merged_verified",
+      "verified_scope": "Actual local status endpoint + emulator lifecycle",
+      "public_native_tool": "device_status",
+      "feature_executable_in_production": true
+    },
+    {
+      "id": "N02",
+      "name": "Android Build / OS / ABI metadata",
+      "work_packages": [
+        "N1.a"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N1.a",
+          "pr": 56,
+          "merge_sha": "4e80b0f97b0214d2769a8041dcd657bd99f056bd"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeBuildSnapshot.kt",
+      "android_api_or_boundary": "Build API/ABI",
+      "required_permission_or_review_gate": "Caller authentication before sensitive exposure",
+      "status": "inert_merged",
+      "verified_scope": "Kotlin fake + APK regression, not public Native Tool",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N03",
+      "name": "Battery storage display network metadata",
+      "work_packages": [
+        "N1.b"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N1.b",
+          "pr": 57,
+          "merge_sha": "0047286161964666b327109683ef27313e4e57a3"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeSystemSnapshot.kt",
+      "android_api_or_boundary": "Android system snapshot APIs",
+      "required_permission_or_review_gate": "Platform scoped read permissions",
+      "status": "inert_merged",
+      "verified_scope": "Kotlin fake + APK regression, not public Native Tool",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N04",
+      "name": "Runtime permission readiness",
+      "work_packages": [
+        "N0.d",
+        "N1.d"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N0.d",
+          "pr": 53,
+          "merge_sha": "ec21755d27010d15c4108ea3872af6e0dc69e744"
+        },
+        {
+          "package": "N1.d",
+          "pr": 59,
+          "merge_sha": "85ed6fab608119aa841e5a5865ad2692ce348ffc"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativePermissionReadiness.kt",
+      "android_api_or_boundary": "PackageManager permission checks",
+      "required_permission_or_review_gate": "Android OS grants cannot be inferred",
+      "status": "inert_merged",
+      "verified_scope": "OS permission gating baseline via verified emulator",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N05",
+      "name": "Visible Android packages and details",
+      "work_packages": [
+        "N2.a",
+        "N2.b"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N2.a",
+          "pr": 60,
+          "merge_sha": "952662c55a9200936f99ad92f3661107b481b063"
+        },
+        {
+          "package": "N2.b",
+          "pr": 62,
+          "merge_sha": "9f38c7aa59e20eda8155be18742a4bc073759c09"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativePackageVisibility.kt",
+      "android_api_or_boundary": "PackageManager filtered visibility API30+",
+      "required_permission_or_review_gate": "OS visibility filtering; never QUERY_ALL_PACKAGES",
+      "status": "inert_merged",
+      "verified_scope": "Filtered mock and rejection tests, no live public query",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N06",
+      "name": "Own-app diagnostics and health fallback",
+      "work_packages": [
+        "N1.c",
+        "N5.a",
+        "N5.d"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N1.c",
+          "pr": 58,
+          "merge_sha": "6053192fd627cfe734e5ae7464a4604aa43be1f9"
+        },
+        {
+          "package": "N5.a",
+          "pr": 78,
+          "merge_sha": "1c8f2fc5eb5b42527ab39b31e5b91be9fa507a44"
+        },
+        {
+          "package": "N5.d",
+          "pr": 84,
+          "merge_sha": "ac8de978b402ad5cd94e9df6529c3aa2dad6fa74"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeAppHealth.kt",
+      "android_api_or_boundary": "App-local diagnostics only",
+      "required_permission_or_review_gate": "App-private data; no global Logcat",
+      "status": "inert_merged",
+      "verified_scope": "Kotlin/source safety tests; no sensitive public stream",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N07",
+      "name": "Accessibility service and UI-tree inspection",
+      "work_packages": [
+        "N3.d",
+        "N3.e"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N3.d",
+          "pr": 68,
+          "merge_sha": "e8b2732802b614e63498c3ee7b6d672765c17bb4"
+        },
+        {
+          "package": "N3.e",
+          "pr": 69,
+          "merge_sha": "3ed2ec1278e60601eb88a65b341326ca6eaa4898"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeAccessibilityPolicy.kt",
+      "android_api_or_boundary": "AccessibilityService eligibility",
+      "required_permission_or_review_gate": "Separate legitimate OS accessibility activation not granted",
+      "status": "blocked",
+      "verified_scope": "Synthetic only, no real AccessibilityService grant",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N08",
+      "name": "UI gesture plans and cancellation",
+      "work_packages": [
+        "N4.a",
+        "N4.b",
+        "N6.e"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N4.a",
+          "pr": 70,
+          "merge_sha": "5aaffec1a03822cc600459af2313090bb5200687"
+        },
+        {
+          "package": "N4.b",
+          "pr": 72,
+          "merge_sha": "d73edc0b002974226bc61a925cf03c73b3395f6a"
+        },
+        {
+          "package": "N6.e",
+          "pr": 95,
+          "merge_sha": "545a593e3fe84cd2dae6932fd4944a7e0e70a36e"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeUiActionPlan.kt",
+      "android_api_or_boundary": "Accessibility action plan and preverified QEMU",
+      "required_permission_or_review_gate": "Real Android user and caller authorization absent",
+      "status": "plan_only",
+      "verified_scope": "Synthetic action plans; emulator safety baseline not production dispatch",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N09",
+      "name": "One-shot user-consented screen capture",
+      "work_packages": [
+        "N3.a",
+        "N3.b"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N3.a",
+          "pr": 64,
+          "merge_sha": "bdbf6f31d3d866379f32da6ef2b9a1fb689a4e65"
+        },
+        {
+          "package": "N3.b",
+          "pr": 66,
+          "merge_sha": "1b8db6d6f0c4499ef5f9a6f28669767f7c4c899b"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeProjectionConsent.kt",
+      "android_api_or_boundary": "MediaProjection",
+      "required_permission_or_review_gate": "Visible OS MediaProjection consent absent",
+      "status": "blocked",
+      "verified_scope": "Inert plan and artifacts; real screenshot unverified",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N10",
+      "name": "User-consented screen recording",
+      "work_packages": [
+        "N3.a",
+        "N3.c"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N3.a",
+          "pr": 64,
+          "merge_sha": "bdbf6f31d3d866379f32da6ef2b9a1fb689a4e65"
+        },
+        {
+          "package": "N3.c",
+          "pr": 67,
+          "merge_sha": "4ad2192a7690f5d03c4744a540cecb1b7669a0cf"
+        }
+      ],
+      "source_file": "android/native-lifecycle/src/main/kotlin/org/androidmcp/lifecycle/NativeSyntheticRecording.kt",
+      "android_api_or_boundary": "MediaProjection foreground capture",
+      "required_permission_or_review_gate": "User projection/FGS consent absent",
+      "status": "blocked",
+      "verified_scope": "Synthetic lifecycle; no live recording",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N11",
+      "name": "User-picked SAF import export",
+      "work_packages": [
+        "N0.e",
+        "N4.c",
+        "N4.d",
+        "N4.e"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N0.e",
+          "pr": 55,
+          "merge_sha": "4a979941eaa2762766e94f6453cd1e148a6d81fd"
+        },
+        {
+          "package": "N4.c",
+          "pr": 74,
+          "merge_sha": "1edb399f4c5605a48d958c7995329d184e89e55a"
+        },
+        {
+          "package": "N4.d",
+          "pr": 75,
+          "merge_sha": "a5cba795369ca7eb9143b57642fbb71b65a7d86f"
+        },
+        {
+          "package": "N4.e",
+          "pr": 76,
+          "merge_sha": "d9b149b5b53089a8e7afa7db26303954762afae2"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeSafGrantPolicy.kt",
+      "android_api_or_boundary": "Storage Access Framework picker and URI",
+      "required_permission_or_review_gate": "Exact user-chosen URI and persisted OS grant required",
+      "status": "plan_only",
+      "verified_scope": "Synthetic grant/IO; no public foreign-user file access",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N12",
+      "name": "Explicit allowed Activity intent launch",
+      "work_packages": [
+        "N2.c",
+        "N7.c"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N2.c",
+          "pr": 63,
+          "merge_sha": "50c7bb2ee7d2b88629fad9a8d8d545cdbc3c8019"
+        },
+        {
+          "package": "N7.c",
+          "pr": 98,
+          "merge_sha": "d2b930a681dabf0e885342caed5e661b77f49356"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeExplicitLaunchSafety.kt",
+      "android_api_or_boundary": "Explicit exported Activity Intent",
+      "required_permission_or_review_gate": "Real user/caller grant and background restrictions",
+      "status": "plan_only",
+      "verified_scope": "Typed deterministic plan, real third-party launch off",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N13",
+      "name": "Optional scoped sensor/network/notification status",
+      "work_packages": [
+        "N4.f"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N4.f",
+          "pr": 77,
+          "merge_sha": "0ae9acce921e1bcf7efee048d5487b8423928c2a"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeOptionalStatus.kt",
+      "android_api_or_boundary": "Scoped ordinary Android permissions",
+      "required_permission_or_review_gate": "No location or notification surveillance grant",
+      "status": "inert_merged",
+      "verified_scope": "Bounded optional status fixtures only",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N14",
+      "name": "Own-process performance and crash telemetry",
+      "work_packages": [
+        "N5.a",
+        "N5.b",
+        "N5.c"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N5.a",
+          "pr": 78,
+          "merge_sha": "1c8f2fc5eb5b42527ab39b31e5b91be9fa507a44"
+        },
+        {
+          "package": "N5.b",
+          "pr": 80,
+          "merge_sha": "7c261268751d9d308fc8e4957906d2b7be832f76"
+        },
+        {
+          "package": "N5.c",
+          "pr": 81,
+          "merge_sha": "bf985160856cc517322d6f185ad8c3ea3130f780"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeOwnPerformance.kt",
+      "android_api_or_boundary": "Own-app memory/crash measurements",
+      "required_permission_or_review_gate": "App-only retention and finite counters",
+      "status": "inert_merged",
+      "verified_scope": "Private diagnostics, not a global profiler",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N15",
+      "name": "User-mediated PackageInstaller",
+      "work_packages": [
+        "N7.a",
+        "N7.b"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N7.a",
+          "pr": 96,
+          "merge_sha": "bd31100511e5ead0b92c75205525228d59f8bd69"
+        },
+        {
+          "package": "N7.b",
+          "pr": 97,
+          "merge_sha": "e751808cf71ddc417240dd8ed4c7ccb272fc84f2"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeInstallerConsentSafety.kt",
+      "android_api_or_boundary": "Android PackageInstaller",
+      "required_permission_or_review_gate": "Dedicated signed fixture, owned AVD and genuine OS consent missing",
+      "status": "blocked",
+      "verified_scope": "N7b QEMU identity read-only passed; actual consent UI BLOCKED",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N16",
+      "name": "Opt-in Native foreground MCP service",
+      "work_packages": [
+        "N0.c",
+        "N7.d"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N0.c",
+          "pr": 51,
+          "merge_sha": "9f443a16548a5faf5f06feb76150396b63006b40"
+        },
+        {
+          "package": "N7.d",
+          "pr": 99,
+          "merge_sha": "e7c5bd9bb0026a281f4557c43d9b216c9e09b6fe"
+        }
+      ],
+      "source_file": "android/app/src/main/java/org/androidmcp/nativeapp/NativeMcpForegroundService.kt",
+      "android_api_or_boundary": "FGS specialUse API34+",
+      "required_permission_or_review_gate": "User-visible foreground/notification permission required",
+      "status": "merged_verified",
+      "verified_scope": "Actual Activity/FGS/Stop QEMU API34/36; API30/33 legacy denial",
+      "public_native_tool": null,
+      "feature_executable_in_production": true
+    },
+    {
+      "id": "N17",
+      "name": "Authenticated Host/Native pairing",
+      "work_packages": [
+        "N0.b",
+        "N6.a",
+        "N6.b"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N0.b",
+          "pr": 48,
+          "merge_sha": "c09bd23a7a59324561a182bb0df621d095f45812"
+        },
+        {
+          "package": "N6.a",
+          "pr": 87,
+          "merge_sha": "0d2be9996af33d39bd68797ffbc3155efafd56c3"
+        },
+        {
+          "package": "N6.b",
+          "pr": 88,
+          "merge_sha": "99e3ac9ec5f6cef3facabe89b7568e6ea5b89916"
+        }
+      ],
+      "source_file": "android/native-lifecycle/src/main/kotlin/org/androidmcp/lifecycle/NativeInstallationIdentity.kt",
+      "android_api_or_boundary": "Android Keystore and signed Host challenge",
+      "required_permission_or_review_gate": "No live authenticated pairing or external caller boundary",
+      "status": "blocked",
+      "verified_scope": "Keystore foundation with synthetic Host pairing only",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N18",
+      "name": "Durable distributed mutation fencing",
+      "work_packages": [
+        "N6.c",
+        "N6.d",
+        "N6.e"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N6.c",
+          "pr": 91,
+          "merge_sha": "a790dca8959d55b055c5fcce5b4e81281410ab26"
+        },
+        {
+          "package": "N6.d",
+          "pr": 94,
+          "merge_sha": "b95fc28566a2114eb2aac0c4726843bff5d9e7ef"
+        },
+        {
+          "package": "N6.e",
+          "pr": 95,
+          "merge_sha": "545a593e3fe84cd2dae6932fd4944a7e0e70a36e"
+        }
+      ],
+      "source_file": "android/native-lifecycle/src/main/kotlin/org/androidmcp/lifecycle/NativeFenceState.kt",
+      "android_api_or_boundary": "App-private synthetic monotonic journal",
+      "required_permission_or_review_gate": "Real Host/Native distributed lease and independent review missing",
+      "status": "inert_merged",
+      "verified_scope": "Crash/replay/fence fakes; real mutation remains OFF",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N19",
+      "name": "Managed Device Owner/enterprise policy",
+      "work_packages": [
+        "N8.a"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N8.a",
+          "pr": 101,
+          "merge_sha": "e064559d69604db00fbd6292e7c837ec1a63e73b"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeManagedDevicePolicy.kt",
+      "android_api_or_boundary": "DevicePolicyManager own-package read-only status",
+      "required_permission_or_review_gate": "No admin receiver, provisioning or trusted owner grant",
+      "status": "blocked",
+      "verified_scope": "Feasibility only; real enterprise policy changes denied",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    },
+    {
+      "id": "N20",
+      "name": "Root Bootloader ROM recovery",
+      "work_packages": [
+        "N8.b"
+      ],
+      "merge_receipts": [
+        {
+          "package": "N8.b",
+          "pr": 102,
+          "merge_sha": "f3c2771668fa1fe91396e77c5f507b9bf0312d64"
+        }
+      ],
+      "source_file": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeRootRecoveryGap.kt",
+      "android_api_or_boundary": "No ordinary APK OS privilege",
+      "required_permission_or_review_gate": "Physical owner, signed Host and external approval mandatory",
+      "status": "unsupported_by_platform",
+      "verified_scope": "Host manual planning only; root, erase and flash unsupported",
+      "public_native_tool": null,
+      "feature_executable_in_production": false
+    }
+  ]
+}
