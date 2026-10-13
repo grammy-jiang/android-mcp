@@ -26,7 +26,10 @@ an expired lease. Even an active fake lease returns
 realDeviceMutationAllowed()=false and mutation_executed=false.
 
 N6.c separately provides the owner-locked on-disk private high-water
-journal. This N6.d simulator's recovery snapshot is **not** a durable
+journal. This N6.d simulator's recovery snapshot includes the bounded 64-entry request/plan replay
+ledger so the same ambiguous action is rejected even under a newer fence.
+Missing, malformed or oversized recovery ledgers fail closed. An expired
+lease cannot be reported as successfully released. The snapshot is **not** a durable
 authenticated Host record or a production cross-runtime protocol.
 No two real Host services, USB device, physical tablet or ADB mutation
 are involved. Actual mutation requires mutually agreed signed
@@ -35,8 +38,11 @@ consent and independent external security review.
 
 Six T-N6D-01..06 Kotlin tests were RED on the permissive stub, then
 GREEN after adding fake contention, lease expiry, uncertainty,
-recovery and strict schema checks. Two additional Kotlin regressions
-cover higher-fence same-plan replay and clock rollback/changed boot.
+recovery and strict schema checks. Five additional Kotlin regressions cover higher-fence same-plan replay,
+clock rollback/changed boot, cross-restart same-plan replay, expired
+release and malformed/oversized recovery snapshots. The last two
+security cases were observed RED on the initial N6.d code and GREEN
+after the state-machine corrections.
 Six Native Python source/Manifest gates check no real write dispatch,
 only safe provenance and unchanged public one-Tool APK permissions.
 Full JDK17/SDK36 Host/Native quality, signing, Lint, dependency

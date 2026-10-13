@@ -80,3 +80,12 @@ def test_n6d_06_android_manifest_not_expanded() -> None:
         "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
         "android.permission.POST_NOTIFICATIONS",
     }
+
+
+def test_n6d_07_recovery_ledger_and_expiry_fail_closed() -> None:
+    code = SRC.read_text()
+    assert "recovery.seenRequestIds.size <= 64" in code
+    assert "recovery.seenPlanDigests.all { DIGEST.matches(it) }" in code
+    assert "seenRequests.toList(), seenPlans.toList()" in code
+    assert "if (now > current.expiresAt)" in code
+    assert 'override fun toString() = "FakeLeaseRecovery([REDACTED])"' in code

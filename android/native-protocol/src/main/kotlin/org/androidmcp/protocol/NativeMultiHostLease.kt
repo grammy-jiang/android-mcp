@@ -32,7 +32,11 @@ data class FakeLeaseRecovery(
     val uncertainFence: Long?,
     val nativeInstallation: String,
     val bootEpoch: String,
-)
+    val seenRequestIds: List<String> = emptyList(),
+    val seenPlanDigests: List<String> = emptyList(),
+) {
+    override fun toString() = "FakeLeaseRecovery([REDACTED])"
+}
 
 data class FakeLeaseReceipt(
     val status: DualHostLeaseState,
@@ -69,15 +73,32 @@ class NativeMultiHostLease(
     private var lastClock = -1L
     private var highWater = recovery?.highWater ?: 0
     private var uncertain = recovery?.uncertainFence
+    // A recovered high-water with no replay evidence is not safe to resume:
+    // a caller could repeat the same ambiguous action under a newer fence.
+    // These are bounded injected fixtures, NOT authenticated durable storage.
+    private val recoveredLedgerValid = recovery == null ||
+        (recovery.seenRequestIds.size == recovery.seenPlanDigests.size &&
+            recovery.seenRequestIds.size <= 64 &&
+            (recovery.highWater == 0L || recovery.seenRequestIds.isNotEmpty()) &&
+            (recovery.highWater != 0L || recovery.seenRequestIds.isEmpty()) &&
+            recovery.seenRequestIds.all { REQUEST_ID.matches(it) } &&
+            recovery.seenPlanDigests.all { DIGEST.matches(it) } &&
+            recovery.seenRequestIds.toSet().size == recovery.seenRequestIds.size &&
+            recovery.seenPlanDigests.toSet().size == recovery.seenPlanDigests.size)
     private val wrongRecoveredIdentity = recovery != null &&
-        (recovery.nativeInstallation != nativeInstallation ||
+        (!recoveredLedgerValid || recovery.nativeInstallation != nativeInstallation ||
             recovery.bootEpoch != bootEpoch || recovery.highWater < 0 ||
             (recovery.uncertainFence != null &&
-                recovery.uncertainFence > recovery.highWater))
+                (recovery.uncertainFence <= 0 ||
+                    recovery.uncertainFence > recovery.highWater)))
     private var active: Active? = null
     private var lastReleasedFence: Long? = null
-    private val seenRequests = ArrayDeque<String>()
-    private val seenPlans = ArrayDeque<String>()
+    private val seenRequests = ArrayDeque<String>().apply {
+        if (recoveredLedgerValid) recovery?.seenRequestIds?.forEach { addLast(it) }
+    }
+    private val seenPlans = ArrayDeque<String>().apply {
+        if (recoveredLedgerValid) recovery?.seenPlanDigests?.forEach { addLast(it) }
+    }
 
     @Synchronized
     fun acquire(request: FakeLeaseRequest): FakeLeaseReceipt {
@@ -118,6 +139,7 @@ class NativeMultiHostLease(
     @Synchronized
     fun renew(request: FakeLeaseRequest): DualHostLeaseState {
         if (stopped) return DualHostLeaseState.UNAVAILABLE
+        if (wrongRecoveredIdentity) return DualHostLeaseState.PAIRING_REQUIRED
         val now = time() ?: return DualHostLeaseState.UNCERTAIN
         val current = active ?: return DualHostLeaseState.STALE
         val invalid = validate(request)
@@ -142,6 +164,8 @@ class NativeMultiHostLease(
         if (stopped) return if (request.fence == uncertain) {
             DualHostLeaseState.UNCERTAIN
         } else DualHostLeaseState.UNAVAILABLE
+        if (wrongRecoveredIdentity) return DualHostLeaseState.PAIRING_REQUIRED
+        val now = time() ?: return DualHostLeaseState.UNCERTAIN
         val invalid = validate(request)
         if (invalid != null) return invalid
         val current = active
@@ -152,6 +176,10 @@ class NativeMultiHostLease(
             current.requestId != request.requestId ||
             current.plan != request.planDigest
         ) return DualHostLeaseState.DENIED
+        if (now > current.expiresAt) {
+            active = null
+            return DualHostLeaseState.EXPIRED
+        }
         active = null
         lastReleasedFence = request.fence
         return DualHostLeaseState.RELEASED
@@ -171,6 +199,7 @@ class NativeMultiHostLease(
     @Synchronized
     fun recoverySnapshot() = FakeLeaseRecovery(
         highWater, uncertain, nativeInstallation, bootEpoch,
+        seenRequests.toList(), seenPlans.toList(),
     )
 
     fun realDeviceMutationAllowed(): Boolean = false

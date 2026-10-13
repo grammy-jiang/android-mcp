@@ -158,4 +158,53 @@ class NativeMultiHostLeaseTest {
             current.acquire(request(a, 12).copy(planDigest = "d".repeat(64))).status)
         assertFalse(current.realDeviceMutationAllowed())
     }
+
+    @Test
+    fun recoveryRejectsReplayedPlanWithHigherFenceAfterProcessDeath() {
+        val previous = lease()
+        val original = request(a, 10)
+        assertEquals(DualHostLeaseState.FAKE_HELD, previous.acquire(original).status)
+        previous.simulateProcessDeath()
+        val next = lease(previous.recoverySnapshot())
+        val blindRetry = original.copy(hostId = b, requestId = "new-request-after-death", fence = 11)
+        assertEquals(DualHostLeaseState.REPLAY, next.acquire(blindRetry).status)
+        assertEquals(DualHostLeaseState.FAKE_HELD,
+            next.acquire(request(b, 12).copy(planDigest = "b".repeat(64))).status)
+        assertFalse(next.realDeviceMutationAllowed())
+    }
+
+    @Test
+    fun expiredFakeLeaseCannotReportSuccessfulRelease() {
+        val arbiter = lease()
+        val original = request(a, 10)
+        assertEquals(DualHostLeaseState.FAKE_HELD, arbiter.acquire(original).status)
+        now.set(11_001)
+        assertEquals(DualHostLeaseState.EXPIRED, arbiter.release(original))
+        assertEquals(DualHostLeaseState.STALE, arbiter.release(original))
+        assertFalse(arbiter.realDeviceMutationAllowed())
+    }
+
+    @Test
+    fun malformedRecoveryLedgerMustFailClosed() {
+        val owner = lease()
+        owner.acquire(request())
+        owner.simulateProcessDeath()
+        val snapshot = owner.recoverySnapshot()
+        val invalid = listOf(
+            snapshot.copy(seenRequestIds = emptyList()),
+            snapshot.copy(seenPlanDigests = listOf("not-a-sha256")),
+            snapshot.copy(seenRequestIds = List(65) { "req-$it" },
+                seenPlanDigests = List(65) { "%064x".format(it + 1) }),
+        )
+        for (corrupted in invalid) {
+            val resumed = lease(corrupted)
+            assertEquals(DualHostLeaseState.PAIRING_REQUIRED,
+                resumed.acquire(request(b, 11).copy(planDigest = "b".repeat(64))).status)
+            assertEquals(DualHostLeaseState.PAIRING_REQUIRED,
+                resumed.release(request(b, 11).copy(planDigest = "b".repeat(64))))
+            assertFalse(resumed.realDeviceMutationAllowed())
+        }
+        assertFalse(snapshot.toString().contains(install))
+        assertFalse(snapshot.toString().contains(boot))
+    }
 }
