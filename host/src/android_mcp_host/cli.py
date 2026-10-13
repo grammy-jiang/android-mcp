@@ -20,6 +20,7 @@ from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs
 from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.durable_jobs import DurableJobStore
+from android_mcp_host.emulator_instrumentation_jobs import InstrumentationJobs
 from android_mcp_host.emulator_lifecycle import EmulatorLifecycle
 from android_mcp_host.emulator_snapshot_manager import EmulatorSnapshotManager
 from android_mcp_host.fastboot_inventory import FastbootInventory
@@ -106,6 +107,11 @@ def main(argv: list[str] | None = None) -> int:
         "--build-wrapper-sha256",
         default=None,
         help="Host-operator-approved full Gradle wrapper jar SHA-256; otherwise denies.",
+    )
+    serve.add_argument(
+        "--emulator-instrumentation-plan",
+        action="store_true",
+        help="Opt in to owner-scoped test planning; real ADB execution always disabled.",
     )
     serve.add_argument(
         "--emulator-snapshot-fixture",
@@ -297,6 +303,17 @@ def main(argv: list[str] | None = None) -> int:
         args.avd_system_image_sha256,
         args.avd_license_sha256,
     )
+    if args.emulator_instrumentation_plan and (
+        not args.emulator_lifecycle_plan
+        or not args.avd_provision
+        or not args.durable_job_status
+        or not args.artifact_metadata
+        or args.avd_owner != args.job_owner
+    ):
+        parser.error(
+            "--emulator-instrumentation-plan needs trusted lifecycle, AVD owner, "
+            "private artifacts and durable jobs; real instrumentation stays disabled."
+        )
     if args.emulator_snapshot_fixture and (
         not args.avd_provision or not args.durable_job_status or args.avd_owner != args.job_owner
     ):
@@ -414,6 +431,15 @@ def main(argv: list[str] | None = None) -> int:
             kwargs["avd_provisioner"],
             kwargs["durable_jobs"],
             owner=args.avd_owner,
+        )
+    if args.emulator_instrumentation_plan:
+        kwargs["instrumentation_jobs"] = InstrumentationJobs(
+            kwargs["avd_provisioner"],
+            kwargs["emulator_lifecycle"],
+            kwargs["durable_jobs"],
+            kwargs["artifact_store"],
+            owner=args.avd_owner,
+            artifact_owner=args.artifact_owner,
         )
     if args.controlled_build:
         kwargs["build_jobs"] = ControlledBuildJobs(
