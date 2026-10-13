@@ -5,10 +5,12 @@ from __future__ import annotations
 import argparse
 import json
 import platform
+from pathlib import Path
 from typing import Any
 
 from android_mcp_host.adb import AdbClient
 from android_mcp_host.adb_transport import AdbTransport
+from android_mcp_host.android_build_preflight import AndroidBuildPreflight
 from android_mcp_host.capability_profiles import CapabilityProfiles
 from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.fastboot_inventory import FastbootInventory
@@ -74,6 +76,27 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Opt in to fixed read-only Android SDK/NDK/JDK workstation inventory.",
     )
+    serve.add_argument(
+        "--build-preflight",
+        action="store_true",
+        help="Opt in to a strictly inert, operator-pinned Android Gradle plan Tool.",
+    )
+    serve.add_argument(
+        "--build-root",
+        type=Path,
+        default=None,
+        help="Host-operator-selected absolute repository root, not an MCP Tool argument.",
+    )
+    serve.add_argument(
+        "--build-approved-revision",
+        default=None,
+        help="Host-operator-pinned full Git commit SHA; otherwise preflight denies.",
+    )
+    serve.add_argument(
+        "--build-wrapper-sha256",
+        default=None,
+        help="Host-operator-approved full Gradle wrapper jar SHA-256; otherwise denies.",
+    )
     args = parser.parse_args(argv)
 
     if args.command == "doctor":
@@ -112,6 +135,14 @@ def main(argv: list[str] | None = None) -> int:
         kwargs["fastboot_inventory"] = FastbootInventory()
     if args.sdk_ndk_inventory:
         kwargs["sdk_ndk_inventory"] = SdkNdkInventory()
+    if args.build_preflight:
+        kwargs["build_preflight"] = AndroidBuildPreflight(
+            root=args.build_root or (Path.home() / "Projects" / "android-mcp"),
+            expected_revision=args.build_approved_revision,
+            expected_wrapper_sha256=args.build_wrapper_sha256,
+        )
+    elif any((args.build_root, args.build_approved_revision, args.build_wrapper_sha256)):
+        parser.error("Build pins require --build-preflight.")
     server = create_server(**kwargs)
     server.run(transport="http", host=args.host, port=args.port)
     return 0
