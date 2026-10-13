@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-controlled-build-job:v1",
+  "title": "Pinned finite offline Host build job status v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","runtime","status","state","job_id","report_handle","apk_handle","result_sha256","errors","device_mutation_enabled"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok","blocked","failed","uncertain","in_progress"]},
+    "state": {"type": ["string","null"], "enum": ["prepared","queued","running","succeeded","failed","cancelled","uncertain",null]},
+    "job_id": {"type": ["string","null"], "pattern": "^job_[A-Za-z0-9_-]{32}$"},
+    "report_handle": {"type": ["string","null"], "pattern": "^art_[A-Za-z0-9_-]{32}$"},
+    "apk_handle": {"type": ["string","null"], "pattern": "^art_[A-Za-z0-9_-]{32}$"},
+    "result_sha256": {"type": ["string","null"], "pattern": "^[0-9a-f]{64}$"},
+    "errors": {
+      "type": "array","maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code","message"],
+        "properties": {
+          "code": {"enum": ["NOT_APPROVED","INVALID_ACTION","INVALID_REQUEST","IDEMPOTENCY_CONFLICT","JOB_UNAVAILABLE","BUILD_FAILED","OUTPUT_INVALID","OUTPUT_LIMIT","TIMEOUT","RUNNER_FAILED","ARTIFACT_FAILED","BUILD_BUSY","RECOVERY_REQUIRED"]},
+          "message": {"type": "string","maxLength": 80}
+        }
+      }
+    },
+    "device_mutation_enabled": {"const": false}
+  }
+}

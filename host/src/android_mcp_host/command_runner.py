@@ -44,6 +44,7 @@ def bounded_run(
     byte_limit: int,
     *,
     env: Mapping[str, str] | None = None,
+    cwd: str | os.PathLike[str] | None = None,
 ) -> RunResult:
     """Capture limited bytes, killing the command if it exceeds resource limits."""
     if not 0 < timeout_s <= 180 or not 1024 <= byte_limit <= 262144:
@@ -55,6 +56,7 @@ def bounded_run(
         stderr=subprocess.PIPE,
         start_new_session=True,
         env=env,
+        cwd=cwd,
     )
     captured: dict[str, bytearray] = {"stdout": bytearray(), "stderr": bytearray()}
     deadline = time.monotonic() + timeout_s
