@@ -25,6 +25,8 @@ from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_buil
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 from android_mcp_host.durable_job_tool import register_job_status_tool
 from android_mcp_host.durable_jobs import DurableJobStore
+from android_mcp_host.emulator_instrumentation_jobs import InstrumentationJobs
+from android_mcp_host.emulator_instrumentation_tool import register_instrumentation_tool
 from android_mcp_host.emulator_lifecycle import EmulatorLifecycle
 from android_mcp_host.emulator_lifecycle_tool import register_emulator_lifecycle_tool
 from android_mcp_host.emulator_snapshot_manager import EmulatorSnapshotManager
@@ -73,6 +75,7 @@ def create_server(
     avd_inventory: AvdInventory | None = None,
     avd_provisioner: AvdProvisioner | None = None,
     emulator_lifecycle: EmulatorLifecycle | None = None,
+    instrumentation_jobs: InstrumentationJobs | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -460,6 +463,8 @@ def create_server(
         register_avd_provision_tool(server, avd_provisioner)
     if emulator_lifecycle is not None:
         register_emulator_lifecycle_tool(server, emulator_lifecycle)
+    if instrumentation_jobs is not None:
+        register_instrumentation_tool(server, instrumentation_jobs)
     if snapshot_manager is not None:
         register_snapshot_tool(server, snapshot_manager)
 
