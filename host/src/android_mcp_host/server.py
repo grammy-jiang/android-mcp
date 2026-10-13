@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import asyncio
 import threading
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastmcp import FastMCP
 from pydantic import Field
 
 from android_mcp_host.adb import AdbClient
 from android_mcp_host.adb_transport import AdbTransport, get_transport_output_schema
+from android_mcp_host.android_build_preflight import (
+    AndroidBuildPreflight,
+    get_build_preflight_output_schema,
+)
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
 from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
@@ -45,6 +49,7 @@ def create_server(
     logcat_filter: LogcatFilters | None = None,
     fastboot_inventory: FastbootInventory | None = None,
     sdk_ndk_inventory: SdkNdkInventory | None = None,
+    build_preflight: AndroidBuildPreflight | None = None,
 ) -> FastMCP:
     client = adb if adb is not None else AdbClient()
     observer = probes if probes is not None else ProbeService(client)
@@ -355,5 +360,29 @@ def create_server(
             Availability is not authorization or proof of accepted licenses.
             """
             return await asyncio.to_thread(sdk_ndk_inventory.inspect)
+
+    if build_preflight is not None:
+
+        @server.tool(
+            title="Preview Approved Android Build Preflight",
+            output_schema=get_build_preflight_output_schema(),
+            annotations={
+                "readOnlyHint": False,
+                "destructiveHint": False,
+                "idempotentHint": True,
+                "openWorldHint": False,
+            },
+        )
+        async def android_build_preflight(
+            action: Literal["assemble_debug", "lint_debug", "test_jvm"] = "assemble_debug",
+            variant: Literal["debug"] = "debug",
+        ) -> dict[str, object]:
+            """Preview a fixed Gradle task plan for an operator-pinned project.
+
+            No Gradle wrapper or build command is executed. This does not
+            authorize a build, accept SDK licenses or trust an unsigned input.
+            Only Host operator config can supply root and approved SHA pins.
+            """
+            return await asyncio.to_thread(build_preflight.plan, action, variant)
 
     return server

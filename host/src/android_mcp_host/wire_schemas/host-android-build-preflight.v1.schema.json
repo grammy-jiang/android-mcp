@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-android-build-preflight:v1",
+  "title": "Pinned Android Gradle project read-only build plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "runtime", "status", "project_root",
+    "expected_revision", "observed_revision", "wrapper_sha256",
+    "gradle_distribution_sha256", "gradle_version", "agp_version",
+    "jdk_version", "sdk_api", "variant", "action", "tasks",
+    "argv_preview", "dirty", "execution_enabled", "sdk_licenses_verified",
+    "errors"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["planned", "blocked", "unavailable"]},
+    "project_root": {"type": "string", "maxLength": 1024},
+    "expected_revision": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40,64}$"},
+    "observed_revision": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40,64}$"},
+    "wrapper_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "gradle_distribution_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "gradle_version": {"type": ["string", "null"], "enum": ["9.6.0", null]},
+    "agp_version": {"type": ["string", "null"], "enum": ["9.4.0", null]},
+    "jdk_version": {"type": ["string", "null"], "maxLength": 64},
+    "sdk_api": {"type": ["integer", "null"], "enum": [36, null]},
+    "variant": {"const": "debug"},
+    "action": {"type": ["string", "null"], "enum": ["assemble_debug", "lint_debug", "test_jvm", null]},
+    "tasks": {
+      "type": "array", "maxItems": 3,
+      "items": {"type": "string", "enum": [":app:assembleDebug", ":app:lintDebug", ":native-protocol:test", ":native-lifecycle:test", ":native-mcp-jvm:test"]}
+    },
+    "argv_preview": {
+      "type": "array", "maxItems": 10,
+      "items": {"type": "string", "maxLength": 128}
+    },
+    "dirty": {"type": ["boolean", "null"]},
+    "execution_enabled": {"const": false},
+    "sdk_licenses_verified": {"const": false},
+    "errors": {
+      "type": "array", "maxItems": 2,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"type": "string", "maxLength": 64},
+          "message": {"type": "string", "maxLength": 200}
+        }
+      }
+    }
+  }
+}
