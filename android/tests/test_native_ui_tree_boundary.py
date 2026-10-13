@@ -16,7 +16,10 @@ APP = ROOT / "android/app/src/main/java/org/androidmcp/nativeapp"
 ADAPTER = APP / "AndroidUiTreeReadiness.kt"
 ACCESSIBILITY = APP / "AndroidAccessibilityEligibilityReader.kt"
 GATEWAY = APP / "LocalMcpGateway.kt"
-MODEL = ROOT / "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeSyntheticUiTree.kt"
+MODEL = (
+    ROOT
+    / "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeSyntheticUiTree.kt"
+)
 
 
 def test_T_N3E_01_synthetic_tree_bounds_roles_and_ephemeral_handles() -> None:
@@ -25,7 +28,7 @@ def test_T_N3E_01_synthetic_tree_bounds_roles_and_ephemeral_handles() -> None:
         "MAX_NODES = 64",
         "MAX_DEPTH = 8",
         "IdentityHashMap",
-        "MessageDigest.getInstance(\"SHA-256\")",
+        'MessageDigest.getInstance("SHA-256")',
         "UUID.randomUUID()",
         "UiNodeRole.REDACTED",
         "SafeUiNode(",
@@ -37,7 +40,9 @@ def test_T_N3E_01_synthetic_tree_bounds_roles_and_ephemeral_handles() -> None:
         assert expected in source
 
 
-def test_T_N3E_02_raw_password_node_text_and_cross_package_are_never_in_output() -> None:
+def test_T_N3E_02_raw_password_node_text_and_cross_package_are_never_in_output() -> (
+    None
+):
     source = MODEL.read_text()
     assert "val text: String?" in source
     assert "val contentDescription: String?" in source
@@ -57,7 +62,8 @@ def test_T_N3E_02_raw_password_node_text_and_cross_package_are_never_in_output()
 def test_T_N3E_03_revoke_and_absent_service_clear_results_not_return_old_tree() -> None:
     source = MODEL.read_text()
     assert "if (revoked)" in source
-    assert "if (context.processEpoch != processEpoch)" in source
+    assert "context.processEpoch != processEpoch ||" in source
+    assert "context.nodeEpoch != nodeEpoch" in source
     assert "!context.serviceDeclared" in source
     assert "!context.serviceEnabled" in source
     assert "!context.serviceConnected" in source
@@ -68,7 +74,9 @@ def test_T_N3E_03_revoke_and_absent_service_clear_results_not_return_old_tree() 
     assert "UiTreeStatus.REVOKED" in source
 
 
-def test_T_N3E_05_android_reader_unconditionally_returns_empty_not_real_hierarchy() -> None:
+def test_T_N3E_05_android_reader_unconditionally_returns_empty_not_real_hierarchy() -> (
+    None
+):
     source = ADAPTER.read_text()
     assert "internal object AndroidUiTreeReadiness" in source
     assert "AndroidAccessibilityEligibilityReader.plan(" in source
