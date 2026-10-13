@@ -17,6 +17,8 @@ from android_mcp_host.android_build_preflight import (
 )
 from android_mcp_host.archive_inspector import ArchiveInspector, get_archive_output_schema
 from android_mcp_host.avd_inventory import AvdInventory
+from android_mcp_host.avd_provision_tool import register_avd_provision_tool
+from android_mcp_host.avd_provisioning import AvdProvisioner
 from android_mcp_host.avd_tool_registration import register_avd_inventory_tool
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_build_job_schema
@@ -64,6 +66,7 @@ def create_server(
     archive_inspector: ArchiveInspector | None = None,
     build_jobs: ControlledBuildJobs | None = None,
     avd_inventory: AvdInventory | None = None,
+    avd_provisioner: AvdProvisioner | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
 ) -> FastMCP:
@@ -438,16 +441,16 @@ def create_server(
             },
         )
         async def host_archive_inspect(handle: str) -> dict[str, object]:
-            """Inspect only operator-scoped private APK/AAB metadata by opaque handle.
+            """Read private APK/AAB by handle; a vendor verifier must confirm signatures.
 
-            Read-only ZIP inspection; a cryptographic signature is reported
-            verified only when a preconfigured trusted vendor verifier succeeds.
-            The caller cannot select paths, owner, binaries, commands or devices.
+            The caller cannot select paths, owner, commands or devices.
             """
             return await asyncio.to_thread(archive_inspector.inspect, handle)
 
     if avd_inventory is not None:
         register_avd_inventory_tool(server, avd_inventory)
+    if avd_provisioner is not None:
+        register_avd_provision_tool(server, avd_provisioner)
 
     if build_jobs is not None:
 
@@ -489,11 +492,7 @@ def create_server(
             },
         )
         async def host_job_status(job_id: str) -> dict[str, object]:
-            """Read only a trusted owner's opaque persistent job state.
-
-            Never authorizes a job, dispatches a worker, retries uncertain
-            effects, changes device state or returns owner/secrets.
-            """
+            """Read private job metadata, never dispatch, retry or authorize work."""
             return await asyncio.to_thread(durable_jobs.status, job_owner, job_id)
 
     return server

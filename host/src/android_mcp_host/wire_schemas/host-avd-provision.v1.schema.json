@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-avd-provision:v1",
+  "title": "Disposable Host-owned AVD local provisioning result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runtime", "status", "avd", "errors",
+    "emulator_execution_enabled", "physical_device_writes_enabled"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": [
+      "planned", "created", "existing", "deleted", "blocked", "unavailable", "not_found"
+    ]},
+    "avd": {"oneOf": [
+      {"type": "null"},
+      {"type": "object", "additionalProperties": false,
+       "required": ["name", "handle", "owner_ref", "target", "api", "abi", "artifact_sha256"],
+       "properties": {
+         "name": {"type": "string", "pattern": "^mcp_[A-Za-z0-9][A-Za-z0-9_-]{2,43}$"},
+         "handle": {"type": ["string", "null"], "pattern": "^mcpavd_[A-Za-z0-9_-]{32}$"},
+         "owner_ref": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+         "target": {"const": "disposable_emulator_only"},
+         "api": {"type": "integer", "minimum": 16, "maximum": 40},
+         "abi": {"enum": ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"]},
+         "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+       }}
+    ]},
+    "errors": {"type": "array", "maxItems": 1, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": {"enum": [
+          "INVALID_ACTION", "INVALID_NAME", "INVALID_HANDLE", "IMAGE_UNAVAILABLE",
+          "UNTRUSTED_ROOT", "FOREIGN_AVD", "AVD_NOT_FOUND",
+          "RESOURCE_LIMIT", "RESOURCE_BUSY", "STORAGE_FAILURE"
+        ]},
+        "message": {"type": "string", "maxLength": 96}
+      }
+    }},
+    "emulator_execution_enabled": {"const": false},
+    "physical_device_writes_enabled": {"const": false}
+  }
+}

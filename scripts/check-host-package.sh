@@ -20,6 +20,7 @@ import json
 import sys
 
 from android_mcp_host.avd_inventory import AvdInventory, get_avd_output_schema
+from android_mcp_host.avd_provisioning import AvdProvisioner, get_avd_provision_schema
 from android_mcp_host.archive_inspector import ArchiveInspector, get_archive_output_schema
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_build_job_schema
 from android_mcp_host.server import create_server
@@ -30,6 +31,7 @@ from android_mcp_host.private_artifact_store import (
 )
 from android_mcp_host.android_build_preflight import AndroidBuildPreflight, get_build_preflight_output_schema
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
 from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
 from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
@@ -55,9 +57,20 @@ assert report["runtime"] == "host"
 assert "devices" in report
 assert callable(create_server)
 assert get_avd_output_schema()["$id"] == "urn:android-mcp:host-avd-inventory:v1"
+assert get_avd_provision_schema()["$id"] == "urn:android-mcp:host-avd-provision:v1"
 assert create_server(avd_inventory=AvdInventory(
     Path.home() / ".android" / "avd", Path.home() / "absent-synthetic-emulator"
 )) is not None
+with TemporaryDirectory() as owner_tmp:
+    owner_base = Path(owner_tmp).resolve(strict=True)
+    avd_provisioner = AvdProvisioner(
+        owner_base / "unused-owned-avds", owner_base / "synthetic-sdk",
+        "synthetic-owner", api=36, abi="arm64-v8a",
+        source_properties_sha256="a" * 64,
+        system_image_sha256="c" * 64,
+        license_sha256="b" * 64,
+    )
+    assert create_server(avd_provisioner=avd_provisioner) is not None
 assert get_archive_output_schema()["$id"] == "urn:android-mcp:host-archive-inspection:v1"
 assert get_build_job_schema()["$id"] == "urn:android-mcp:host-controlled-build-job:v1"
 assert get_job_status_schema()["$id"] == "urn:android-mcp:host-durable-job-status:v1"
