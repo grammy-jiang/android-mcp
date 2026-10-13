@@ -23,9 +23,12 @@ from android_mcp_host.avd_tool_registration import register_avd_inventory_tool
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs, get_build_job_schema
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
-from android_mcp_host.durable_jobs import DurableJobStore, get_job_status_schema
+from android_mcp_host.durable_job_tool import register_job_status_tool
+from android_mcp_host.durable_jobs import DurableJobStore
 from android_mcp_host.emulator_lifecycle import EmulatorLifecycle
 from android_mcp_host.emulator_lifecycle_tool import register_emulator_lifecycle_tool
+from android_mcp_host.emulator_snapshot_manager import EmulatorSnapshotManager
+from android_mcp_host.emulator_snapshot_tool import register_snapshot_tool
 from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
 from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
@@ -70,6 +73,7 @@ def create_server(
     avd_inventory: AvdInventory | None = None,
     avd_provisioner: AvdProvisioner | None = None,
     emulator_lifecycle: EmulatorLifecycle | None = None,
+    snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
 ) -> FastMCP:
@@ -456,6 +460,8 @@ def create_server(
         register_avd_provision_tool(server, avd_provisioner)
     if emulator_lifecycle is not None:
         register_emulator_lifecycle_tool(server, emulator_lifecycle)
+    if snapshot_manager is not None:
+        register_snapshot_tool(server, snapshot_manager)
 
     if build_jobs is not None:
 
@@ -481,19 +487,6 @@ def create_server(
     if durable_jobs is not None and job_owner is not None:
         if not durable_jobs.validate_owner(job_owner):
             raise ValueError("Invalid Host job owner")
-
-        @server.tool(
-            title="Inspect Durable Host Job Status",
-            output_schema=get_job_status_schema(),
-            annotations={
-                "readOnlyHint": True,
-                "destructiveHint": False,
-                "idempotentHint": True,
-                "openWorldHint": False,
-            },
-        )
-        async def host_job_status(job_id: str) -> dict[str, object]:
-            """Read private job metadata, never dispatch, retry or authorize work."""
-            return await asyncio.to_thread(durable_jobs.status, job_owner, job_id)
+        register_job_status_tool(server, durable_jobs, job_owner)
 
     return server

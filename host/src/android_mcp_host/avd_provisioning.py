@@ -215,6 +215,14 @@ class AvdProvisioner:
             record = self._record(name, secret)
             if record is None or record["handle"] != handle:
                 raise OwnedAvdError("FOREIGN_AVD")
+            # H3.d private snapshot records must be individually cleared first.
+            # Unknown matching files block deletion rather than get removed.
+            try:
+                prefix = f".mcp-snapshot-{name}-"
+                if any(item.name.startswith(prefix) for item in self._root.iterdir()):
+                    raise OwnedAvdError("FOREIGN_AVD")
+            except OSError as error:
+                raise OwnedAvdError("STORAGE_FAILURE") from error
             try:
                 safe_remove_owned(self._root, name)
             except OSError as error:

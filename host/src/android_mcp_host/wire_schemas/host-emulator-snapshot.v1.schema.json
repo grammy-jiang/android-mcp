@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-emulator-snapshot:v1",
+  "title": "Synthetic-only private emulator snapshot receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "runtime",
+    "status",
+    "action",
+    "avd_name",
+    "avd_handle",
+    "target",
+    "snapshot",
+    "snapshots",
+    "job_id",
+    "possible_emulator_state_change",
+    "real_snapshot_execution_enabled",
+    "physical_device_writes_enabled",
+    "errors",
+    "condition"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "runtime": {
+      "const": "host"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "created",
+        "existing",
+        "simulated",
+        "deleted",
+        "planned",
+        "blocked",
+        "failed",
+        "uncertain",
+        "not_found"
+      ]
+    },
+    "action": {
+      "enum": [
+        "create",
+        "restore",
+        "delete",
+        "list",
+        "fault_plan",
+        "cancel"
+      ]
+    },
+    "avd_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcp_[A-Za-z0-9][A-Za-z0-9_-]{2,43}$"
+    },
+    "avd_handle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcpavd_[A-Za-z0-9_-]{32}$"
+    },
+    "target": {
+      "const": "disposable_emulator_only"
+    },
+    "snapshot": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "handle",
+            "image_sha256",
+            "api",
+            "abi",
+            "snapshot_version",
+            "fixture_sha256"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^snap_[A-Za-z0-9][A-Za-z0-9_-]{1,43}$"
+            },
+            "handle": {
+              "type": "string",
+              "pattern": "^mcpsnap_[A-Za-z0-9_-]{32}$"
+            },
+            "image_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "api": {
+              "type": "integer",
+              "minimum": 16,
+              "maximum": 40
+            },
+            "abi": {
+              "enum": [
+                "arm64-v8a",
+                "armeabi-v7a",
+                "x86",
+                "x86_64"
+              ]
+            },
+            "snapshot_version": {
+              "const": 1
+            },
+            "fixture_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "snapshots": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "handle",
+          "image_sha256",
+          "api",
+          "abi",
+          "snapshot_version",
+          "fixture_sha256"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^snap_[A-Za-z0-9][A-Za-z0-9_-]{1,43}$"
+          },
+          "handle": {
+            "type": "string",
+            "pattern": "^mcpsnap_[A-Za-z0-9_-]{32}$"
+          },
+          "image_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "api": {
+            "type": "integer",
+            "minimum": 16,
+            "maximum": 40
+          },
+          "abi": {
+            "enum": [
+              "arm64-v8a",
+              "armeabi-v7a",
+              "x86",
+              "x86_64"
+            ]
+          },
+          "snapshot_version": {
+            "const": 1
+          },
+          "fixture_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "job_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^job_[A-Za-z0-9_-]{32}$"
+    },
+    "possible_emulator_state_change": {
+      "const": false
+    },
+    "real_snapshot_execution_enabled": {
+      "const": false
+    },
+    "physical_device_writes_enabled": {
+      "const": false
+    },
+    "errors": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "enum": [
+              "INVALID_ACTION",
+              "INVALID_NAME",
+              "INVALID_REQUEST",
+              "INVALID_HANDLE",
+              "NOT_OWNED",
+              "UNTRUSTED_SNAPSHOT",
+              "SNAPSHOT_NOT_FOUND",
+              "RESOURCE_LIMIT",
+              "RECOVERY_REQUIRED",
+              "JOB_UNAVAILABLE",
+              "IDEMPOTENCY_CONFLICT",
+              "STORAGE_FAILURE",
+              "TIMEOUT",
+              "INVALID_CONDITION"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 96
+          }
+        }
+      }
+    },
+    "condition": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "boot_delay",
+        "network_disconnect",
+        "process_crash",
+        null
+      ]
+    }
+  }
+}
