@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-emulator-lifecycle:v1",
+  "title": "Host synthetic-only emulator lifecycle v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "runtime", "status", "lifecycle_state", "job_id",
+    "name", "handle", "api", "abi", "artifact_sha256", "target",
+    "process_confirmed", "synthetic_execution_enabled",
+    "real_emulator_execution_enabled", "physical_device_writes_enabled", "errors"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "runtime": {"const": "host"},
+    "status": {"enum": ["ok", "planned", "blocked", "failed", "uncertain", "not_found"]},
+    "lifecycle_state": {
+      "enum": ["planned", "running", "stopped", "failed", "uncertain", "blocked", "not_found"]
+    },
+    "job_id": {"type": ["string", "null"], "pattern": "^job_[A-Za-z0-9_-]{32}$"},
+    "name": {"type": ["string", "null"], "pattern": "^mcp_[A-Za-z0-9][A-Za-z0-9_-]{2,43}$"},
+    "handle": {"type": ["string", "null"], "pattern": "^mcpavd_[A-Za-z0-9_-]{32}$"},
+    "api": {"type": ["integer", "null"], "minimum": 16, "maximum": 40},
+    "abi": {
+      "type": ["string", "null"],
+      "enum": ["arm64-v8a", "armeabi-v7a", "x86", "x86_64", null]
+    },
+    "artifact_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "target": {"const": "disposable_emulator_only"},
+    "process_confirmed": {"type": "boolean"},
+    "synthetic_execution_enabled": {"type": "boolean"},
+    "real_emulator_execution_enabled": {"const": false},
+    "physical_device_writes_enabled": {"const": false},
+    "errors": {
+      "type": "array", "maxItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {"enum": [
+            "NOT_OWNED", "INVALID_ACTION", "INVALID_REQUEST", "INVALID_JOB",
+            "EXECUTION_DISABLED", "RECOVERY_REQUIRED", "IDEMPOTENCY_CONFLICT",
+            "JOB_UNAVAILABLE", "SPAWN_FAILED", "READINESS_REJECTED",
+            "READINESS_TIMEOUT", "READINESS_LIMIT", "PROCESS_EXITED",
+            "STOP_UNCONFIRMED"
+          ]},
+          "message": {"type": "string", "maxLength": 96}
+        }
+      }
+    }
+  }
+}
