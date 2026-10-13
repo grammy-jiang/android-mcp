@@ -52,6 +52,8 @@ from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_outp
 from android_mcp_host.status import build_status
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
 from android_mcp_host.synthetic_screenshot_tool import register_screenshot_tool
+from android_mcp_host.synthetic_ui_hierarchy import UiHierarchyService
+from android_mcp_host.synthetic_ui_tool import register_ui_hierarchy_tool
 from android_mcp_host.system_snapshot import SystemSnapshot, get_snapshot_output_schema
 from android_mcp_host.toolchain_inventory import (
     ToolchainInventory,
@@ -83,6 +85,7 @@ def create_server(
     instrumentation_jobs: InstrumentationJobs | None = None,
     debug_deployment: DebugDeployment | None = None,
     screenshot_worker: ScreenshotArtifacts | None = None,
+    ui_hierarchy_worker: UiHierarchyService | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -476,6 +479,8 @@ def create_server(
         register_debug_deployment_tool(server, debug_deployment)
     if screenshot_worker is not None:
         register_screenshot_tool(server, screenshot_worker)
+    if ui_hierarchy_worker is not None:
+        register_ui_hierarchy_tool(server, ui_hierarchy_worker)
     if snapshot_manager is not None:
         register_snapshot_tool(server, snapshot_manager)
 
