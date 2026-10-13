@@ -16,6 +16,7 @@ from android_mcp_host.device_discovery import DeviceDiscovery
 from android_mcp_host.fastboot_inventory import FastbootInventory
 from android_mcp_host.logcat_filters import LogcatFilters
 from android_mcp_host.package_inspector import PackageInspector
+from android_mcp_host.private_artifact_store import PrivateArtifactStore
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory
 from android_mcp_host.server import create_server
 from android_mcp_host.status import build_status, host_platform_name
@@ -97,6 +98,22 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Host-operator-approved full Gradle wrapper jar SHA-256; otherwise denies.",
     )
+    serve.add_argument(
+        "--artifact-metadata",
+        action="store_true",
+        help="Opt in to owner-scoped, metadata-only private artifact inspection.",
+    )
+    serve.add_argument(
+        "--artifact-root",
+        type=Path,
+        default=None,
+        help="Host-operator-selected absolute private artifact store root.",
+    )
+    serve.add_argument(
+        "--artifact-owner",
+        default=None,
+        help="Trusted Host owner scope; never selectable by an MCP caller.",
+    )
     args = parser.parse_args(argv)
 
     if args.command == "doctor":
@@ -143,6 +160,17 @@ def main(argv: list[str] | None = None) -> int:
         )
     elif any((args.build_root, args.build_approved_revision, args.build_wrapper_sha256)):
         parser.error("Build pins require --build-preflight.")
+    if args.artifact_metadata:
+        if (
+            args.artifact_root is None
+            or not args.artifact_root.is_absolute()
+            or not PrivateArtifactStore.validate_owner(args.artifact_owner)
+        ):
+            parser.error("--artifact-metadata requires an absolute root and valid owner.")
+        kwargs["artifact_store"] = PrivateArtifactStore(args.artifact_root)
+        kwargs["artifact_owner"] = args.artifact_owner
+    elif args.artifact_root is not None or args.artifact_owner is not None:
+        parser.error("Private artifact options require --artifact-metadata.")
     server = create_server(**kwargs)
     server.run(transport="http", host=args.host, port=args.port)
     return 0

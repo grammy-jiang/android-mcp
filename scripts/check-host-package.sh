@@ -20,6 +20,10 @@ import json
 import sys
 
 from android_mcp_host.server import create_server
+from android_mcp_host.private_artifact_store import (
+    PrivateArtifactStore,
+    get_artifact_metadata_schema,
+)
 from android_mcp_host.android_build_preflight import AndroidBuildPreflight, get_build_preflight_output_schema
 from pathlib import Path
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
@@ -46,6 +50,13 @@ assert report["schema_version"] == 1
 assert report["runtime"] == "host"
 assert "devices" in report
 assert callable(create_server)
+assert get_artifact_metadata_schema()["$id"] == "urn:android-mcp:host-private-artifact-metadata:v1"
+from tempfile import TemporaryDirectory
+with TemporaryDirectory() as private_tmp:
+    private_store = PrivateArtifactStore(Path(private_tmp).resolve(strict=True) / "objects-private")
+    private_record = private_store.put("packaging-test", b"synthetic", mime_type="application/octet-stream")
+    assert private_store.public_metadata("packaging-test", private_record["handle"])["status"] == "ok"
+    assert create_server(artifact_store=private_store, artifact_owner="packaging-test") is not None
 assert get_build_preflight_output_schema()["$id"] == "urn:android-mcp:host-android-build-preflight:v1"
 assert create_server(build_preflight=AndroidBuildPreflight(Path.home() / "Projects" / "missing")) is not None
 assert get_sdk_ndk_output_schema()["$id"] == "urn:android-mcp:host-sdk-ndk-inventory:v1"
