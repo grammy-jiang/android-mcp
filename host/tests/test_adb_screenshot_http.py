@@ -123,8 +123,8 @@ def test_actual_localhost_mcp_screenshot_schema_and_denial(
                     schema = get_screenshot_schema()
                     assert tool.output_schema == schema
                     assert "sensitive" in tool.description.lower()
-                    assert tool.annotations.readOnlyHint is False
-                    assert tool.annotations.destructiveHint is True
+                    assert tool.annotations.read_only_hint is False
+                    assert tool.annotations.destructive_hint is True
                     args = {
                         "action": "plan",
                         "avd_name": NAME,

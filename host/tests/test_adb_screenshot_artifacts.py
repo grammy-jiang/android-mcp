@@ -56,7 +56,9 @@ def builder(
         ScreenshotArtifacts,
     )
 
-    lifecycle, handle, jobs, _ = engine(tmp_path, backend=active)
+    # Give the isolated synthetic child the full bounded readiness window.
+    # Shared CI macOS runners can be slow to start a Python subprocess.
+    lifecycle, handle, jobs, _ = engine(tmp_path, backend=active, readiness_timeout=5.0)
     lid = "job_" + "z" * 32
     if active:
         started = lifecycle.run("start", NAME, handle, request_id=LIFECYCLE_REQUEST)
