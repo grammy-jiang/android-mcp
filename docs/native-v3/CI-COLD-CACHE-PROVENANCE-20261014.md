@@ -22,10 +22,12 @@ bypassing Gradle dependency verification or claiming Android product acceptance.
 
 ## Fixed verification boundaries
 
-Six new SHA-256 entries were added, all cross-checked against
+Seven new SHA-256 entries were added, all cross-checked against
 Maven Central's published .sha256 (where available), a separately fetched
 complete upstream artifact, and the previously cached file on the Mac.
-The corresponding exact artifact hash and Maven Central provenance are
+Six Maven Central artifacts and one Google Maven Linux-specific Android
+resource-compiler JAR were independently checked using their official SHA256
+endpoints and separate downloads. Their exact artifact hash/provenance is
 enforced by `tests/test_native_v3_ci_coldcache_provenance.py`.
 
 | Artifact | Independently verified SHA-256 |
@@ -36,6 +38,7 @@ enforced by `tests/test_native_v3_ci_coldcache_provenance.py`.
 | junit-bom-5.10.2.module | `de23b114b3e4119a8fe6eb17bed5a3852816698bace67071579d6d927ebb080a` |
 | junit-bom-5.11.0-M2.module | `86477abcf490d6ca059aa9973cb108d22a506f49d1a5569bb32cc6cbf43c2cce` |
 | groovy-bom-4.0.29.pom | `c24277dec93f146bcda25f5ae4391d6527e384e2132efa32184c1e852b42bca9` |
+| Google Android aapt2-9.4.0-15978811-linux.jar | `f5bebd466ecf14d341fd465f2756a16d86052f29eb4532003d5ff7bcffd08de5` |
 
 No wildcard trust rule, unsigned artifact bypass, dependency update,
 `--write-verification-metadata` shortcut, or disabled dependency integrity
@@ -90,7 +93,7 @@ bash scripts/check-native-local-ci.sh
 ```
 
 The Gradle JVM refresh and Android/fixture/Lint refresh both genuinely
-resolved successfully after the six exact pins were included. The existing
+resolved successfully after the seven exact pins were included. The existing
 Android Native tool catalog, Android manifest permissions, Host production
 source, sensitive N01–N20 capability status and V3 acceptance evidence
 are unchanged.

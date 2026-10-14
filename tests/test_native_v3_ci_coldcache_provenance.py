@@ -34,6 +34,29 @@ class NativeCiColdCacheProvenanceTests(unittest.TestCase):
         self.assertEqual(checksums[0].get("value"), EXPECTED_BOM_SHA256)
         self.assertIn("Maven Central", checksums[0].get("origin", ""))
 
+    def test_google_maven_linux_aapt2_binary_hash_is_explicit(self) -> None:
+        # Mac-only AAPT2 checksums cannot admit Linux Android SDK build tools.
+        ns = {"gradle": "https://schema.gradle.org/dependency-verification"}
+        root = ET.parse(VERIFICATION).getroot()
+        components = root.findall(
+            ".//gradle:component[@group='com.android.tools.build']"
+            "[@name='aapt2'][@version='9.4.0-15978811']",
+            ns,
+        )
+        self.assertEqual(len(components), 1)
+        artifact = components[0].find(
+            "gradle:artifact[@name='aapt2-9.4.0-15978811-linux.jar']",
+            ns,
+        )
+        self.assertIsNotNone(artifact)
+        values = artifact.findall("gradle:sha256", ns)
+        self.assertEqual(len(values), 1)
+        self.assertEqual(
+            values[0].get("value"),
+            "f5bebd466ecf14d341fd465f2756a16d86052f29eb4532003d5ff7bcffd08de5",
+        )
+        self.assertIn("Google Maven", values[0].get("origin", ""))
+
     def test_pinned_junit_5134_bom_pom_has_independent_digest(self) -> None:
         root = ET.parse(VERIFICATION).getroot()
         ns = {"gradle": "https://schema.gradle.org/dependency-verification"}
