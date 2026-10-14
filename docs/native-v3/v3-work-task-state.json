@@ -52,7 +52,10 @@
     "state": "DONE_ENGINEERING"
   },
   "E01.e": {
-    "note": "Exclusive owned AVD markers, PID/ABI/boot checks and OS lock present; nonce, fault-injection and full teardown beyond E01.f remain unverified",
+    "evidence": [
+      "docs/native-v3/E01E-OWNED-AVD-ATTESTATION-20261014.md"
+    ],
+    "note": "Sealed owner/boot/PID test-only HMAC attestation and per-run nonce/ADB-forward cleanup added; real consent, Stop, process-death and recovery not yet complete",
     "state": "PARTIAL"
   },
   "E01.f": {

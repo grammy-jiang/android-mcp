@@ -49,9 +49,9 @@ class FullV3ChecklistTests(unittest.TestCase):
             self.status, self.config, PLAN.read_text(encoding="utf-8"), ROOT
         )
         self.assertEqual(output["initial_work_packages"], 70)
-        self.assertEqual(output["open_gaps"], 31)
+        self.assertEqual(output["open_gaps"], 32)
         self.assertEqual(output["capabilities_done"], 0)
-        self.assertEqual(len(output["tasks"]), 101)
+        self.assertEqual(len(output["tasks"]), 102)
         self.assertEqual(output["product_status"], "PRODUCT_INCOMPLETE")
         self.assertEqual(
             {x["id"] for x in output["tasks"] if x["kind"] == "package"},

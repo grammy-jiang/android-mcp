@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import secrets
 import subprocess
 import sys
 import time
@@ -67,6 +68,17 @@ def _validate_pair(
         "not an exclusively owned disposable AVD",
     )
     need(native.get("abi") == "arm64-v8a", "ABI mismatch")
+    for item, length in (
+        ("owner_attestation_nonce", 32),
+        ("owner_attestation_sha256", 64),
+        ("run_nonce", 32),
+    ):
+        source = native.get(item)
+        witness = fixture.get(item)
+        need(
+            _hex(source, length) and source == witness,
+            f"Owner signed attestation or run nonce mismatch: {item}",
+        )
     pid = native.get("emulator_pid")
     need(
         isinstance(pid, int) and pid > 0 and fixture.get("emulator_pid") == pid,
@@ -103,6 +115,10 @@ def _validate_pair(
         native.get("independent_android_oracle")
         == "PackageManager installed version/UID",
         "missing separate OS PackageManager proof",
+    )
+    need(
+        native.get("forward_cleanup_verified") is True,
+        "Native MCP forward was not verified clean after Stop/failure",
     )
     need(
         native.get("mcp_client") == "FastMCP to installed Native Android APK",
@@ -208,6 +224,11 @@ def evaluate_matrix(
         _validate_pair(native, fixture, api, head, tree)
         api_ids.append(api)
     _require(set(api_ids) == set(APIS), "Required Android API missing")
+    for key in ("owner_attestation_nonce", "run_nonce"):
+        _require(
+            len({pair[0][key] for pair in receipts}) == len(APIS),
+            f"Test-only {key} was reused across different emulator boots",
+        )
     for key, group in (
         ("apk_sha256", [pair[0] for pair in receipts]),
         ("instrumentation_apk_sha256", [pair[0] for pair in receipts]),
@@ -290,11 +311,13 @@ def run_matrix(repo: Path, python: Path, evidence_dir: Path) -> dict[str, Any]:
     )
     pair_results: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for api in APIS:
+        run_nonce = secrets.token_hex(16)
         native = json.loads(
             _run(
                 [
                     str(python),
-                    str(repo / "scripts/native_v3_owned_avd.py"),
+                    "-m",
+                    "scripts.native_v3_owned_avd",
                     "--api",
                     str(api),
                     "--repo",
@@ -307,6 +330,8 @@ def run_matrix(repo: Path, python: Path, evidence_dir: Path) -> dict[str, Any]:
                     str(native_tests),
                     "--evidence-dir",
                     str(evidence_dir),
+                    "--run-nonce",
+                    run_nonce,
                 ]
             )
         )
@@ -322,8 +347,15 @@ def run_matrix(repo: Path, python: Path, evidence_dir: Path) -> dict[str, Any]:
                     str(repo),
                     "--evidence-dir",
                     str(evidence_dir),
+                    "--run-nonce",
+                    run_nonce,
                 ]
             )
+        )
+        _require(
+            native.get("run_nonce") == run_nonce
+            and fixture.get("run_nonce") == run_nonce,
+            "Child process did not answer this exact fresh test-run challenge",
         )
         pair_results.append((native, fixture))
         # Fail at first version with missing genuine evidence, not only after
