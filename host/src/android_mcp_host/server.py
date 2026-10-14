@@ -48,15 +48,13 @@ from android_mcp_host.status import build_status
 from android_mcp_host.synthetic_bugreport import BugreportService
 from android_mcp_host.synthetic_file_pull import FilePullService
 from android_mcp_host.synthetic_file_push import FilePushService
+from android_mcp_host.synthetic_logcat_stream import SyntheticLogcatStream
 from android_mcp_host.synthetic_screenrecord import ScreenRecordService
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
 from android_mcp_host.synthetic_ui_actions import UiActionService
 from android_mcp_host.synthetic_ui_hierarchy import UiHierarchyService
 from android_mcp_host.system_snapshot import SystemSnapshot, get_snapshot_output_schema
-from android_mcp_host.toolchain_inventory import (
-    ToolchainInventory,
-    get_toolchain_output_schema,
-)
+from android_mcp_host.toolchain_inventory import ToolchainInventory, get_toolchain_output_schema
 
 
 def create_server(
@@ -89,6 +87,7 @@ def create_server(
     file_push_worker: FilePushService | None = None,
     ui_action_worker: UiActionService | None = None,
     bugreport_worker: BugreportService | None = None,
+    logcat_stream_worker: SyntheticLogcatStream | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -488,7 +487,12 @@ def create_server(
         ui_action_worker,
     )
     register_host_tail(
-        server, bugreport_worker, snapshot_manager, build_jobs, durable_jobs, job_owner
+        server,
+        bugreport_worker,
+        snapshot_manager,
+        build_jobs,
+        durable_jobs,
+        job_owner,
+        logcat_stream=logcat_stream_worker,
     )
-
     return server
