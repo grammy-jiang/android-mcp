@@ -1,0 +1,639 @@
+{
+  "capabilities": [
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "NONE_STATUS_ONLY",
+      "fallback": "NONE_ALLOWED",
+      "id": "N01",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "security_architect"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S0_STATUS_ONLY",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "status",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "BUILD_FRAMEWORK_SDK_READ",
+      "fallback": "HOST_READ_ONLY_WHEN_NATIVE_OFFLINE",
+      "id": "N02",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "native_android_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S1_PAIRED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "read",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "BATTERYMANAGER_STATFS_DISPLAYMETRICS_CONNECTIVITY",
+      "fallback": "NONE_ALLOWED",
+      "id": "N03",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "native_android_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S1_PAIRED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "read",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "PACKAGEMANAGER_APPOPS_PERMISSION_READ",
+      "fallback": "NONE_ALLOWED",
+      "id": "N04",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "native_android_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S1_PAIRED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "read",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "PACKAGEMANAGER_VISIBLE_SCOPED_QUERIES",
+      "fallback": "NONE_ALLOWED",
+      "id": "N05",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "native_android_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S1_PAIRED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "read",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "APP_OWN_ACTIVITY_SERVICE_STATE",
+      "fallback": "NONE_ALLOWED",
+      "id": "N06",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "native_android_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S1_PAIRED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "read",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": true,
+      "android_os_mechanism": "ACCESSIBILITY_SETTINGS_SERVICE_CALLBACK",
+      "fallback": "NONE_ALLOWED",
+      "id": "N07",
+      "independent_review": {
+        "owner_role": "independent_privacy_and_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_privacy_and_appsec",
+        "risk_owner": "android_accessibility_feature_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S2_USER_CONSENTED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "user_consented",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": true,
+      "android_os_mechanism": "ACCESSIBILITY_GESTURES_SCOPED_SERVICE",
+      "fallback": "NONE_ALLOWED",
+      "id": "N08",
+      "independent_review": {
+        "owner_role": "independent_privacy_and_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": true,
+      "operator_approval_required": true,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_privacy_and_appsec",
+        "risk_owner": "android_accessibility_feature_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S3_APPROVED_CONTROL",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "approved_control",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": true,
+      "android_os_mechanism": "MEDIAPROJECTION_CREATE_SCREEN_CAPTURE_INTENT",
+      "fallback": "NONE_ALLOWED",
+      "id": "N09",
+      "independent_review": {
+        "owner_role": "independent_privacy_and_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_privacy_and_appsec",
+        "risk_owner": "android_capture_feature_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S2_USER_CONSENTED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "user_consented",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": true,
+      "android_os_mechanism": "MEDIAPROJECTION_FOREGROUND_RECORDING",
+      "fallback": "NONE_ALLOWED",
+      "id": "N10",
+      "independent_review": {
+        "owner_role": "independent_privacy_and_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_privacy_and_appsec",
+        "risk_owner": "android_capture_feature_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S2_USER_CONSENTED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "user_consented",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": true,
+      "android_os_mechanism": "SAF_OPEN_AND_CREATE_DOCUMENT",
+      "conditional_authority": [
+        {
+          "native_lease_required": true,
+          "operation": "create_document",
+          "operator_approval_required": true
+        },
+        {
+          "native_lease_required": true,
+          "operation": "export_document",
+          "operator_approval_required": true
+        }
+      ],
+      "fallback": "NONE_ALLOWED",
+      "id": "N11",
+      "independent_review": {
+        "owner_role": "independent_privacy_and_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_privacy_and_appsec",
+        "risk_owner": "android_file_feature_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S2_USER_CONSENTED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "user_consented",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "EXPLICIT_EXPORTED_INTENT_LAUNCH",
+      "fallback": "NONE_ALLOWED",
+      "id": "N12",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": true,
+      "operator_approval_required": true,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "native_android_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S3_APPROVED_CONTROL",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "approved_control",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": true,
+      "android_os_mechanism": "OPTIONAL_NOTIFICATION_SENSOR_RUNTIME_PERMISSION",
+      "fallback": "NONE_ALLOWED",
+      "id": "N13",
+      "independent_review": {
+        "owner_role": "independent_privacy_and_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_privacy_and_appsec",
+        "risk_owner": "android_optional_permission_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S2_USER_CONSENTED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "user_consented",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "OWN_PROCESS_DIAGNOSTICS_RETENTION",
+      "fallback": "NONE_ALLOWED",
+      "id": "N14",
+      "independent_review": {
+        "owner_role": "independent_privacy_and_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_privacy_and_appsec",
+        "risk_owner": "native_privacy_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S1_PAIRED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "read",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": true,
+      "android_os_mechanism": "PACKAGEINSTALLER_PENDING_USER_ACTION",
+      "fallback": "NONE_ALLOWED",
+      "id": "N15",
+      "independent_review": {
+        "owner_role": "independent_privacy_and_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": true,
+      "operator_approval_required": true,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_privacy_and_appsec",
+        "risk_owner": "android_installation_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S3_APPROVED_CONTROL",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "approved_control",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "SERVICE_ACTIVITY_NOTIFICATION_STOP",
+      "fallback": "NONE_ALLOWED",
+      "id": "N16",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": false,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "native_android_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S0_STATUS_ONLY",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "status",
+      "runtime": "NATIVE_ANDROID",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "KEYSTORE_USER_PAIRED_HOST_CERT_TLS",
+      "fallback": "NONE_ALLOWED",
+      "id": "N17",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": true,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "identity_protocol_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S1_PAIRED_READ",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "read",
+      "runtime": "NATIVE_ANDROID_AND_HOST",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "DURABLE_FENCE_LEASE_DISPATCH_RECHECK",
+      "fallback": "NONE_ALLOWED",
+      "id": "N18",
+      "independent_review": {
+        "owner_role": "independent_appsec",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": true,
+      "operator_approval_required": true,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_appsec",
+        "risk_owner": "native_lease_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "S3_APPROVED_CONTROL",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "approved_control",
+      "runtime": "NATIVE_ANDROID_AND_HOST",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    },
+    {
+      "android_consent_required": true,
+      "android_os_mechanism": "DEVICEPOLICYMANAGER_MANAGED_LAB",
+      "fallback": "BLOCKED_EXTERNAL_DEDICATED_MANAGED_LAB",
+      "id": "N19",
+      "independent_review": {
+        "owner_role": "independent_security_and_enterprise_lab",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": true,
+      "operator_approval_required": true,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_security_and_enterprise_lab",
+        "risk_owner": "managed_android_lab_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "EXTERNAL_MANAGED_LAB",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "managed_lab",
+      "runtime": "MANAGED_DPC_TEST_AVD_ONLY",
+      "test_environment": "DEDICATED_MANAGED_TEST_AVD_ONLY"
+    },
+    {
+      "android_consent_required": false,
+      "android_os_mechanism": "NO_NATIVE_ROOT_ROM_BOOTLOADER_API",
+      "fallback": "HOST_READ_ONLY_DIAGNOSTICS_MANUAL_OWNER_RUNBOOK",
+      "id": "N20",
+      "independent_review": {
+        "owner_role": "independent_platform_security",
+        "release_condition": "independently_verifiable_review_and_approved_profile",
+        "status": "PENDING_EXTERNAL"
+      },
+      "native_lease_required": false,
+      "operator_approval_required": true,
+      "owner_roles": {
+        "android_user": "foreground_android_user",
+        "host_operator": "authenticated_owner_paired_host",
+        "independent_reviewer": "independent_platform_security",
+        "risk_owner": "host_maintenance_owner"
+      },
+      "physical_device_access": "DENIED_UNLESS_SEPARATELY_APPROVED",
+      "profile": "UNSUPPORTED_APK_HOST_FALLBACK",
+      "prohibited_shortcuts": [
+        "ADB_SUBSTITUTES_NATIVE_EFFECT",
+        "SIMULATED_ANDROID_GRANT",
+        "MODEL_SELF_AUTHORIZATION",
+        "UNREVIEWED_PHYSICAL_TARGET"
+      ],
+      "release_status": "NOT_DONE",
+      "required_scope": "host_maintenance",
+      "runtime": "HOST_READ_ONLY_MANUAL_FALLBACK",
+      "test_environment": "EXCLUSIVE_DISPOSABLE_API30_33_34_36"
+    }
+  ],
+  "no_external_approvals_assumed": true,
+  "release_status": "PRODUCT_INCOMPLETE",
+  "schema": "native-v3-authority-risk.v1"
+}

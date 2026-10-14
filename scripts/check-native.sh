@@ -47,4 +47,9 @@ python3 scripts/native_v3_legacy_attribution.py \
   --require-all-unit-results \
   --out artifacts/native-v3-e00b-unit-attribution.json
 
+echo "== E00.d twenty-family Android consent/operator/independent reviewer taxonomy =="
+python3 scripts/native_v3_authority_matrix.py \
+  --matrix docs/native-v3/v3-authority-risk-register.json \
+  --registry docs/native-v3/Android_Native_MCP_E2E_Acceptance_Registry_V3_2026-10-14.json
+
 echo "JVM Native protocol, cross-language MCP, V3 traceability/admission, and safety gates passed."

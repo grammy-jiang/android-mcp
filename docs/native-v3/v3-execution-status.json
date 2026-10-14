@@ -905,6 +905,54 @@
       ],
       "source": "E02.a genuine Keystore/Host OpenSSL one-version test POC gap-closure audit 2026-10-14",
       "status": "OPEN"
+    },
+    {
+      "description": "228 test selectors are mapped to files and JVM/Python XML, but every test body is not yet independently checked for asserting all original requirement semantics",
+      "found_in": "E00.b semantic completeness audit",
+      "id": "GAP-N01-002",
+      "independent_oracle": "228 reviewed body-to-requirement assertions with separate real Android E2E receipts where applicable",
+      "next_action": "Review each of 228 original historical specifications against executable assertions; flag fake/missing semantics and add dedicated behavioral tests per uncovered case",
+      "owner": "Native V3 historical test reviewer",
+      "profile": "CORE",
+      "release_blocking": true,
+      "requirements": [
+        "T-N0A-01",
+        "T-N8B-06"
+      ],
+      "source": "V3 historical 228 case attribution / real-vs-mock requirement",
+      "status": "OPEN"
+    },
+    {
+      "description": "Original machine-readable 70-work-package registry and V3 delivery summary inside approved ZIP remain unavailable as original bytes; derived prose index is not the missing original",
+      "found_in": "E00.a original source retrieval audit",
+      "id": "GAP-N01-003",
+      "independent_oracle": "Original approved source hashes and exact parsed registry match, with documented discrepancies",
+      "next_action": "Recover and hash the two original documents from authorized Library/ZIP; reconcile approved dependencies and acceptance metadata against the derived 70-package index without manufacturing originals",
+      "owner": "V3 design source-of-truth custodian",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-XR-01"
+      ],
+      "source": "Library ZIP could not be materialized into runtime",
+      "status": "OPEN"
+    },
+    {
+      "description": "Signed fixture UI tests have pixels/counter/SAF provider, but an explicit secure/password-window oracle and negative Accessibility/screenshot data-leakage fixture are still missing",
+      "found_in": "E01.b architecture acceptance fixture audit",
+      "id": "GAP-N07-002",
+      "independent_oracle": "Accessibility node-tree secure-screen redaction and MediaProjection secure pixels independently observed on installed fixture",
+      "next_action": "Add deterministic FLAG_SECURE and password edit controls to separately signed fixture; prove secure-window non-disclosure, redaction and targeted gesture refusal by real Android instrumentation on API30/33/34/36",
+      "owner": "Native Android signed fixture owner",
+      "profile": "SENSITIVE_USER_CONSENT",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N07-04",
+        "V3-N07-05",
+        "V3-N09-04"
+      ],
+      "source": "V3 architecture fixture secure/password-window requirements",
+      "status": "OPEN"
     }
   ],
   "snapshot_origin": "V3 full-lifecycle acceptance spec plus current app Tool registration source",
@@ -938,13 +986,15 @@
       "status": "NOT_VERIFIED_DONE"
     },
     {
+      "completion_evidence": "docs/native-v3/E00D-AUTHORITY-RISK-REVIEW-20261014.md",
       "dependencies": [
         "E00.c"
       ],
       "id": "E00.d",
       "objective": "Classify OS consent vs operator-scoped privilege vs independent external security review; record risk owners and fallback for every family.",
+      "product_status": "NOT_DONE",
       "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
-      "status": "NOT_VERIFIED_DONE"
+      "status": "DONE_ENGINEERING_POLICY_ONLY_NO_PRODUCT_APPROVAL"
     },
     {
       "dependencies": [
