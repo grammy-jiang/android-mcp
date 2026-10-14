@@ -10,16 +10,21 @@ from android_mcp_host.durable_job_tool import register_job_status_tool
 from android_mcp_host.durable_jobs import DurableJobStore
 from android_mcp_host.emulator_snapshot_manager import EmulatorSnapshotManager
 from android_mcp_host.emulator_snapshot_tool import register_snapshot_tool
+from android_mcp_host.synthetic_bugreport import BugreportService
+from android_mcp_host.synthetic_bugreport_tool import register_bugreport_tool
 
 
 def register_host_tail(
     server: FastMCP,
+    bugreport: BugreportService | None,
     snapshot_manager: EmulatorSnapshotManager | None,
     build_jobs: ControlledBuildJobs | None,
     durable_jobs: DurableJobStore | None,
     job_owner: str | None,
 ) -> None:
     """Retains existing catalog ordering and rejects unmatched job owners."""
+    if bugreport is not None:
+        register_bugreport_tool(server, bugreport)
     if snapshot_manager is not None:
         register_snapshot_tool(server, snapshot_manager)
     if build_jobs is not None:
