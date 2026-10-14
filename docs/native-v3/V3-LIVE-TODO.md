@@ -7,7 +7,7 @@ product capability or an independent security review.
 - Baseline work packages: **70**
 - Engineering packages checked: **7**
 - Remaining or partially complete packages: **63**
-- Required GAP tasks still open: **30**
+- Required GAP tasks still open: **31**
 - Real product capabilities accepted: **0/20**
 - New V3 real-E2E case receipts admitted: **0/192**
 - Product state: **PRODUCT_INCOMPLETE**
@@ -54,7 +54,8 @@ be added to the source ledger and rendered here immediately.
   - Evidence: [evidence](E02A-ANDROID-KEYSTORE-MTLS-POC-20261014.md)
 - [ ] **E02.b — Freeze versioned shared v2 pairing/auth/permission/grant/lease schema and compatibility; coordinate C0→Host→Native PR train with named writers.** — PARTIAL; dependencies: E02.a
   - C0 candidate six-kind v2 security wire JSON schema and Kotlin/Python structural validators exist; actual Host+Native live paired consumers, canonical signed bytes, owner approval and v1 compatibility gates remain three separate GAP tasks
-- [ ] **E02.c — Wire AndroidKeyStore installation identity to user-visible local pairing UI and persistent owner binding with explicit fingerprint confirmation.** — OPEN; dependencies: E02.b
+- [ ] **E02.c — Wire AndroidKeyStore installation identity to user-visible local pairing UI and persistent owner binding with explicit fingerprint confirmation.** — PARTIAL; dependencies: E02.b
+  - Actual installed Native APK Keystore ownership and synthetic durable-fence journal verified on API30/33/34/36, 8 device tests each; Host public key fingerprint user-confirmation and live paired MCP still GAP-N17-007
 - [ ] **E02.d — Implement Native and Host mutually authenticated session lifecycle with key rotation, expiry, replay cache, revoke/unpair, OS boot/install epoch validation.** — OPEN; dependencies: E02.c
 - [ ] **E02.e — Register real Kotlin MCP tools/list and tools/call with session-scoped read profile + request authorization on every call.** — OPEN; dependencies: E02.d, E01.d
 - [ ] **E02.f — Run second Mac/Linux Host and same-Android-hostile-peer tests, certificate replacement, disconnect/reconnect, boot/key epoch and malformed HTTP.** — OPEN; dependencies: E02.d, E02.e
@@ -214,6 +215,8 @@ be added to the source ledger and rendered here immediately.
   - Next: Agree and independently review standardized cryptographic envelope/canonical encoding and exact key fingerprints, then test signature, stale boot, replay, replacement and revocation against real Host and Native processes.
 - [ ] **GAP-N18-002** — OPEN: The v2 lease request/receipt is a typed protocol claim; no persistent Native authoritative lease/replay journal or Android pre-effect fence is connected.
   - Next: Implement Native durable monotonically increasing arbiter, competing Host process tests and uncertain-after-dispatch reconciliation with independent Android effect evidence.
+- [ ] **GAP-N17-007** — OPEN: Installed Native APK AndroidKeyStore persists and signs after ART compatibility patch, but exact user-confirmed Host public key binding through visible Native UI + independent Host roundtrip is not yet admitted as real paired MCP authentication
+  - Next: Complete user-visible fingerprint approval path with independently operated Host signature/proof and actual paired MCP, verify wrong Host/replay/Stop/crash/unpair on four owned Android APIs; never fabricate foreground OS/user approval
 
 ## Repeatable completion workflow
 

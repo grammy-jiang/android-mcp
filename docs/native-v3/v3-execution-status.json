@@ -1027,6 +1027,27 @@
       ],
       "source": "E02.b six-kind C0 candidate/dual-runtime source test and gap review 2026-10-14",
       "status": "OPEN"
+    },
+    {
+      "description": "Installed Native APK AndroidKeyStore persists and signs after ART compatibility patch, but exact user-confirmed Host public key binding through visible Native UI + independent Host roundtrip is not yet admitted as real paired MCP authentication",
+      "engineering_evidence": "docs/native-v3/GAP-N17-ART-ANDROID-RUNTIME-20261014.md",
+      "found_in": "E02.c real Android Keystore private signing/visible Host fingerprint integration",
+      "id": "GAP-N17-007",
+      "independent_oracle": "Separate signed Host public identity vs AndroidKeyStore signature and OS noBackup pairing record, real MCP wrong-Host rejection plus user-visible unpair",
+      "next_action": "Complete user-visible fingerprint approval path with independently operated Host signature/proof and actual paired MCP, verify wrong Host/replay/Stop/crash/unpair on four owned Android APIs; never fabricate foreground OS/user approval",
+      "owner": "Native Host pairing UI + independent Host verifier",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N17-01",
+        "V3-N17-02",
+        "V3-N17-03",
+        "V3-N17-04",
+        "V3-N17-05",
+        "V3-N17-06"
+      ],
+      "source": "Actual API30/33/34/36 installed Native APK AndroidJUnitRunner and Host UI E2E attempt",
+      "status": "OPEN"
     }
   ],
   "snapshot_origin": "V3 full-lifecycle acceptance spec plus current app Tool registration source",
@@ -1161,8 +1182,10 @@
       ],
       "id": "E02.c",
       "objective": "Wire AndroidKeyStore installation identity to user-visible local pairing UI and persistent owner binding with explicit fingerprint confirmation.",
+      "product_status": "NOT_DONE",
       "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
-      "status": "NOT_VERIFIED_DONE"
+      "status": "PARTIAL_NATIVE_KEYSTORE_RESTART_PROOF_HOST_UI_APPROVAL_NOT_VERIFIED",
+      "verification_doc": "docs/native-v3/GAP-N17-ART-ANDROID-RUNTIME-20261014.md"
     },
     {
       "dependencies": [

@@ -7,6 +7,7 @@ import unittest
 from pathlib import Path
 
 from scripts.native_v3_e2e_gate import GateError, evaluate_matrix
+from scripts.native_v3_owned_avd import EXPECTED_NATIVE_ANDROID_TEST_NAMES
 
 API_LEVELS = (30, 33, 34, 36)
 GIT_SHA = "1" * 40
@@ -36,7 +37,8 @@ def example(api: int) -> tuple[dict, dict]:
         "git_tree": GIT_TREE,
         "apk_sha256": APK,
         "instrumentation_apk_sha256": TEST_APK,
-        "instrumentation_tests": 3,
+        "instrumentation_tests": 8,
+        "instrumentation_method_ids": sorted(EXPECTED_NATIVE_ANDROID_TEST_NAMES),
         "mcp_client": "FastMCP to installed Native Android APK",
         "independent_android_oracle": "PackageManager installed version/UID",
         "mcp_check": {
@@ -89,7 +91,7 @@ class E01MatrixGateTests(unittest.TestCase):
     def test_full_four_api_receipts_admitted_as_infrastructure_only(self) -> None:
         result = evaluate_matrix(receipts(), GIT_SHA, GIT_TREE)
         self.assertEqual(result["verified_api_levels"], [30, 33, 34, 36])
-        self.assertEqual(result["android_junit_tests"], 60)
+        self.assertEqual(result["android_junit_tests"], 80)
         self.assertEqual(result["native_mcp_client_calls_verified"], 4)
         self.assertEqual(result["native_product_features_done"], 0)
         self.assertEqual(result["product_status"], "PRODUCT_INCOMPLETE")
@@ -202,7 +204,7 @@ class E01MatrixGateTests(unittest.TestCase):
         self.assertTrue(script.is_file())
         content = script.read_text()
         self.assertIn(":app:assembleDebugAndroidTest", content)
-        self.assertIn("scripts/native_v3_e2e_gate.py", content)
+        self.assertIn("-m scripts.native_v3_e2e_gate", content)
         self.assertIn("scripts/check-native-v3-fixtures.sh", content)
 
     def test_missing_executed_suite_cannot_be_replaced_by_one_jvm_result(self) -> None:

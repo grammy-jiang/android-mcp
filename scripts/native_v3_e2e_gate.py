@@ -16,6 +16,8 @@ import time
 from pathlib import Path
 from typing import Any
 
+from scripts.native_v3_owned_avd import EXPECTED_NATIVE_ANDROID_TEST_NAMES
+
 APIS = (30, 33, 34, 36)
 SERIALS = {
     30: "emulator-5564",
@@ -90,7 +92,9 @@ def _validate_pair(
         "fake Native capability promotion",
     )
     need(
-        native.get("instrumentation_tests") == 3
+        native.get("instrumentation_tests") == 8
+        and native.get("instrumentation_method_ids")
+        == sorted(EXPECTED_NATIVE_ANDROID_TEST_NAMES)
         and _hex(native.get("apk_sha256"), 64)
         and _hex(native.get("instrumentation_apk_sha256"), 64),
         "missing real Native instrumentation APK evidence",
@@ -228,7 +232,7 @@ def evaluate_matrix(
         "verified_api_levels": sorted(api_ids),
         "git_head": head,
         "git_tree": tree,
-        "android_junit_tests": sum(3 + 12 for _ in receipts),
+        "android_junit_tests": sum(8 + 12 for _ in receipts),
         "native_mcp_client_calls_verified": len(receipts),
         "fixture_is_not_native_executor": True,
         "native_product_features_done": 0,

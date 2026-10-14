@@ -41,7 +41,7 @@ python3 -m unittest discover -s tests -p 'test_native_v3_e2e_gate.py' -v
 
 echo '=== E01.f: FOUR real owned AVDs, Native APK MCP + Android OS/fixture oracles ==='
 uv run --project host --locked --group dev --python 3.13 python \
-  scripts/native_v3_e2e_gate.py \
+  -m scripts.native_v3_e2e_gate \
   --repo "$root" \
   --python "$root/host/.venv/bin/python" \
   --evidence-dir "$root/artifacts/v3-e01"

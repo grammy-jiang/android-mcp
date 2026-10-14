@@ -8,9 +8,11 @@ import unittest
 from pathlib import Path
 
 from scripts.native_v3_owned_avd import (
+    EXPECTED_NATIVE_ANDROID_TEST_NAMES,
     IdentityError,
     exclusive_avd_lock,
     validate_identity,
+    verify_native_instrumentation_report,
 )
 
 BASE = {
@@ -72,6 +74,21 @@ class OwnedEmulatorTests(unittest.TestCase):
             observed[field] = value
             with self.subTest(field=field), self.assertRaises(IdentityError):
                 validate_identity(BASE, observed)
+
+    def test_instrumentation_verifies_exact_eight_real_android_methods(self) -> None:
+        cases = sorted(EXPECTED_NATIVE_ANDROID_TEST_NAMES)
+        source = "\n".join(
+            "INSTRUMENTATION_STATUS: test=" + name for name in cases for _ in range(2)
+        )
+        good = source + "\nOK (8 tests)\nINSTRUMENTATION_CODE: -1\n"
+        self.assertEqual(verify_native_instrumentation_report(good), cases)
+        for bad in (
+            good.replace(cases[0], "forged_method", 1),
+            good.replace("OK (8 tests)", "OK (7 tests)"),
+            good.replace("INSTRUMENTATION_CODE: -1", "INSTRUMENTATION_CODE: 0"),
+        ):
+            with self.assertRaises(RuntimeError):
+                verify_native_instrumentation_report(bad)
 
     def test_reused_lease_cannot_run_parallel_tests(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

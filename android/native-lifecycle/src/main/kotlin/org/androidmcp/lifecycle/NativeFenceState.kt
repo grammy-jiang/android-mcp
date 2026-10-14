@@ -231,7 +231,12 @@ class NativeFenceState(
         if (!Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS) ||
             Files.isSymbolicLink(path) || Files.size(path) !in 30..MAX_FILE_BYTES.toLong()
         ) throw IllegalStateException("FENCE_CORRUPT")
-        val content = Files.readString(path, Charsets.US_ASCII)
+        // Files.readString is not available in Android ART on our API30–36 matrix.
+        val encoded = Files.readAllBytes(path)
+        if (encoded.size !in 30..MAX_FILE_BYTES) {
+            throw IllegalStateException("FENCE_CORRUPT")
+        }
+        val content = String(encoded, Charsets.US_ASCII)
         val lines = content.lines().filter { it.isNotEmpty() }
         val checksum = lines.lastOrNull()?.split('|') ?: throw IllegalStateException()
         if (checksum.size != 2 || checksum[0] != "C" ||

@@ -85,7 +85,7 @@ def build_checklist(
     )
 
     gaps = status.get("required_gaps")
-    _require(isinstance(gaps, list) and len(gaps) >= 30, "Previously found GAP deleted")
+    _require(isinstance(gaps, list) and len(gaps) >= 31, "Previously found GAP deleted")
     gap_ids = [item.get("id") for item in gaps]
     _require(
         len(set(gap_ids)) == len(gaps)
@@ -108,6 +108,7 @@ def build_checklist(
             "GAP-N07-002",
             "GAP-N17-005",
             "GAP-N17-006",
+            "GAP-N17-007",
             "GAP-N18-002",
         }.issubset(set(gap_ids)),
         "Previously discovered semantic or fixture gap hidden",
