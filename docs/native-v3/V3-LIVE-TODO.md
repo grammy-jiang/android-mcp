@@ -7,7 +7,7 @@ product capability or an independent security review.
 - Baseline work packages: **70**
 - Engineering packages checked: **7**
 - Remaining or partially complete packages: **63**
-- Required GAP tasks still open: **27**
+- Required GAP tasks still open: **30**
 - Real product capabilities accepted: **0/20**
 - New V3 real-E2E case receipts admitted: **0/192**
 - Product state: **PRODUCT_INCOMPLETE**
@@ -52,8 +52,8 @@ be added to the source ledger and rendered here immediately.
 - [x] ~~E02.a — Run vetted transport library POC for confidential mutually authenticated Host↔Native session over explicit ADB forward/approved relay.~~ — DONE_ENGINEERING; dependencies: E01.d, E00.d
   - Separate installed Android Keystore test fixture verified real Host OpenSSL TLS mTLS in both directions on API36, with correct/anonymous/wrong certs; production N17 still NOT_DONE
   - Evidence: [evidence](E02A-ANDROID-KEYSTORE-MTLS-POC-20261014.md)
-- [ ] **E02.b — Freeze versioned shared v2 pairing/auth/permission/grant/lease schema and compatibility; coordinate C0→Host→Native PR train with named writers.** — IN_PROGRESS; dependencies: E02.a
-  - Another exclusive worktree has strict additive shared pairing/grant/lease schema candidate and active local quality checks; no unreviewed shared contracts changed here
+- [ ] **E02.b — Freeze versioned shared v2 pairing/auth/permission/grant/lease schema and compatibility; coordinate C0→Host→Native PR train with named writers.** — PARTIAL; dependencies: E02.a
+  - C0 candidate six-kind v2 security wire JSON schema and Kotlin/Python structural validators exist; actual Host+Native live paired consumers, canonical signed bytes, owner approval and v1 compatibility gates remain three separate GAP tasks
 - [ ] **E02.c — Wire AndroidKeyStore installation identity to user-visible local pairing UI and persistent owner binding with explicit fingerprint confirmation.** — OPEN; dependencies: E02.b
 - [ ] **E02.d — Implement Native and Host mutually authenticated session lifecycle with key rotation, expiry, replay cache, revoke/unpair, OS boot/install epoch validation.** — OPEN; dependencies: E02.c
 - [ ] **E02.e — Register real Kotlin MCP tools/list and tools/call with session-scoped read profile + request authorization on every call.** — OPEN; dependencies: E02.d, E01.d
@@ -208,6 +208,12 @@ be added to the source ledger and rendered here immediately.
   - Next: Complete independent 4-API secure/password UI tree oracle and real paired Native AccessibilityService/MediaProjection refusal; verify Stop, revocation, crash and no password or secure pixel leak
 - [ ] **GAP-N01-004** — OPEN: External oracle/reviewer signing identities, actual Android OS-effect receipt collection, verified trusted key rotation and replay database are not yet integrated into an independently operated release gate
   - Next: Provision externally approved pinned witness/reviewer public keys through a reviewed configuration; instrument true Native MCP→Android callback→independent fixture receipt; test exact source/APK/boot, expiry, revoked signer and replay across all four API levels
+- [ ] **GAP-N17-005** — OPEN: C0 shared v2 contract candidate has Python/Kotlin offline parsers only, not a jointly integrated live Native/Host MCP consumer.
+  - Next: Require separately owned Host and Native writers to validate exact wire bytes and version negotiation over mutually authenticated TLS with real device_status v1 compatibility test.
+- [ ] **GAP-N17-006** — OPEN: Signature-shaped proof/grant fields lack jointly reviewed canonical signed-byte encoding and external Host owner key enrollment.
+  - Next: Agree and independently review standardized cryptographic envelope/canonical encoding and exact key fingerprints, then test signature, stale boot, replay, replacement and revocation against real Host and Native processes.
+- [ ] **GAP-N18-002** — OPEN: The v2 lease request/receipt is a typed protocol claim; no persistent Native authoritative lease/replay journal or Android pre-effect fence is connected.
+  - Next: Implement Native durable monotonically increasing arbiter, competing Host process tests and uncertain-after-dispatch reconciliation with independent Android effect evidence.
 
 ## Repeatable completion workflow
 
