@@ -14,7 +14,14 @@ bypassing Gradle dependency verification or claiming Android product acceptance.
    `junit-bom:5.10.2.module`, `junit-bom:5.11.0-M2.module`, and
    `groovy-bom:4.0.29.pom` checksums. These are **existing pinned
    dependency graph artifacts**, not newly selected dependency versions.
-3. The Android emulator workflow checked out Git history at the default
+3. The original mocked AVD ownership tests used the developer's literal
+   hostname `Mac`. Automated Linux and hosted macOS runners use distinct
+   machine names, so six honest ownership-unit tests failed even when
+   actual signature and boot checks were correct. The tests now bind
+   their **synthetic positive owner fixture** to `socket.gethostname()`;
+   negative tests still deny mismatched Host identity. Production
+   verification continues to require exact local hostname equality.
+4. The Android emulator workflow checked out Git history at the default
    depth of one commit. `test_native_capability_ledger.py` verifies the
    38 older merged work-package SHAs using actual `git show` and
    `git merge-base --is-ancestor`, so a shallow GitHub Actions checkout

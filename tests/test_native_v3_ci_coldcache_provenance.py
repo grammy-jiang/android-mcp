@@ -34,6 +34,25 @@ class NativeCiColdCacheProvenanceTests(unittest.TestCase):
         self.assertEqual(checksums[0].get("value"), EXPECTED_BOM_SHA256)
         self.assertIn("Maven Central", checksums[0].get("origin", ""))
 
+    def test_pinned_avd_fixture_host_is_runner_local_not_grammy_mac(self) -> None:
+        # Cloud Linux and macOS runners have fresh random hostnames; a
+        # hardcoded local developer workstation is not a valid positive.
+        # The underlying attestation validator still requires exact host
+        # equality, and existing negative tests reject a different owner.
+        fixtures = (
+            "test_native_v3_owned_attestation.py",
+            "test_native_v3_owned_avd.py",
+            "test_native_v3_tls_poc.py",
+        )
+        for filename in fixtures:
+            with self.subTest(fixture=filename):
+                source = (ROOT / "tests" / filename).read_text()
+                self.assertIn('"host": socket.gethostname()', source)
+                self.assertNotIn('"host": "Mac"', source)
+                self.assertIn(
+                    "other-host", source
+                ) if filename != "test_native_v3_tls_poc.py" else None
+
     def test_google_maven_linux_aapt2_binary_hash_is_explicit(self) -> None:
         # Mac-only AAPT2 checksums cannot admit Linux Android SDK build tools.
         ns = {"gradle": "https://schema.gradle.org/dependency-verification"}
