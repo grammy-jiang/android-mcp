@@ -76,8 +76,15 @@ class SyntheticLogcatProcessReader:
             or not 0 < timeout <= 3.0
         ):
             raise ValueError("Untrusted synthetic fixture limits")
+        started = time.monotonic()
         process = subprocess.Popen(
-            [str(self._python), str(self._script), "--mcp-synthetic-logcat-v1"],
+            [
+                str(self._python),
+                str(Path(__file__).resolve().with_name("logcat_stream_guard.py")),
+                str(self._script),
+                str(os.getpid()),
+                repr(started + timeout),
+            ],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
@@ -86,7 +93,6 @@ class SyntheticLogcatProcessReader:
         )
         parts: list[bytes] = []
         total = 0
-        started = time.monotonic()
         try:
             assert process.stdout is not None
             with selectors.DefaultSelector() as selector:

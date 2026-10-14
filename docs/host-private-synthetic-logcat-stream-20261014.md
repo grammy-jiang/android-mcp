@@ -92,13 +92,23 @@ an unknown capture blindly. If a worker crashes, H2.d lease recovery
 requires explicit reconciliation, not implicit job replay.
 
 The optional **trusted-test-only** Python fixture child helper uses
-an explicitly pinned owned Python script, fixed argv and isolated
-process group, drains a capped pipe and kills its entire process
-group on cancellation, timeout, output flood or process exit. No
-production CLI or MCP argument can inject this child. An arbitrary
-Python callback itself is not sandboxed; for hard deadlines use the
-bounded child helper. This is not evidence of a real Android streaming
-worker or privileged device operation.
+an explicitly pinned owned Python script, fixed argv, capped stdout,
+and a fresh isolated process group. It starts a separate *guard*
+process as the process-group leader, which launches the fixture in
+the same group and independently verifies the original Host parent
+PID and a monotonic deadline no later than three seconds. The guard
+kills its entire owned process group if the Host crashes, is SIGKILLed,
+disconnects or hangs beyond the deadline, even when the Host's own
+Python `finally` cleanup cannot execute. Normal Host cancellation,
+timeout, output overflow and process exit still kill and reap the
+guard group. The guard never sends a signal to the Host's group.
+A real subprocess SIGKILL regression test checks that an otherwise
+continuously running synthetic heartbeat child terminates without
+`finally` execution; it also tests direct parent-death and deadline
+branches. No production CLI or MCP argument can inject this child.
+An arbitrary Python callback itself is not sandboxed; for hard
+deadlines use the guarded fixture process. This is not evidence of
+a real Android streaming worker or privileged device operation.
 
 ## Acceptance matrix and follow-up
 
