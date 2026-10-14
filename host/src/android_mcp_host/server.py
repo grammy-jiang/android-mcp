@@ -45,6 +45,7 @@ from android_mcp_host.private_artifact_store import (
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
 from android_mcp_host.status import build_status
+from android_mcp_host.synthetic_bugreport import BugreportService
 from android_mcp_host.synthetic_file_pull import FilePullService
 from android_mcp_host.synthetic_file_push import FilePushService
 from android_mcp_host.synthetic_screenrecord import ScreenRecordService
@@ -87,6 +88,7 @@ def create_server(
     file_pull_worker: FilePullService | None = None,
     file_push_worker: FilePushService | None = None,
     ui_action_worker: UiActionService | None = None,
+    bugreport_worker: BugreportService | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -485,6 +487,8 @@ def create_server(
         file_push_worker,
         ui_action_worker,
     )
-    register_host_tail(server, snapshot_manager, build_jobs, durable_jobs, job_owner)
+    register_host_tail(
+        server, bugreport_worker, snapshot_manager, build_jobs, durable_jobs, job_owner
+    )
 
     return server
