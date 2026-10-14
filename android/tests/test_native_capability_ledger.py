@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
@@ -10,6 +11,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts/check_native_capability_ledger.py"
 CANONICAL = ROOT / "docs/native-capability-ledger.v1.json"
+
+# pytest executing android/tests directly does not add the repository root to
+# sys.path. Load this exact source file without changing Python global paths.
+_HISTORY = ROOT / "scripts/native_v3_ci_git_history.py"
+_SPEC = importlib.util.spec_from_file_location("native_v3_ci_git_history", _HISTORY)
+assert _SPEC is not None and _SPEC.loader is not None
+_MODULE = importlib.util.module_from_spec(_SPEC)
+_SPEC.loader.exec_module(_MODULE)
+ensure_complete_ledger_history = _MODULE.ensure_complete_ledger_history
 
 
 def run(
@@ -42,6 +52,10 @@ def test_20_families_38_merged_packages_228_specified_cases() -> None:
 
 
 def test_actual_merge_receipts_are_git_ancestral() -> None:
+    # Only the exact official GitHub Actions shallow checkout may recover
+    # historical commits. The strict test below still verifies all 38 real
+    # merge receipts and does not accept a fabricated ancestry marker.
+    ensure_complete_ledger_history(ROOT)
     result = run(strict=True)
     assert result.returncode == 0, result.stdout + result.stderr
 
