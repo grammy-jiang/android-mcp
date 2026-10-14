@@ -1,0 +1,26 @@
+{
+  "cross_runtime_signature_canonicalization": "BLOCKED_REVIEW",
+  "external_host_writer_acknowledgement": "NOT_OBTAINED",
+  "grants_authority": false,
+  "host_live_runtime_consumer": "NOT_CONNECTED",
+  "host_reference_parser": "scripts/native_v3_contract_v2.py",
+  "independent_security_review": "NOT_OBTAINED",
+  "native_live_mcp_runtime_consumer": "NOT_CONNECTED",
+  "native_reference_parser": "android/native-protocol/src/main/kotlin/org/androidmcp/protocol/NativeSecurityWireV2.kt",
+  "payload_kinds": [
+    "pair_challenge",
+    "pair_proof",
+    "session_authorization",
+    "operation_grant",
+    "lease_acquire",
+    "lease_receipt"
+  ],
+  "production_pairing_enabled": false,
+  "real_android_e2e_features_done": 0,
+  "review_note": "Versioned structural/semantic preflight only; valid frame is never a signed identity, OS consent or lease. Require E02.c/d/f and independent reviews before freeze.",
+  "schema_file": "native-security-envelope.v2.schema.json",
+  "schema_sha256": "b5f27c18c49d90d77cce8304f0681c348f3cf82f20246c820880af264aa9836a",
+  "schema_version": 2,
+  "spec_status": "C0_CANDIDATE_NOT_FROZEN",
+  "work_package": "E02.b"
+}

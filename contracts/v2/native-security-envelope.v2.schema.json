@@ -1,0 +1,429 @@
+{
+  "$defs": {
+    "lease_acquire": {
+      "additionalProperties": false,
+      "properties": {
+        "fence": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "grant_message_id": {
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "operation_digest_sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "scope": {
+          "const": "approved_control"
+        },
+        "target_package": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^(?:[A-Za-z_][A-Za-z_0-9]*\\.)+[A-Za-z_][A-Za-z_0-9]*$",
+          "type": "string"
+        },
+        "tool": {
+          "enum": [
+            "native_capture_screen",
+            "native_record_screen",
+            "native_file_exchange",
+            "native_ui_action",
+            "native_app_launch",
+            "native_install_request"
+          ]
+        },
+        "ttl_ms": {
+          "maximum": 10000,
+          "minimum": 100,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scope",
+        "tool",
+        "target_package",
+        "operation_digest_sha256",
+        "fence",
+        "ttl_ms",
+        "grant_message_id"
+      ],
+      "type": "object"
+    },
+    "lease_receipt": {
+      "additionalProperties": false,
+      "properties": {
+        "dispatched": {
+          "type": "boolean"
+        },
+        "fence": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "operation_digest_sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "originating_request_id": {
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "retry_automatically": {
+          "const": false
+        },
+        "state": {
+          "enum": [
+            "held",
+            "busy",
+            "denied",
+            "expired",
+            "stopped",
+            "releasing",
+            "released",
+            "uncertain",
+            "replay"
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "fence",
+        "dispatched",
+        "retry_automatically",
+        "operation_digest_sha256",
+        "originating_request_id"
+      ],
+      "type": "object"
+    },
+    "operation_grant": {
+      "additionalProperties": false,
+      "properties": {
+        "consent_event_id": {
+          "maxLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "operation_digest_sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "user_consented",
+            "approved_control"
+          ]
+        },
+        "signature_der_b64u": {
+          "maxLength": 512,
+          "minLength": 64,
+          "pattern": "^[A-Za-z0-9_-]{64,512}$",
+          "type": "string"
+        },
+        "target_package": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^(?:[A-Za-z_][A-Za-z_0-9]*\\.)+[A-Za-z_][A-Za-z_0-9]*$",
+          "type": "string"
+        },
+        "tool": {
+          "enum": [
+            "native_capture_screen",
+            "native_record_screen",
+            "native_file_exchange",
+            "native_ui_action",
+            "native_app_launch",
+            "native_install_request"
+          ]
+        }
+      },
+      "required": [
+        "scope",
+        "tool",
+        "target_package",
+        "operation_digest_sha256",
+        "consent_event_id",
+        "signature_der_b64u"
+      ],
+      "type": "object"
+    },
+    "pair_challenge": {
+      "additionalProperties": false,
+      "properties": {
+        "nonce_b64u": {
+          "maxLength": 64,
+          "minLength": 40,
+          "pattern": "^[A-Za-z0-9_-]{40,64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nonce_b64u"
+      ],
+      "type": "object"
+    },
+    "pair_proof": {
+      "additionalProperties": false,
+      "properties": {
+        "nonce_b64u": {
+          "maxLength": 64,
+          "minLength": 40,
+          "pattern": "^[A-Za-z0-9_-]{40,64}$",
+          "type": "string"
+        },
+        "signature_der_b64u": {
+          "maxLength": 512,
+          "minLength": 64,
+          "pattern": "^[A-Za-z0-9_-]{64,512}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nonce_b64u",
+        "signature_der_b64u"
+      ],
+      "type": "object"
+    },
+    "session_authorization": {
+      "additionalProperties": false,
+      "properties": {
+        "scope": {
+          "enum": [
+            "status",
+            "read",
+            "user_consented",
+            "approved_control"
+          ]
+        },
+        "signature_der_b64u": {
+          "maxLength": 512,
+          "minLength": 64,
+          "pattern": "^[A-Za-z0-9_-]{64,512}$",
+          "type": "string"
+        },
+        "state": {
+          "const": "authenticated"
+        },
+        "tls_peer_spki_sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope",
+        "tls_peer_spki_sha256",
+        "state",
+        "signature_der_b64u"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:android-mcp:native-security-envelope:v2",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "pair_challenge"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/pair_challenge"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "pair_proof"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/pair_proof"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "session_authorization"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/session_authorization"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "operation_grant"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/operation_grant"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "lease_acquire"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/lease_acquire"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "lease_receipt"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/lease_receipt"
+          }
+        }
+      }
+    }
+  ],
+  "description": "Strict structural compatibility only. TLS peer identity, user consent, scopes, signatures, replay journal and lease are checked by real runtime, never granted by parsing a wire frame.",
+  "properties": {
+    "expires_at_unix_ms": {
+      "maximum": 4102444800000,
+      "minimum": 946684800000,
+      "type": "integer"
+    },
+    "host_spki_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "issued_at_unix_ms": {
+      "maximum": 4102444800000,
+      "minimum": 946684800000,
+      "type": "integer"
+    },
+    "kind": {
+      "enum": [
+        "pair_challenge",
+        "pair_proof",
+        "session_authorization",
+        "operation_grant",
+        "lease_acquire",
+        "lease_receipt"
+      ]
+    },
+    "message_id": {
+      "maxLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "native_boot_epoch": {
+      "maxLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "native_installation_id": {
+      "maxLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "native_spki_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "payload": {
+      "maxProperties": 10,
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 2
+    },
+    "session_id": {
+      "maxLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "kind",
+    "message_id",
+    "session_id",
+    "native_installation_id",
+    "native_boot_epoch",
+    "host_spki_sha256",
+    "native_spki_sha256",
+    "issued_at_unix_ms",
+    "expires_at_unix_ms",
+    "payload"
+  ],
+  "title": "Android Native MCP V3 cross-runtime security frame v2 (C0 candidate, not an approval)",
+  "type": "object"
+}

@@ -67,7 +67,10 @@
     "state": "DONE_ENGINEERING"
   },
   "E02.b": {
-    "note": "Another exclusive worktree has strict additive shared pairing/grant/lease schema candidate and active local quality checks; no unreviewed shared contracts changed here",
-    "state": "IN_PROGRESS"
+    "evidence": [
+      "docs/native-v3/E02B-C0-SECURITY-WIRE-V2-CANDIDATE-20261014.md"
+    ],
+    "note": "C0 candidate six-kind v2 security wire JSON schema and Kotlin/Python structural validators exist; actual Host+Native live paired consumers, canonical signed bytes, owner approval and v1 compatibility gates remain three separate GAP tasks",
+    "state": "PARTIAL"
   }
 }

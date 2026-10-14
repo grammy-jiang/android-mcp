@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "kind": "session_authorization",
+  "message_id": "0d2b70d7-95ef-4441-bb45-398a8fe5cb7e",
+  "session_id": "47707d52-ecf5-454d-9d28-a364bbbf9eba",
+  "native_installation_id": "598f88d9-28a5-4235-b7c8-3c8aa7827202",
+  "native_boot_epoch": "bf038b5a-d3ba-47e3-940a-dfc5ca86182b",
+  "host_spki_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "native_spki_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "issued_at_unix_ms": 1791940000000,
+  "expires_at_unix_ms": 1791940015000,
+  "payload": {
+    "scope": "read",
+    "tls_peer_spki_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "state": "authenticated",
+    "signature_der_b64u": "MEUCIFo8b2u3pLe4g5e6fg7h8i9j0kLm1No2Pq3Rs4Tu5VwWAiEAlfas8Bl4N36q4eGxXiLE_c2vzHokBEy2uvTzrI31Jf8"
+  }
+}
