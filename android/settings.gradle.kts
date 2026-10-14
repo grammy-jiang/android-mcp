@@ -23,3 +23,9 @@ include(":native-mcp-jvm")
 if (providers.gradleProperty("enableAndroidApp").orNull == "true") {
     include(":app")
 }
+
+// Disposable E01 fixtures are independent opt-in APKs, never production app deps.
+if (providers.gradleProperty("enableV3Fixtures").orNull == "true") {
+    include(":native-v3-fixture")
+    include(":native-v3-install-fixture")
+}

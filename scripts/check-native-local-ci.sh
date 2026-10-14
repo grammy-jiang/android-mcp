@@ -17,7 +17,7 @@ Requirements:
   uv with locked host dependencies, Git with standard pre-commit hooks.
 
   Default: repository hygiene, Host quality, Native Kotlin/JVM and Python
-  safety tests, signed Android debug APK, Lint and dependency integrity.
+  safety tests, signed Android debug APK, signed V3 fixture apps, Lint and dependency integrity.
   --matrix additionally requires explicit, QEMU-verified API30/33/34/36
   disposable emulators. Never targets or installs on physical Android.
 USAGE
@@ -50,6 +50,8 @@ echo '=== Native Kotlin/JVM, MCP interoperability and safety tests ==='
 bash scripts/check-native.sh
 echo '=== Android APK signing, Lint and exact-permissions gate ==='
 bash scripts/check-native-apk.sh
+echo '=== E01 signed deterministic fixtures and instrumentation build (no emulator required) ==='
+bash scripts/check-native-v3-fixtures.sh
 echo '=== Native static lockfiles and verification policy ==='
 python3 scripts/audit_native_gradle_policy.py --strict
 

@@ -49,8 +49,8 @@ def test_allow_static_pinned_dependencies_but_report_missing_locks(
     repo = make_fixture(tmp_path)
     report = m.policy_for(repo)
     assert report["result"] == "incomplete"
-    assert report["explicit_coordinate_count"] == 4
-    assert report["module_count"] == 4
+    assert report["explicit_coordinate_count"] == len(m.MODULES)
+    assert report["module_count"] == len(m.MODULES)
     assert report["wrapper_sha256_pinned"] is True
     assert len(report["gaps"]) == 2
 
@@ -129,4 +129,15 @@ def test_module_lockfiles_and_metadata_make_strict_policy_complete(
     )
     report = m.policy_for(repo, strict=True)
     assert report["result"] == "passed"
-    assert report["lockfile_count"] == 4
+    assert report["lockfile_count"] == len(m.MODULES)
+
+
+def test_dynamic_android_test_fixture_dependency_is_rejected(tmp_path: Path) -> None:
+    repo = make_fixture(tmp_path)
+    fixture = repo / "android/native-v3-fixture/build.gradle.kts"
+    fixture.write_text(
+        fixture.read_text()
+        + '\nandroidTestImplementation("androidx.test:runner:latest.release")\n'
+    )
+    with pytest.raises(m.NativeGradlePolicyError):
+        m.policy_for(repo)

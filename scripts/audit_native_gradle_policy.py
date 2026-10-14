@@ -16,9 +16,16 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parents[1]
-MODULES = ("app", "native-protocol", "native-lifecycle", "native-mcp-jvm")
+MODULES = (
+    "app",
+    "native-protocol",
+    "native-lifecycle",
+    "native-mcp-jvm",
+    "native-v3-fixture",
+    "native-v3-install-fixture",
+)
 COORDINATE = re.compile(
-    r'\b(?:implementation|api|testImplementation|testRuntimeOnly|runtimeOnly)\("([^"()]+)"\)'
+    r'\b(?:implementation|api|testImplementation|testRuntimeOnly|androidTestImplementation|runtimeOnly)\("([^"()]+)"\)'
 )
 PLUGIN = re.compile(r'\bid\("([^"()]+)"\)\s+version\s+"([^"()]+)"')
 PINNED = re.compile(r"\A\d+\.\d+(?:\.\d+)*(?:[-.][A-Za-z0-9.]+)?\Z")
@@ -90,7 +97,7 @@ def policy_for(repo_root: Path, strict: bool = False) -> dict[str, object]:
             plugin_versions.append(version)
         # Fail closed for versions injected dynamically in dependency strings.
         if re.search(
-            r'(?:implementation|api|runtimeOnly|testImplementation|testRuntimeOnly)\("[^"\n]*\$',
+            r'(?:implementation|api|runtimeOnly|testImplementation|testRuntimeOnly|androidTestImplementation)\("[^"\n]*\$',
             script,
         ):
             raise NativeGradlePolicyError(
