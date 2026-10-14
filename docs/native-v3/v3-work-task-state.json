@@ -1,0 +1,69 @@
+{
+  "E00.a": {
+    "note": "Six recovered original V3 baseline source files; original work-package JSON and delivery summary in ZIP remain unmaterialized",
+    "state": "PARTIAL"
+  },
+  "E00.b": {
+    "evidence": [
+      "docs/native-v3/E00B-LEGACY-228-TRACEABILITY-EVIDENCE-20261014.md"
+    ],
+    "note": "All 228 historical IDs mapped to 257 exact executable JVM/Python test methods, with actual local test XML results; real device acceptance stays open",
+    "state": "DONE_ENGINEERING"
+  },
+  "E00.c": {
+    "note": "Adversarial fake-evidence rejection in place; externally trusted signing/provenance, per-case semantic attestation and product closure remain open",
+    "state": "PARTIAL"
+  },
+  "E00.d": {
+    "evidence": [
+      "docs/native-v3/E00D-AUTHORITY-RISK-REVIEW-20261014.md",
+      "docs/native-v3/v3-authority-risk-register.json"
+    ],
+    "note": "20-family consent/operator/Native-lease/independent-review/fallback taxonomy; 12 adversarial tests and full local CI pass; no OS grant or external security approval claimed",
+    "state": "DONE_ENGINEERING"
+  },
+  "E01.a": {
+    "evidence": [
+      "docs/native-v3/E00-E01-EXECUTION-EVIDENCE-20261014.md"
+    ],
+    "note": "Installed Native AndroidJUnitRunner APK; real Android API30/33/34/36 instrumentation verification; separate JVM simulation is not counted",
+    "state": "DONE_ENGINEERING"
+  },
+  "E01.b": {
+    "evidence": [
+      "docs/native-v3/E01B-SIGNED-FIXTURE-EVIDENCE-20261014.md"
+    ],
+    "note": "Signed deterministic UI/counter/pixel, SAF provider, installation-target fixtures tested on API30/33/34/36; secure-window extension remains a feature GAP",
+    "state": "DONE_ENGINEERING"
+  },
+  "E01.c": {
+    "note": "Another exclusive E01.c developer worktree contains uncommitted real OS-consent tests; do not interfere or claim completion",
+    "state": "IN_PROGRESS"
+  },
+  "E01.d": {
+    "evidence": [
+      "docs/native-v3/E00-E01-EXECUTION-EVIDENCE-20261014.md"
+    ],
+    "note": "Independent FastMCP Streamable HTTP real installed Native APK status/list/call/denial/Stop/restart checks across API30/33/34/36",
+    "state": "DONE_ENGINEERING"
+  },
+  "E01.e": {
+    "note": "Exclusive owned AVD markers, PID/ABI/boot checks and OS lock present; nonce, fault-injection and full teardown beyond E01.f remain unverified",
+    "state": "PARTIAL"
+  },
+  "E01.f": {
+    "note": "Optional full local --v3-matrix passed with 48 on-device tests; affected PR CI enforcement and E01.c actual consent failure gates not yet all integrated",
+    "state": "PARTIAL"
+  },
+  "E02.a": {
+    "evidence": [
+      "docs/native-v3/E02A-ANDROID-KEYSTORE-MTLS-POC-20261014.md"
+    ],
+    "note": "Separate installed Android Keystore test fixture verified real Host OpenSSL TLS mTLS in both directions on API36, with correct/anonymous/wrong certs; production N17 still NOT_DONE",
+    "state": "DONE_ENGINEERING"
+  },
+  "E02.b": {
+    "note": "Another exclusive worktree has strict additive shared pairing/grant/lease schema candidate and active local quality checks; no unreviewed shared contracts changed here",
+    "state": "IN_PROGRESS"
+  }
+}
