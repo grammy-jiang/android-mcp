@@ -219,7 +219,14 @@ class NativeInstallationIdentity(
             Files.isSymbolicLink(recordPath) ||
             Files.size(recordPath) !in 20..MAX_RECORD_BYTES.toLong()
         ) throw IllegalStateException("NATIVE_ID_INVALID_RECORD")
-        val record = Files.readString(recordPath, Charsets.US_ASCII)
+        // Android ART API 30–36 does not provide java.nio.file.Files.readString
+        // even when Gradle compiles against JDK 17. Check size both before and
+        // after read to fail closed on a changed/corrupted private record.
+        val encoded = Files.readAllBytes(recordPath)
+        if (encoded.size !in 20..MAX_RECORD_BYTES) {
+            throw IllegalStateException("NATIVE_ID_INVALID_RECORD_SIZE")
+        }
+        val record = String(encoded, Charsets.US_ASCII)
         if (!record.endsWith('\n')) throw IllegalStateException("NATIVE_ID_TRUNCATED")
         val parts = record.trimEnd('\n').split('|')
         if (parts.size != 4 || parts[0] != "N6A1" ||
@@ -271,7 +278,7 @@ class NativeInstallationIdentity(
     }
 
     companion object {
-        private const val KEY_ALIAS = "android-mcp-native-install-signing-v1"
+        const val KEY_ALIAS = "android-mcp-native-install-signing-v1"
         private const val CHALLENGE_TTL_MS = 30_000L
         private const val MAX_RECORD_BYTES = 2048
         private val UUID_REGEX = Regex("[a-f0-9-]{36}")

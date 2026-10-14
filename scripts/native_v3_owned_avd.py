@@ -25,6 +25,41 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
+EXPECTED_NATIVE_ANDROID_TEST_NAMES = frozenset(
+    {
+        "installedApplicationIsObservableThroughRealPackageManager",
+        "installedManifestHasExplicitLocalPreviewAndNoPrivilegedWildcard",
+        "realSystemServicesAreAccessibleWithoutPrivilegedConsent",
+        "realInstalledAppKeystoreCreatesNonexportablePersistentPrivateKey",
+        "genuineKeystoreSignatureVerifiesButForgedPeerCannotEnroll",
+        "privateInstallationRecordSurvivesClosingOneOwnerWithoutNewIdentity",
+        "secondConcurrentActivityOwnerIsRejectedUntilLockReleased",
+        "actualAndroidReopensPersistedFenceAndRetainsNoMutationAuthority",
+    }
+)
+
+
+def verify_native_instrumentation_report(text: str) -> list[str]:
+    """Require exact on-device methods, not a fraudulent tests-passed count."""
+    if (
+        not isinstance(text, str)
+        or len(text) > 128 * 1024
+        or "FAILURES!!!" in text
+        or "INSTRUMENTATION_CODE: -1" not in text
+        or "OK (8 tests)" not in text
+    ):
+        raise RuntimeError("AndroidJUnitRunner output is not a complete genuine run")
+    methods = re.findall(r"(?m)^INSTRUMENTATION_STATUS: test=([A-Za-z0-9_]+)$", text)
+    if set(methods) != EXPECTED_NATIVE_ANDROID_TEST_NAMES or len(methods) != 16:
+        raise RuntimeError(
+            "Native Android test names, count or execution callbacks drifted"
+        )
+    if any(methods.count(name) != 2 for name in EXPECTED_NATIVE_ANDROID_TEST_NAMES):
+        raise RuntimeError(
+            "Native AndroidJUnitRunner missing start/end method callbacks"
+        )
+    return sorted(EXPECTED_NATIVE_ANDROID_TEST_NAMES)
+
 
 class IdentityError(ValueError):
     """An AVD or process cannot prove disposable exclusive ownership."""
@@ -201,8 +236,7 @@ def run_for_api(
             "org.androidmcp.nativeapp.test/androidx.test.runner.AndroidJUnitRunner",
             timeout=90,
         )
-        if "OK (3 tests)" not in tests or "INSTRUMENTATION_CODE: -1" not in tests:
-            raise RuntimeError("AndroidJUnitRunner did not pass all on-device cases")
+        executed_android_methods = verify_native_instrumentation_report(tests)
         # MCP client calls real APK. ADB here exclusively launches the app and
         # presses UI buttons; it does not execute the requested MCP status Tool.
         mcp_out = _run(
@@ -231,7 +265,8 @@ def run_for_api(
             "git_tree": _git(repo, "HEAD^{tree}"),
             "apk_sha256": _sha(apk),
             "instrumentation_apk_sha256": _sha(test_apk),
-            "instrumentation_tests": 3,
+            "instrumentation_tests": len(executed_android_methods),
+            "instrumentation_method_ids": executed_android_methods,
             "mcp_client": "FastMCP to installed Native Android APK",
             "mcp_check": result,
             "independent_android_oracle": "PackageManager installed version/UID",

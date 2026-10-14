@@ -72,5 +72,12 @@
     ],
     "note": "C0 candidate six-kind v2 security wire JSON schema and Kotlin/Python structural validators exist; actual Host+Native live paired consumers, canonical signed bytes, owner approval and v1 compatibility gates remain three separate GAP tasks",
     "state": "PARTIAL"
+  },
+  "E02.c": {
+    "evidence": [
+      "docs/native-v3/GAP-N17-ART-ANDROID-RUNTIME-20261014.md"
+    ],
+    "note": "Actual installed Native APK Keystore ownership and synthetic durable-fence journal verified on API30/33/34/36, 8 device tests each; Host public key fingerprint user-confirmation and live paired MCP still GAP-N17-007",
+    "state": "PARTIAL"
   }
 }
