@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import socket
 import unittest
 
 from scripts.native_v3_owned_avd import (
@@ -20,7 +21,7 @@ OWNER = {
     "avd": "android_mcp_native_v3_api36_20261014",
     "expected_serial": "emulator-5562",
     "expected_api": 36,
-    "host": "Mac",
+    "host": socket.gethostname(),
     "worktree": "android-mcp-native-v3-e00-e01-20261014",
     "pid": 61501,
     "disposable": True,

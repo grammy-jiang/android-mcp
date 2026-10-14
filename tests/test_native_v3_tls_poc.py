@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import socket
 import unittest
 
 from scripts.native_v3_tls_poc import (
@@ -27,7 +28,7 @@ OWNER = {
     "abi": "arm64-v8a",
     "worktree": "android-mcp-native-v3-e02a-mtls-poc-20261014",
     "pid": 7780,
-    "host": "Mac",
+    "host": socket.gethostname(),
 }
 OBS = {
     "serial": "emulator-5570",
