@@ -13,6 +13,8 @@ from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
+from android_mcp_host.screenrecord_support import InvalidSyntheticVideo, validate_video
+
 MAX_BYTES = 64 * 1024 * 1024
 MAX_TOTAL_BYTES = 512 * 1024 * 1024
 MAX_RECORDS = 4096
@@ -33,6 +35,7 @@ _SUPPORTED_MIMES = frozenset(
         "application/pdf",
         "image/png",
         "image/jpeg",
+        "video/mp4",
     }
 )
 
@@ -117,6 +120,12 @@ def _validate_mime(data: bytes, mime_type: str) -> None:
         valid = data.startswith(b"\x89PNG\r\n\x1a\n")
     elif mime_type == "image/jpeg":
         valid = data.startswith(b"\xff\xd8\xff")
+    elif mime_type == "video/mp4":
+        try:
+            validate_video(data)
+            valid = True
+        except InvalidSyntheticVideo:
+            valid = False
     elif mime_type == "application/pdf":
         valid = data.startswith(b"%PDF-")
     elif mime_type in {

@@ -1,0 +1,26 @@
+"""Registered sensitive Host media tool families, preserving legacy ordering."""
+
+from __future__ import annotations
+
+from fastmcp import FastMCP
+
+from android_mcp_host.synthetic_screenrecord import ScreenRecordService
+from android_mcp_host.synthetic_screenrecord_tool import register_screenrecord_tool
+from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
+from android_mcp_host.synthetic_screenshot_tool import register_screenshot_tool
+from android_mcp_host.synthetic_ui_hierarchy import UiHierarchyService
+from android_mcp_host.synthetic_ui_tool import register_ui_hierarchy_tool
+
+
+def register_media_tools(
+    server: FastMCP,
+    screenshot: ScreenshotArtifacts | None,
+    hierarchy: UiHierarchyService | None,
+    screenrecord: ScreenRecordService | None,
+) -> None:
+    if screenshot is not None:
+        register_screenshot_tool(server, screenshot)
+    if hierarchy is not None:
+        register_ui_hierarchy_tool(server, hierarchy)
+    if screenrecord is not None:
+        register_screenrecord_tool(server, screenrecord)
