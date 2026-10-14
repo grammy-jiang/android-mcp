@@ -17,9 +17,7 @@ from android_mcp_host.android_build_preflight import (
 )
 from android_mcp_host.archive_inspector import ArchiveInspector, get_archive_output_schema
 from android_mcp_host.avd_inventory import AvdInventory
-from android_mcp_host.avd_provision_tool import register_avd_provision_tool
 from android_mcp_host.avd_provisioning import AvdProvisioner
-from android_mcp_host.avd_tool_registration import register_avd_inventory_tool
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs
 from android_mcp_host.controlled_build_tool import register_build_tool
@@ -27,13 +25,11 @@ from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_o
 from android_mcp_host.durable_job_tool import register_job_status_tool
 from android_mcp_host.durable_jobs import DurableJobStore
 from android_mcp_host.emulator_debug_deployment import DebugDeployment
-from android_mcp_host.emulator_debug_tool import register_debug_deployment_tool
 from android_mcp_host.emulator_instrumentation_jobs import InstrumentationJobs
-from android_mcp_host.emulator_instrumentation_tool import register_instrumentation_tool
 from android_mcp_host.emulator_lifecycle import EmulatorLifecycle
-from android_mcp_host.emulator_lifecycle_tool import register_emulator_lifecycle_tool
 from android_mcp_host.emulator_snapshot_manager import EmulatorSnapshotManager
 from android_mcp_host.emulator_snapshot_tool import register_snapshot_tool
+from android_mcp_host.emulator_tool_registration import register_emulator_tools
 from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
 from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
@@ -52,6 +48,7 @@ from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
 from android_mcp_host.status import build_status
 from android_mcp_host.synthetic_file_pull import FilePullService
+from android_mcp_host.synthetic_file_push import FilePushService
 from android_mcp_host.synthetic_screenrecord import ScreenRecordService
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
 from android_mcp_host.synthetic_ui_hierarchy import UiHierarchyService
@@ -89,6 +86,7 @@ def create_server(
     ui_hierarchy_worker: UiHierarchyService | None = None,
     screenrecord_worker: ScreenRecordService | None = None,
     file_pull_worker: FilePullService | None = None,
+    file_push_worker: FilePushService | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -470,18 +468,21 @@ def create_server(
             """
             return await asyncio.to_thread(archive_inspector.inspect, handle)
 
-    if avd_inventory is not None:
-        register_avd_inventory_tool(server, avd_inventory)
-    if avd_provisioner is not None:
-        register_avd_provision_tool(server, avd_provisioner)
-    if emulator_lifecycle is not None:
-        register_emulator_lifecycle_tool(server, emulator_lifecycle)
-    if instrumentation_jobs is not None:
-        register_instrumentation_tool(server, instrumentation_jobs)
-    if debug_deployment is not None:
-        register_debug_deployment_tool(server, debug_deployment)
+    register_emulator_tools(
+        server,
+        avd_inventory,
+        avd_provisioner,
+        emulator_lifecycle,
+        instrumentation_jobs,
+        debug_deployment,
+    )
     register_media_tools(
-        server, screenshot_worker, ui_hierarchy_worker, screenrecord_worker, file_pull_worker
+        server,
+        screenshot_worker,
+        ui_hierarchy_worker,
+        screenrecord_worker,
+        file_pull_worker,
+        file_push_worker,
     )
     if snapshot_manager is not None:
         register_snapshot_tool(server, snapshot_manager)
