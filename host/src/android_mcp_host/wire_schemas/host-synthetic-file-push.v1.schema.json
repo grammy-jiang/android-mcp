@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-synthetic-file-push:v1",
+  "title": "Controlled private synthetic signed file import v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "runtime",
+    "status",
+    "push_state",
+    "avd_name",
+    "avd_handle",
+    "lifecycle_job_id",
+    "package_id",
+    "destination_filename",
+    "job_id",
+    "report_handle",
+    "report_sha256",
+    "artifact_sha256",
+    "bytes_written",
+    "mime_type",
+    "max_bytes",
+    "synthetic_signature_provenance",
+    "target",
+    "synthetic_fixture_only",
+    "real_push_enabled",
+    "physical_device_writes_enabled",
+    "raw_content_returned",
+    "errors"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "runtime": {
+      "const": "host"
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "blocked",
+        "simulated",
+        "uncertain",
+        "failed"
+      ]
+    },
+    "push_state": {
+      "enum": [
+        "none",
+        "imported_synthetic",
+        "unknown"
+      ]
+    },
+    "avd_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcp_[A-Za-z0-9][A-Za-z0-9_-]{2,43}$"
+    },
+    "avd_handle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcpavd_[A-Za-z0-9_-]{32}$"
+    },
+    "lifecycle_job_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^job_[A-Za-z0-9_-]{32}$"
+    },
+    "package_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^org\\.example\\.synthetic\\.[A-Za-z_][A-Za-z0-9_.]{0,100}$"
+    },
+    "destination_filename": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+    },
+    "job_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^job_[A-Za-z0-9_-]{32}$"
+    },
+    "report_handle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^art_[A-Za-z0-9_-]{32}$"
+    },
+    "report_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifact_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "bytes_written": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 1048576
+    },
+    "mime_type": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "application/json",
+        "text/plain",
+        "application/octet-stream",
+        null
+      ]
+    },
+    "max_bytes": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 1048576
+    },
+    "synthetic_signature_provenance": {
+      "const": "synthetic_hmac_fixture_only"
+    },
+    "target": {
+      "const": "disposable_emulator_only"
+    },
+    "synthetic_fixture_only": {
+      "const": true
+    },
+    "real_push_enabled": {
+      "const": false
+    },
+    "physical_device_writes_enabled": {
+      "const": false
+    },
+    "raw_content_returned": {
+      "const": false
+    },
+    "errors": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "enum": [
+              "INVALID_ACTION",
+              "INVALID_INPUT",
+              "DESTINATION_DENIED",
+              "NOT_OWNED",
+              "MUTATION_DISABLED",
+              "UNVERIFIED_TARGET",
+              "BAD_ARTIFACT",
+              "CONSENT_REQUIRED",
+              "RECOVERY_REQUIRED",
+              "IDEMPOTENCY_CONFLICT",
+              "JOB_UNAVAILABLE",
+              "BAD_FRAME",
+              "OVERWRITE_DENIED",
+              "PARTIAL_WRITE",
+              "CHECKSUM_MISMATCH",
+              "TIMEOUT",
+              "RUNNER_FAILED",
+              "ARTIFACT_EXPIRED",
+              "NOT_ACTIVE",
+              "CANCELLED"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 121
+          }
+        }
+      }
+    }
+  }
+}
