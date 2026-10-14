@@ -163,8 +163,10 @@ def test_real_parent_sigkill_causes_guard_to_terminate_fixture_and_descendants(
         "import json,os,time\nfrom pathlib import Path\n"
         f"p=Path({str(status)!r})\n"
         "while True:\n"
-        "    p.write_text(json.dumps({'pid':os.getpid(),"
+        "    temp=p.with_name(p.name+'.pending')\n"
+        "    temp.write_text(json.dumps({'pid':os.getpid(),"
         "'pgid':os.getpgrp(),'beat':time.monotonic_ns()}))\n"
+        "    os.replace(temp,p)\n"
         "    time.sleep(0.03)\n",
         encoding="utf-8",
     )

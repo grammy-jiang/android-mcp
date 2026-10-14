@@ -15,7 +15,7 @@ security review, GitHub checks, verified merge tree and integration checks.
 Never enable real physical-device writes, root, capture, external network
 or account-based release actions by treating this checklist as permission.
 
-## Checklist (28/45 merged; 17 not merged)
+## Checklist (29/45 merged; 16 not merged)
 
 - [x] **01 H0.a** — Existing tools/list + v1 examples → frozen snapshot/denials
 - [x] **02 H0.b** — Fixed executable IDs → version/runnable/unsupported, separate JDK/SDK/ADB/Fastboot
@@ -45,7 +45,7 @@ or account-based release actions by treating this checklist as permission.
 - [x] **26 H4.e** — Host artifact + safe remote destination → dry-run or emulator write
 - [x] **27 H4.f** — Fixed tap/swipe/key intent → simulator/AVD-only execution or plan
 - [x] **28 H5.a** — Exact target + redaction → bounded private report artifact — [merged PR #114](https://github.com/grammy-jiang/android-mcp/pull/114), exact merged tree verified; synthetic-only
-- [ ] **29 H5.b** — Target + bounded stream lease → cursor, poll, stop — [PR #117](https://github.com/grammy-jiang/android-mcp/pull/117), review/CI remediation in progress; *not merged*
+- [x] **29 H5.b** — Target + bounded stream lease → cursor, poll, stop — [merged PR #117](https://github.com/grammy-jiang/android-mcp/pull/117), SHA 5ff1dd9; exact merged tree verified
 - [ ] **30 H5.c** — Debuggable test target + fixed profile → trace job
 - [ ] **31 H5.d** — Debuggable app + supported ABI → bounded profile job
 - [ ] **32 H5.e** — Trace/log/symbol handles → bounded report with provenance
@@ -65,13 +65,12 @@ or account-based release actions by treating this checklist as permission.
 
 ## Current serial handoff
 
-- **Active:** H5.b (29/45), head is in PR #117. Two review findings:
-  orphan fixture on Host SIGKILL and invalid stored Logcat priority substring.
-  The independent child watchdog and SIGKILL regression were committed.
-  Added red-first priority tests and fix; Linux CI timeout-race regression
-  isolated and fixed. New SHA/CI gates **not yet complete**.
-- **Next:** H5.c synthetic-only bounded Perfetto tracing, **only after** H5.b
-  merges with exact-SHA gates passing.
+- **Completed:** H5.b (29/45) merged PR #117 at `5ff1dd9`. Both review
+  findings were remediated with red-first regression tests; 2,482 tests
+  passed per Python 3.11–3.14 on macOS and Linux ARM64, GitHub checks passed,
+  packaging passed, and the merged Git tree exactly matched.
+- **Active:** H5.c (30/45) bounded synthetic Perfetto, starting from verified
+  H5.b `main`; real tracing remains disabled.
 - **Worktree safety:** Host-only `host/**` and Host docs. Do not modify
   concurrent Native Android worktrees, Android source, shared contracts
   or other development sessions.

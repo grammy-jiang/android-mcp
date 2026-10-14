@@ -49,6 +49,7 @@ from android_mcp_host.synthetic_bugreport import BugreportService
 from android_mcp_host.synthetic_file_pull import FilePullService
 from android_mcp_host.synthetic_file_push import FilePushService
 from android_mcp_host.synthetic_logcat_stream import SyntheticLogcatStream
+from android_mcp_host.synthetic_perfetto import PerfettoService
 from android_mcp_host.synthetic_screenrecord import ScreenRecordService
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
 from android_mcp_host.synthetic_ui_actions import UiActionService
@@ -88,6 +89,7 @@ def create_server(
     ui_action_worker: UiActionService | None = None,
     bugreport_worker: BugreportService | None = None,
     logcat_stream_worker: SyntheticLogcatStream | None = None,
+    perfetto_worker: PerfettoService | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -102,8 +104,7 @@ def create_server(
             "Android Host tools provide read-only device diagnostics and bounded plans. "
             "ADB discovery may start the local ADB daemon, so host state can change. "
             "Every device operation requires an explicit online authorized device. "
-            "Typed engineering actions can describe mutation, but actual mutation "
-            "is denied without independent trusted approval, device lease and audit. "
+            "Device mutation is denied without independent approval, lease and audit. "
             "No raw shell, root or remote network access is provided."
         ),
     )
@@ -494,5 +495,6 @@ def create_server(
         durable_jobs,
         job_owner,
         logcat_stream=logcat_stream_worker,
+        perfetto_worker=perfetto_worker,
     )
     return server
