@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Host private finite synthetic Perfetto trace receipt v1",
+  "description": "Fake-only, sanitization before private TTL storage, no real tracer or physical device reads",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "runtime": {
+      "const": "host"
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "ok",
+        "blocked",
+        "failed",
+        "uncertain"
+      ]
+    },
+    "trace_state": {
+      "enum": [
+        "none",
+        "synthetic_sanitized",
+        "unknown"
+      ]
+    },
+    "avd_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "avd_handle": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 160
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "lifecycle_job_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 80
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "profile": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "sched-lite-v1",
+            "frames-lite-v1",
+            null
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "duration_s": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "max_bytes": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 131072
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "job_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^job_[A-Za-z0-9_-]{32}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "artifact_handle": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^art_[A-Za-z0-9_-]{32}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "receipt_handle": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^art_[A-Za-z0-9_-]{32}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "size_bytes": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32768
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sample_count": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "redacted_lines": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 256
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "retention_seconds": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 300
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "mime_type": {
+      "const": "application/json"
+    },
+    "format": {
+      "const": "mcp-synthetic-perfetto-v1"
+    },
+    "synthetic_fixture_only": {
+      "const": true
+    },
+    "real_perfetto_enabled": {
+      "const": false
+    },
+    "physical_device_reads_enabled": {
+      "const": false
+    },
+    "raw_trace_returned": {
+      "const": false
+    },
+    "privacy_class": {
+      "const": "sensitive_private"
+    },
+    "errors": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{1,63}$"
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 160
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "runtime",
+    "status",
+    "trace_state",
+    "avd_name",
+    "avd_handle",
+    "lifecycle_job_id",
+    "profile",
+    "duration_s",
+    "max_bytes",
+    "job_id",
+    "artifact_handle",
+    "receipt_handle",
+    "sha256",
+    "size_bytes",
+    "sample_count",
+    "redacted_lines",
+    "retention_seconds",
+    "mime_type",
+    "format",
+    "synthetic_fixture_only",
+    "real_perfetto_enabled",
+    "physical_device_reads_enabled",
+    "raw_trace_returned",
+    "privacy_class",
+    "errors"
+  ]
+}
