@@ -852,6 +852,59 @@
       ],
       "source": "E00 startup reality audit; not a completed/merged work package",
       "status": "OPEN"
+    },
+    {
+      "description": "Real mutual TLS POC is confined to AndroidJUnitRunner test fixture; actual installed Native MCP listener remains unauthenticated local-status-only",
+      "found_in": "E02.a",
+      "id": "GAP-N17-002",
+      "independent_oracle": "Actual installed Native MCP tool/callback + separately operated paired Host, OS cert identity and revocation oracle",
+      "next_action": "Integrate reviewed mTLS with live Native MCP tools/list/call, mandatory per-session scope rechecks and independent Host process test",
+      "owner": "Native Android authentication / Host operator pairing",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N17-01",
+        "V3-N17-02",
+        "V3-N17-03",
+        "V3-N17-04"
+      ],
+      "source": "E02.a genuine Keystore/Host OpenSSL one-version test POC gap-closure audit 2026-10-14",
+      "status": "OPEN"
+    },
+    {
+      "description": "TLS 1.2 EC signing tested only API36 test-only AVD; four-API TLS 1.3/rotation/replay/crash-recovery evidence absent",
+      "found_in": "E02.a",
+      "id": "GAP-N17-003",
+      "independent_oracle": "Actual installed Native MCP tool/callback + separately operated paired Host, OS cert identity and revocation oracle",
+      "next_action": "Prove TLS1.2/1.3 applicability, lifecycle, cleanup, rotation, revoked/replayed credentials and independent APK effects on API30/33/34/36",
+      "owner": "Native Android authentication / Host operator pairing",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N17-05",
+        "V3-N17-06",
+        "V3-N17-07",
+        "V3-N17-08"
+      ],
+      "source": "E02.a genuine Keystore/Host OpenSSL one-version test POC gap-closure audit 2026-10-14",
+      "status": "OPEN"
+    },
+    {
+      "description": "Short-lived one-test pinned identities provisioned by instrumentation arguments are not genuine operator-enrolled Host pairing",
+      "found_in": "E02.a",
+      "id": "GAP-N17-004",
+      "independent_oracle": "Actual installed Native MCP tool/callback + separately operated paired Host, OS cert identity and revocation oracle",
+      "next_action": "Implement Android user-visible Host public-key fingerprint confirmation, secure owner identity storage, revoke/unpair, and independent production security review",
+      "owner": "Native Android authentication / Host operator pairing",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N17-01",
+        "V3-N17-05",
+        "V3-N17-06"
+      ],
+      "source": "E02.a genuine Keystore/Host OpenSSL one-version test POC gap-closure audit 2026-10-14",
+      "status": "OPEN"
     }
   ],
   "snapshot_origin": "V3 full-lifecycle acceptance spec plus current app Tool registration source",
@@ -954,6 +1007,7 @@
       "status": "NOT_VERIFIED_DONE"
     },
     {
+      "capability_product_status": "NOT_DONE",
       "dependencies": [
         "E01.d",
         "E00.d"
@@ -961,7 +1015,8 @@
       "id": "E02.a",
       "objective": "Run vetted transport library POC for confidential mutually authenticated Host\u2194Native session over explicit ADB forward/approved relay.",
       "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
-      "status": "NOT_VERIFIED_DONE"
+      "status": "API36_TEST_ONLY_ANDROID_KEYSTORE_MTLS_POC_PASS_PRODUCT_NOT_DONE",
+      "verification_doc": "docs/native-v3/E02A-ANDROID-KEYSTORE-MTLS-POC-20261014.md"
     },
     {
       "dependencies": [

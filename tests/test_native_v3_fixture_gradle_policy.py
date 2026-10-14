@@ -11,8 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class FixtureGradlePolicyTests(unittest.TestCase):
     def test_fixture_modules_are_lockfile_checked(self) -> None:
         result = policy_for(ROOT, strict=True)
-        self.assertEqual(result["module_count"], 6)
-        self.assertEqual(result["lockfile_count"], 6)
+        self.assertEqual(result["module_count"], 7)
+        self.assertEqual(result["lockfile_count"], 7)
         self.assertGreaterEqual(result["explicit_coordinate_count"], 15)
         self.assertEqual(result["gaps"], [])
 

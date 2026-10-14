@@ -12,6 +12,7 @@ Usage:
   bash scripts/check-native-local-ci.sh
   bash scripts/check-native-local-ci.sh --matrix --api30 emulator-5560 --api33 emulator-5558 --api34 emulator-5556 --api36 emulator-5554
   bash scripts/check-native-local-ci.sh --v3-matrix
+  bash scripts/check-native-local-ci.sh --tls-poc
 
 Requirements:
   JDK 17 exported as JAVA_HOME, Android SDK 36 exported as ANDROID_HOME,
@@ -22,12 +23,14 @@ Requirements:
   --matrix additionally requires explicit, QEMU-verified API30/33/34/36
   disposable emulators. --v3-matrix runs the strict four exclusive V3 AVDs:
   AndroidJUnitRunner, installed Native APK MCP, signed fixture and OS oracles.
+  --tls-poc runs a separate E02.a on-device AndroidKeyStore/TLS Host proof.
   Neither option targets or installs on physical Android.
 USAGE
 }
 
 matrix=0
 v3_matrix=0
+tls_poc=0
 matrix_args=()
 if [[ $# -eq 1 && "$1" == "--help" ]]; then
   usage
@@ -36,6 +39,8 @@ elif [[ $# -eq 0 ]]; then
   :
 elif [[ $# -eq 1 && "$1" == "--v3-matrix" ]]; then
   v3_matrix=1
+elif [[ $# -eq 1 && "$1" == "--tls-poc" ]]; then
+  tls_poc=1
 elif [[ $# -eq 9 && "$1" == "--matrix" ]]; then
   matrix=1
   shift
@@ -73,6 +78,12 @@ if [[ "$v3_matrix" -eq 1 ]]; then
   bash scripts/check-native-v3-e2e.sh
 fi
 
-printf '{"result":"pass","local_quality":"passed","api_matrix_executed":%s,"v3_owned_avd_matrix_executed":%s,"physical_android_used":false}\n' \
+if [[ "$tls_poc" -eq 1 ]]; then
+  echo '=== E02.a real Android KeyStore two-direction Host mutual TLS POC ==='
+  bash scripts/check-native-v3-tls-poc.sh
+fi
+
+printf '{"result":"pass","local_quality":"passed","api_matrix_executed":%s,"v3_owned_avd_matrix_executed":%s,"tls_poc_executed":%s,"physical_android_used":false}\n' \
   "$([[ "$matrix" -eq 1 ]] && echo true || echo false)" \
-  "$([[ "$v3_matrix" -eq 1 ]] && echo true || echo false)"
+  "$([[ "$v3_matrix" -eq 1 ]] && echo true || echo false)" \
+  "$([[ "$tls_poc" -eq 1 ]] && echo true || echo false)"
