@@ -47,6 +47,10 @@ python3 scripts/native_v3_legacy_attribution.py \
   --require-all-unit-results \
   --out artifacts/native-v3-e00b-unit-attribution.json
 
+echo "== GAP-N01-002 exact 228-case substantive assertion audit (no E2E credit) =="
+python3 -m unittest discover -s tests -p 'test_native_v3_legacy_assertion_audit.py' -v
+python3 -m scripts.native_v3_legacy_assertion_audit --repo . --verify
+
 echo "== E00.d twenty-family Android consent/operator/independent reviewer taxonomy =="
 python3 scripts/native_v3_authority_matrix.py \
   --matrix docs/native-v3/v3-authority-risk-register.json \

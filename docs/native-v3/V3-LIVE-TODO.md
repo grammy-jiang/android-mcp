@@ -7,7 +7,7 @@ product capability or an independent security review.
 - Baseline work packages: **70**
 - Engineering packages checked: **7**
 - Remaining or partially complete packages: **63**
-- Required GAP tasks still open: **32**
+- Required GAP tasks still open: **33**
 - Real product capabilities accepted: **0/20**
 - New V3 real-E2E case receipts admitted: **0/192**
 - Product state: **PRODUCT_INCOMPLETE**
@@ -20,8 +20,8 @@ be added to the source ledger and rendered here immediately.
 - [ ] **E00.a — Freeze the original full-lifecycle goal, 20 capabilities, release profiles, platform exclusions and real client acceptance; carry forward all open blocks.** — PARTIAL; dependencies: none
   - Six recovered original V3 baseline source files; original work-package JSON and delivery summary in ZIP remain unmaterialized
 - [x] ~~E00.b — Map all 228 legacy T-Nxx test IDs to executable test identifiers, layer, code path, real-or-mock classification and current evidence.~~ — DONE_ENGINEERING; dependencies: E00.a
-  - All 228 historical IDs mapped to 257 exact executable JVM/Python test methods, with actual local test XML results; real device acceptance stays open
-  - Evidence: [evidence](E00B-LEGACY-228-TRACEABILITY-EVIDENCE-20261014.md)
+  - 228 historical case IDs and 257 existing methods traced to actual local JVM/Python execution; separate assertion audit identifies 11 only source/mock cases requiring independent semantics and Android E2E GAPs.
+  - Evidence: [evidence](E00B-LEGACY-228-TRACEABILITY-EVIDENCE-20261014.md), [evidence](GAP-N01-002-ASSERTION-BODY-AUDIT-20261014.md)
 - [x] ~~E00.c — Define and implement product-status taxonomy, capability closure ledger, independent OS-effect receipts and unforgeable PASS_REAL_E2E admission rules.~~ — DONE_ENGINEERING; dependencies: E00.b
   - Canonical two-role Ed25519 real-Android receipt policy, exact API/boot/MCP/OS callback/recovery tests and strict case matrix; actual external roots/OS witnesses remain GAP-N01-004
   - Evidence: [evidence](E00C-EVIDENCE-ADMISSION-POLICY-20261014.md)
@@ -201,8 +201,8 @@ be added to the source ledger and rendered here immediately.
   - Next: Prove TLS1.2/1.3 applicability, lifecycle, cleanup, rotation, revoked/replayed credentials and independent APK effects on API30/33/34/36
 - [ ] **GAP-N17-004** — OPEN: Short-lived one-test pinned identities provisioned by instrumentation arguments are not genuine operator-enrolled Host pairing
   - Next: Implement Android user-visible Host public-key fingerprint confirmation, secure owner identity storage, revoke/unpair, and independent production security review
-- [ ] **GAP-N01-002** — OPEN: 228 test selectors are mapped to files and JVM/Python XML, but every test body is not yet independently checked for asserting all original requirement semantics
-  - Next: Review each of 228 original historical specifications against executable assertions; flag fake/missing semantics and add dedicated behavioral tests per uncovered case
+- [ ] **GAP-N01-002** — IN_PROGRESS: 228 test selectors are mapped to files and JVM/Python XML, but every test body is not yet independently checked for asserting all original requirement semantics
+  - Next: Review each of 228 historical requirements against actual test assertions, independently verify behavior rather than relying on source/AST presence; prepare real Android oracles for device-facing requirements.
 - [ ] **GAP-N01-003** — OPEN: Original machine-readable 70-work-package registry and V3 delivery summary inside approved ZIP remain unavailable as original bytes; derived prose index is not the missing original
   - Next: Recover and hash the two original documents from authorized Library/ZIP; reconcile approved dependencies and acceptance metadata against the derived 70-package index without manufacturing originals
 - [ ] **GAP-N07-002** — OPEN: Secure/password fixture exists and 4-API instrumentation passes; independent OS accessibility/screenshot exclusion plus actual Native MCP secure-node refusal and privacy recovery remain missing
@@ -219,6 +219,8 @@ be added to the source ledger and rendered here immediately.
   - Next: Complete user-visible fingerprint approval path with independently operated Host signature/proof and actual paired MCP, verify wrong Host/replay/Stop/crash/unpair on four owned Android APIs; never fabricate foreground OS/user approval
 - [ ] **GAP-N16-002** — OPEN: Signed local test AVD owner/nonce and ADB forward teardown gates work, but real consent cancel, user notification Stop, forced Native process death, reconnect/uncertain dispatch and revalidated OS-grant recovery are not yet linked to independent four-API automation
   - Next: Integrate E01.c actual Android permission/ActivityResult UI automation with sealed E01.e AVD and E01.f; exercise user reject, cancellation, Stop, timeout, process-death/retry, competing Host, stale lease, boot epoch and independent OS state on API30/33/34/36
+- [ ] **GAP-N01-005** — OPEN: Eleven historical requirement IDs currently have only a Python source-string check or mocked harness test; they cannot independently certify requested actual Native or Android behavior
+  - Next: Provide per-case tests of actual correct/incorrect behavior rather than source/comment/mocked success; for lifecycle/UI scenarios run installed Native APK against owned Android API30/33/34/36 and independently check Android OS effects
 
 ## Repeatable completion workflow
 
