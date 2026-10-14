@@ -17,6 +17,23 @@ from android_mcp_host.logcat_stream_child import SyntheticLogcatProcessReader
 from android_mcp_host.logcat_stream_store import LogcatStreamStore, StreamStoreError
 
 
+def assert_fixture_terminated(pid: int) -> None:
+    """A zombie is already dead; Linux may defer PID1 reaping after SIGKILL."""
+    for _ in range(60):
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            return
+        proc_stat = Path(f"/proc/{pid}/stat")
+        try:
+            if proc_stat.exists() and proc_stat.read_text().split(") ", 1)[1].startswith("Z "):
+                return
+        except (OSError, IndexError):
+            pass
+        time.sleep(0.02)
+    pytest.fail(f"Synthetic fixture PID {pid} remained runnable after cleanup")
+
+
 def script(tmp_path: Path, body: str) -> Path:
     source = tmp_path / "synthetic-logcat-fixture.py"
     source.write_text(body, encoding="utf-8")
@@ -52,8 +69,7 @@ def test_fake_process_timeout_kills_isolated_group(tmp_path: Path) -> None:
     with pytest.raises(subprocess.TimeoutExpired):
         reader(NAME, "fake-avd", "job_" + "x" * 32, 128, 65536, 0.25, threading.Event())
     assert pid.exists()
-    with pytest.raises(ProcessLookupError):
-        os.kill(int(pid.read_text()), 0)
+    assert_fixture_terminated(int(pid.read_text()))
 
 
 def test_fixture_process_stop_cancels_and_kills_group(tmp_path: Path) -> None:
@@ -85,8 +101,7 @@ def test_fixture_process_stop_cancels_and_kills_group(tmp_path: Path) -> None:
     assert not thread.is_alive()
     assert len(errors) == 1
     assert isinstance(errors[0], InterruptedError)
-    with pytest.raises(ProcessLookupError):
-        os.kill(int(pid.read_text()), 0)
+    assert_fixture_terminated(int(pid.read_text()))
 
 
 def test_fixture_output_size_limit_kills_child_without_private_storage(tmp_path: Path) -> None:
@@ -295,7 +310,6 @@ def test_actual_service_stop_interrupts_child_process_without_orphan(tmp_path: P
         assert not thread.is_alive()
         assert responses[0]["status"] == "uncertain"
         assert responses[0]["errors"][0]["code"] == "CANCELLED"
-        with pytest.raises(ProcessLookupError):
-            os.kill(int(pid.read_text()), 0)
+        assert_fixture_terminated(int(pid.read_text()))
     finally:
         live.shutdown()
