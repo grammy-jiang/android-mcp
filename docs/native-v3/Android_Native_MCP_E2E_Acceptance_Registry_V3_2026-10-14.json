@@ -1,0 +1,1776 @@
+{
+  "registry_version": "3.0",
+  "created_date": "2026-10-14",
+  "nature": "PLANNED_E2E_REQUIREMENTS_NOT_EXECUTION_RESULTS",
+  "repository": "https://github.com/grammy-jiang/android-mcp",
+  "audited_native_baseline": "184f8c4afcffd4d49e393e14c6c08ca4ec8cb175",
+  "current_main_at_initial_recheck": "e2d95a541d604e7652b5104f24a003f79e99986a",
+  "old_safe_roadmap_work_packages_merged": 38,
+  "old_specified_test_ids": 228,
+  "new_planned_capability_cases": 160,
+  "new_planned_crosscut_cases": 32,
+  "statuses_lexicon": [
+    "NOT_RUN",
+    "RUNNING",
+    "PASS_REAL_E2E",
+    "FAIL_REAL_E2E",
+    "BLOCKED_EXTERNAL",
+    "UNSUPPORTED_BY_PLATFORM_WITH_EVIDENCE",
+    "DEFERRED_NOT_DONE"
+  ],
+  "capability_families": [
+    {
+      "capability_id": "N01",
+      "family": "Native MCP loopback and health",
+      "baseline_evidence_level": "BASELINE_LOCAL_E2E",
+      "target_scope": "CORE",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N01-01",
+          "description": "Real client discovers exactly the authenticated status tool; status response matches schema on a running emulator",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N01-02",
+          "description": "Native Activity starts loopback endpoint and Android process/listener/HTTP reply are independently observed",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N01-03",
+          "description": "Anonymous/malformed/unknown tool calls cannot enumerate sensitive tools or trigger other providers",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N01-04",
+          "description": "Activity Home and foreground-service modes preserve their documented different lifecycle and user control",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N01-05",
+          "description": "Notification Stop removes listener, service and ongoing notification with independent Android oracle",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N01-06",
+          "description": "Port conflict, rapid dual start, process death, app restart and stale readiness nonce are fail-closed",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N01-07",
+          "description": "API30/33 legacy and API34/36 FGS behavior is observed on distinct pinned QEMU instances",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N01-08",
+          "description": "Large headers/bodies, hostile Host/Origin, log redaction, output bound and teardown verified",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N02",
+      "family": "Build/OS/ABI/app profile",
+      "baseline_evidence_level": "INTERNAL_NOT_PUBLIC",
+      "target_scope": "CORE",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N02-01",
+          "description": "Authenticated native_device_profile MCP call returns actual Build/API/ABI/app version",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N02-02",
+          "description": "Compare fields with device-side Build APIs from AndroidJUnitRunner in same emulator boot",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N02-03",
+          "description": "Unauthenticated client and foreign app on device cannot retrieve protected profile",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N02-04",
+          "description": "Profile omits serial, IMEI, advertising ID, fingerprint and persistent tracking identifiers",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N02-05",
+          "description": "App goes background or permission is revoked: return exact supported/denied status without fabricated values",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N02-06",
+          "description": "Restart and repeated profile requests retain correct schema and do not leak prior sessions",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N02-07",
+          "description": "API30/33/34/36 release/ABI/type differences mapped to exact per-OS expectations",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N02-08",
+          "description": "Bad schema, oversized response request and failure injection yield bounded typed error",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N03",
+      "family": "Battery/storage/display/network snapshots",
+      "baseline_evidence_level": "INTERNAL_NOT_PUBLIC",
+      "target_scope": "CORE",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N03-01",
+          "description": "Authenticated native_system_snapshot MCP call returns real battery, app storage and display measurements",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N03-02",
+          "description": "Cross-check against BatteryManager/StatFs/DisplayMetrics on the same boot, not fake numbers",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N03-03",
+          "description": "Caller without read scope receives typed denial without personal network identifiers",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N03-04",
+          "description": "Unavailable battery/system service and denied network permission are represented honestly",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N03-05",
+          "description": "Rotation changes display values; no stale data survives post-rotation refresh",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N03-06",
+          "description": "Rapid readings and process restart have rate/size bounds and no background sampling",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N03-07",
+          "description": "API30/33/34/36 snapshot correctness and explicitly unsupported sensor fields",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N03-08",
+          "description": "No SSID, MAC, location or detailed device identity exposed by default",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N04",
+      "family": "Android permission and consent readiness",
+      "baseline_evidence_level": "FGS_INTERNAL_REAL",
+      "target_scope": "CORE",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N04-01",
+          "description": "Authenticated native_permission_status reflects actual Android grant/denial state for each reviewed capability",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N04-02",
+          "description": "AndroidJUnitRunner independently queries PackageManager and relevant manager permission fields",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N04-03",
+          "description": "MCP boolean/model claims cannot create OS grants or bypass user-authenticated profile",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N04-04",
+          "description": "Real OS deny/revoke and Settings enable/disable transitions are observed through callback or fresh query",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N04-05",
+          "description": "Activity/FGS Stop revokes effective session-ready state immediately",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N04-06",
+          "description": "Process death/restart invalidates ephemeral user grants, projection tokens and owner proof",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N04-07",
+          "description": "API30/33/34/36 permission and foreground-service differences checked through system UI",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N04-08",
+          "description": "Permission responses distinguish UNAVAILABLE, DENIED, REQUIRES_USER_ACTION, GRANTED and EXPIRED",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N05",
+      "family": "Visible packages and targeted package info",
+      "baseline_evidence_level": "INTERNAL_NOT_PUBLIC",
+      "target_scope": "CORE",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N05-01",
+          "description": "Authenticated native_package_query returns own fixture app package/version/known signer digest",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N05-02",
+          "description": "Cross-check Native PackageManager filtered result against fixture-package on-device ground truth",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N05-03",
+          "description": "Hidden/unallowlisted/other-user package request denied or not-visible without data leak",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N05-04",
+          "description": "App installation/removal and package visibility change reflected in fresh query",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N05-05",
+          "description": "Missing package, package manager exception and app disabled are separate typed outcomes",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N05-06",
+          "description": "Duplicate/rate-limited query and restart do not return cached sensitive metadata",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N05-07",
+          "description": "API30/33/34/36 package visibility and manifest <queries> scope validated",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N05-08",
+          "description": "No QUERY_ALL_PACKAGES, full signer key material, broad inventory or cross-profile data",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N06",
+      "family": "Native own-app health/diagnostics",
+      "baseline_evidence_level": "INTERNAL_NOT_PUBLIC",
+      "target_scope": "CORE",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N06-01",
+          "description": "Authenticated native_app_health returns real own-process/service counters and last error state",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N06-02",
+          "description": "Cross-check process/FGS health from Android dumpsys and bounded own-app counters",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N06-03",
+          "description": "Another app/unauthenticated client cannot query diagnostic traces",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N06-04",
+          "description": "Synthetic app exception is recorded without reading system-wide logcat",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N06-05",
+          "description": "User stops service: status is stopped and no background collection continues",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N06-06",
+          "description": "Kill/restart retention and dedupe are actually observed; no stale active session claims",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N06-07",
+          "description": "API30/33/34/36 own-process APIs and foreground constraints tested",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N06-08",
+          "description": "Secrets, raw stack personal paths and large diagnostic payloads are redacted/bounded",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N07",
+      "family": "Accessibility focus and real UI tree",
+      "baseline_evidence_level": "NO_ACCESSIBILITY_SERVICE",
+      "target_scope": "SENSITIVE_USER_CONSENT",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N07-01",
+          "description": "User enables declared purpose-limited AccessibilityService using actual Android Settings UI",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N07-02",
+          "description": "Native native_ui_inspect through MCP returns a real node from own deterministic fixture Activity",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N07-03",
+          "description": "Other app/window without scoped consent and secure input nodes yield no sensitive data",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N07-04",
+          "description": "Real Settings disable/revoke disconnects Service and immediately forbids a UI-tree read",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N07-05",
+          "description": "Locked screen, Home and window switch invalidate focused-window scope",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N07-06",
+          "description": "Process death/restart or stale node epoch never reuses old UI snapshot authorization",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N07-07",
+          "description": "API30/33/34/36 accessibility enable/visibility/gesture capability behavior observed",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N07-08",
+          "description": "Redaction of password/notification content and bound on tree depth/bytes verified",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N08",
+      "family": "Native Accessibility gesture/node actions",
+      "baseline_evidence_level": "ADB_HARNESS_ONLY",
+      "target_scope": "SENSITIVE_USER_CONSENT",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N08-01",
+          "description": "Native MCP native_ui_action calls real dispatchGesture/node action on own authorized fixture",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N08-02",
+          "description": "Android gesture callback and fixture Activity state counter independently prove actual effect",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N08-03",
+          "description": "Raw model coordinate, foreign package/window, secure field and wrong auth denied",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N08-04",
+          "description": "Real user disables Accessibility during action: no further effects or silent repeat",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N08-05",
+          "description": "User Stop, rotation or foreground change invalidate node and gesture grants",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N08-06",
+          "description": "Two concurrent Host clients contend for one action fence; at most one fixture mutation",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N08-07",
+          "description": "API30/33/34/36 actual service-dispatched gesture behavior, not ADB input substitute",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N08-08",
+          "description": "Timeout-after-dispatch returns UNCERTAIN, never retries tap/swipe automatically",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N09",
+      "family": "One-shot consented screen capture",
+      "baseline_evidence_level": "INERT_CONSENT_MODEL",
+      "target_scope": "SENSITIVE_USER_CONSENT",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N09-01",
+          "description": "Native MCP capture request initiates actual Android MediaProjection consent Activity",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N09-02",
+          "description": "User accepts; Native creates single VirtualDisplay and receives real frame matching fixture pixels/hash",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N09-03",
+          "description": "Unpaired or unrelated app capture request cannot present/consume another clients grant",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N09-04",
+          "description": "User denies consent and Android projection onStop triggers typed denied/stopped, no frame",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N09-05",
+          "description": "Foreground capture service stops and buffers/virtual display are released promptly",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N09-06",
+          "description": "Expired/reused token, process death, rotation and duplicate capture require new session consent",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N09-07",
+          "description": "API30/33/34/36 consent/FGS type/session behavior observed and versioned",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N09-08",
+          "description": "Secure windows, clip bounds, frame size/MIME/retention, artifact redaction enforced",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N10",
+      "family": "Short bounded screen recording",
+      "baseline_evidence_level": "SYNTHETIC_RECORDING",
+      "target_scope": "SENSITIVE_USER_CONSENT",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N10-01",
+          "description": "MCP start_recording with actual user projection consent captures bounded fixture video",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N10-02",
+          "description": "Media extractor decodes expected frames and monotonic duration from recorded artifact",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N10-03",
+          "description": "Unauthenticated or foreign client cannot start/stop/extend another client recording",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N10-04",
+          "description": "User denies/OS revokes consent; session stops, no extra frames recorded",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N10-05",
+          "description": "Native notification/user Stop releases VirtualDisplay, encoder, surface and artifact handles",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N10-06",
+          "description": "Crash/restart and duplicate operation yield uncertain/stop, not covert resumption",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N10-07",
+          "description": "API30/33/34/36 Android mediaProjection FGS/type/user-consent behavior validated",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N10-08",
+          "description": "Max duration, size, frame rate, privacy and artifact encryption/retention verified",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N11",
+      "family": "SAF authorized file import/export",
+      "baseline_evidence_level": "INERT_SAF_MODEL",
+      "target_scope": "SENSITIVE_USER_CONSENT",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N11-01",
+          "description": "MCP authorized request opens actual ACTION_OPEN_DOCUMENT and returns selected URI-bound opaque handle",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N11-02",
+          "description": "Real ContentResolver stream reads fixture bytes; exported private artifact SHA-256 equals independent source hash",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N11-03",
+          "description": "URI string forgery/path traversal and foreign providers without OS grants are denied",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N11-04",
+          "description": "User cancels picker, revokes URI grant or provider raises IOException: truthful denied/partial",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N11-05",
+          "description": "ACTION_CREATE_DOCUMENT writes a new fixture destination after explicit user selection",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N11-06",
+          "description": "Stop/process death/duplicate write cannot overwrite unrelated doc or falsely claim atomic write",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N11-07",
+          "description": "API30/33/34/36 picker, persisted vs transient grant, and provider behavior independently observed",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N11-08",
+          "description": "Read/write mode, MIME/bytes, hash, content-disclosure, cleanup and size/retention caps validated",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N12",
+      "family": "Explicit allowlisted app launch",
+      "baseline_evidence_level": "PLAN_ONLY_INTENT",
+      "target_scope": "AUTHORIZED_WRITE",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N12-01",
+          "description": "Foreground Native app with explicit approval calls startActivity on allowlisted fixture component",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N12-02",
+          "description": "Independent fixture Activity resumed event and Android task manager agree on target component",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N12-03",
+          "description": "Implicit deep link, non-exported component, wrong user and foreign package are rejected",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N12-04",
+          "description": "User/Host grant revoked before launch: no Activity transition occurs",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N12-05",
+          "description": "Background FGS cannot bypass Android background activity launch restrictions",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N12-06",
+          "description": "Duplicate/timeout/restart launch fences prevent second task start without fresh grant",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N12-07",
+          "description": "API30/33/34/36 launch and PendingIntent background restrictions tested",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N12-08",
+          "description": "MCP receipt includes specific executed/rejected effect and no arbitrary shell/force-stop",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N13",
+      "family": "Scoped optional sensors/notifications",
+      "baseline_evidence_level": "PRIVATE_OPTIONAL_POLICY",
+      "target_scope": "OPTIONAL_CONSENT",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N13-01",
+          "description": "MCP opt-in native_optional_status reads supported emulator sensor/notification values",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N13-02",
+          "description": "Android SensorManager/system notification APIs confirm values or UNSUPPORTED",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N13-03",
+          "description": "Unpaired caller cannot read location, notification content or sensor data",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N13-04",
+          "description": "User permission denied/revoked yields exact permission-required status",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N13-05",
+          "description": "Stop/foreground loss terminates any optional sampling session",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N13-06",
+          "description": "Process death/rate limit prevents silent restart of monitors",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N13-07",
+          "description": "API30/33/34/36 available vs absent simulated hardware logged",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N13-08",
+          "description": "No background surveillance, identifiers or notification texts without scoped consent",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N14",
+      "family": "Own performance/crash diagnostics retention",
+      "baseline_evidence_level": "PRIVATE_TELEMETRY_MODEL",
+      "target_scope": "CORE",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N14-01",
+          "description": "MCP own_telemetry gets actual own-process memory, startup and bounded error counters",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N14-02",
+          "description": "Independent instrumentation injects benign own-process fault and confirms resulting record",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N14-03",
+          "description": "Cross-app logcat/system profiler/data is never readable from Native diagnostic tool",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N14-04",
+          "description": "Opt-out/revoke disables collection and wipes/retains exactly per configured policy",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N14-05",
+          "description": "Foreground service Stop leaves no diagnostic sampling worker alive",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N14-06",
+          "description": "Crash/restart journal integrity and event ordering/retention are verified",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N14-07",
+          "description": "API30/33/34/36 memory/perf APIs and unavailable paths tested",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N14-08",
+          "description": "PII/secret redaction, bounded file capacity and export approval validated",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N15",
+      "family": "PackageInstaller user-approved install",
+      "baseline_evidence_level": "CONSENT_PRECHECK_BLOCKED",
+      "target_scope": "SENSITIVE_USER_CONSENT",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N15-01",
+          "description": "MCP native_install_request stages pinned signed fixture APK and opens real system install UI",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N15-02",
+          "description": "User approves; PackageManager independently confirms installed fixture version and signer",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N15-03",
+          "description": "Unsigned/wrong-digest/off-allowlist APK and unpaired caller cannot create install session",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N15-04",
+          "description": "User declines/unknown-app-source setting denied: no package installed",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N15-05",
+          "description": "Cancel before/after session commit cleans owned session or reports UNCERTAIN truthfully",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N15-06",
+          "description": "Process crash/timeout/retry does not install second time or bypass OS user action",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N15-07",
+          "description": "API30/33/34/36 STATUS_PENDING_USER_ACTION, source-permission and OS verifier differences",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N15-08",
+          "description": "No physical device installs, no silent-update path; report installed package and session cleanup",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N16",
+      "family": "User visible Native service lifecycle",
+      "baseline_evidence_level": "FGS_EMULATOR_BASELINE",
+      "target_scope": "CORE",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N16-01",
+          "description": "Explicit Activity user Start yields Native MCP HTTP readiness and correct service notification",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N16-02",
+          "description": "Android dumpsys independently confirms app FGS/loopback transport and correct owner",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N16-03",
+          "description": "Anonymous/malformed stop and foreign owner cannot silently start/restart service",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N16-04",
+          "description": "Notification permission denied/revoked: start blocked or live service stops as platform requires",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N16-05",
+          "description": "Notification Stop and Activity Stop close listener, notification and pending capture/tool sessions",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N16-06",
+          "description": "Rapid start/stop, device reboot test AVD, service crash and stale port do not auto-resurrect",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N16-07",
+          "description": "API30/33 legacy vs API34/36 user-visible FGS modes checked at real OS level",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N16-08",
+          "description": "Teardown leaves zero listener, background job, auth grants or lingering notification",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N17",
+      "family": "Real authenticated Host/Native pairing",
+      "baseline_evidence_level": "SYNTHETIC_SIGNATURE_ONLY",
+      "target_scope": "SECURITY_FOUNDATION",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N17-01",
+          "description": "Real Host process pairs with Native Keystore installation key via explicit on-device bootstrap approval",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N17-02",
+          "description": "Host and Native validate mutual fresh challenge signatures/public-key pin with stable bound identity",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N17-03",
+          "description": "Second unpaired Host and unrelated Android app fail authenticating, despite ADB/localhost access",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N17-04",
+          "description": "User unpairs/revokes Host; all sessions immediately fail and trust store updates",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N17-05",
+          "description": "Role-scoped read/write grants cannot be minted from model approved=true or ADB serial",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N17-06",
+          "description": "Reinstall/reboot/Host key rotation, clock skew, nonce replay and restart produce correct re-pairing",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N17-07",
+          "description": "Pairing and session E2E on each API30/33/34/36 with two independent Host processes",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N17-08",
+          "description": "No private-key export, nonce leak, plaintext token logging, unauthenticated sensitive Tools",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N18",
+      "family": "Cross-runtime durable lease and fencing",
+      "baseline_evidence_level": "SYNTHETIC_LEASE_ONLY",
+      "target_scope": "SECURITY_FOUNDATION",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": true,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N18-01",
+          "description": "Authenticated Host A reserves lease at Native; Host B cannot perform competing fixture mutation",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N18-02",
+          "description": "Independent OS fixture mutation audit shows only one authorized signed action executed",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N18-03",
+          "description": "Wrong Host/boot/device/plan digest/fencing signature refused before executor",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N18-04",
+          "description": "Owner cancels or loses lease, callback immediately rejects new actions",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N18-05",
+          "description": "FGS Stop invalidates active leases and blocks stale Host retry",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N18-06",
+          "description": "Crash/restart/dual process race and uncertain remote result preserve persisted high water",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N18-07",
+          "description": "API30/33/34/36 concurrent Host processes and test fixture effect oracle exercised",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N18-08",
+          "description": "Bounded TTL, durable journal/fsync, audit action IDs, no orphaned or duplicate write",
+          "required_layer": "REAL_ANDROID_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N19",
+      "family": "Managed Android Device Owner extension",
+      "baseline_evidence_level": "ORDINARY_APK_UNSUPPORTED",
+      "target_scope": "MANAGED_PROFILE_OPTIONAL",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": false,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N19-01",
+          "description": "Separate fresh account-free owned disposable AVD has DeviceOwner provisioned with test DPC under explicit test authority",
+          "required_layer": "DEDICATED_MANAGED_AVD_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N19-02",
+          "description": "DevicePolicyManager on same dedicated AVD independently verifies owner identity and supported policy probes",
+          "required_layer": "DEDICATED_MANAGED_AVD_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N19-03",
+          "description": "Normal Native APK without DeviceAdminReceiver or genuine owner role cannot self-provision",
+          "required_layer": "DEDICATED_MANAGED_AVD_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N19-04",
+          "description": "User/organization policy denial gives UNSUPPORTED and does not change existing owner",
+          "required_layer": "DEDICATED_MANAGED_AVD_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N19-05",
+          "description": "Managed test removes non-destructive scoped policy or resets exact ephemeral AVD in controlled cleanup",
+          "required_layer": "DEDICATED_MANAGED_AVD_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N19-06",
+          "description": "No user accounts, unrelated AVD, or device-admin takeover survives test rollback",
+          "required_layer": "DEDICATED_MANAGED_AVD_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N19-07",
+          "description": "API30/33/34/36 OEM/profile differences recorded on dedicated independent managed fixture when feasible",
+          "required_layer": "DEDICATED_MANAGED_AVD_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N19-08",
+          "description": "No wipeData/lockNow/silent package admin operation in ordinary Native flavor; release gate separated",
+          "required_layer": "DEDICATED_MANAGED_AVD_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    },
+    {
+      "capability_id": "N20",
+      "family": "Root/Bootloader/ROM lifecycle fallback",
+      "baseline_evidence_level": "ORDINARY_APK_UNSUPPORTED",
+      "target_scope": "HOST_FALLBACK_PLATFORM_LIMIT",
+      "feature_acceptance_status": "NOT_VERIFIED_V3",
+      "coverage_conditions": {
+        "actual_positive_path_required": false,
+        "all_applicable_api_levels": [
+          30,
+          33,
+          34,
+          36
+        ],
+        "negative_and_recovery_required": true,
+        "no_synthetic_promotion": true
+      },
+      "tests": [
+        {
+          "test_id": "V3-N20-01",
+          "description": "Native reports platform-unsupported root/flash in production and offers verified Host read-only fallback status",
+          "required_layer": "HOST_FALLBACK_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N20-02",
+          "description": "Host independently detects authorized emulator boot/ADB identity and safe non-destructive maintenance probes",
+          "required_layer": "HOST_FALLBACK_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N20-03",
+          "description": "Unknown Host/serial and non-consented hardware cannot select device maintenance backend",
+          "required_layer": "HOST_FALLBACK_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N20-04",
+          "description": "Root/unlock/erase/flash user request returns explicit blocked and physical-owner approval requirement",
+          "required_layer": "HOST_FALLBACK_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N20-05",
+          "description": "Native offline/unbootable simulation switches status to UNAVAILABLE; no fantasy local recovery",
+          "required_layer": "HOST_FALLBACK_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N20-06",
+          "description": "Reconnect/reboot and stale Host response cannot reuse privileged approval across boot epoch",
+          "required_layer": "HOST_FALLBACK_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N20-07",
+          "description": "API30/33/34/36 emulator boot-state/Host read-only presence tested; OEM Fastboot remains hardware-only",
+          "required_layer": "HOST_FALLBACK_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        },
+        {
+          "test_id": "V3-N20-08",
+          "description": "No unrestricted su/fastboot-oem/shell Tool, raw partitions or physical device mutation performed",
+          "required_layer": "HOST_FALLBACK_E2E",
+          "expected_evidence": "MCP tool request/response plus OS-side independent oracle or exact denial; verified AVD/API identity; log and artifact hashes",
+          "status": "NOT_RUN"
+        }
+      ]
+    }
+  ],
+  "crosscut_cases": [
+    {
+      "test_id": "V3-XR-01",
+      "group": "SECURITY",
+      "description": "Anonymous same-Android-app localhost client denied all sensitive tools, even if Origin/Host resembles trusted client",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-02",
+      "group": "SECURITY",
+      "description": "Host client identity must be mutually proved; ADB serial and USB forwarding alone confer no authorization",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-03",
+      "group": "SECURITY",
+      "description": "Pairing proof binds Native installation ID, Host key, OS boot epoch, exact user-selected target",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-04",
+      "group": "SECURITY",
+      "description": "Challenge nonce replay, expired timestamp, forged signer, wrong audience and clock rollback fail closed",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-05",
+      "group": "SECURITY",
+      "description": "Native Keystore signing private keys never exported or persisted in plaintext",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-06",
+      "group": "SECURITY",
+      "description": "Device and Host trust store deletion invalidates all sessions and must not auto-accept new key",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-07",
+      "group": "SECURITY",
+      "description": "Unexpected MCP Origin/Host/Forwarded headers and duplicate security headers denied",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-08",
+      "group": "SECURITY",
+      "description": "MCP tools/list and tools/call have consistent permission filtering, including race with revoke",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-09",
+      "group": "CONCURRENCY",
+      "description": "Two real Host processes compete for same Native write, exactly one fixture effect",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-10",
+      "group": "CONCURRENCY",
+      "description": "Host and Native own UI pipelines share one real lease and cannot write concurrently",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-11",
+      "group": "CONCURRENCY",
+      "description": "Action digest, request ID, nonce, fence and owner are checked immediately before Android operation",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-12",
+      "group": "CONCURRENCY",
+      "description": "Operation timeout after possible side effect reports UNCERTAIN and requires reconciliation",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-13",
+      "group": "CONCURRENCY",
+      "description": "Native process death between intent acceptance and effect preserves write-ahead journal semantics",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-14",
+      "group": "CONCURRENCY",
+      "description": "Host process death between commit and ACK does not silently replay a non-idempotent action",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-15",
+      "group": "CONCURRENCY",
+      "description": "User Stop/disable/unpair immediately fences all in-flight actions and sessions",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-16",
+      "group": "CONCURRENCY",
+      "description": "OS reboot invalidates ephemeral consent/session state and does not cause autostart",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-17",
+      "group": "PERMISSION",
+      "description": "MediaProjection positive and denied OS dialog results tested independently of mock status",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-18",
+      "group": "PERMISSION",
+      "description": "Android 14+ projection one-session consent/token re-use rejected by actual API",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-19",
+      "group": "PERMISSION",
+      "description": "Accessibility enabled through Settings UI with intended declared capability; disabling revokes promptly",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-20",
+      "group": "PERMISSION",
+      "description": "SAF selected provider READ vs WRITE grant, cancellation and process death observed",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-21",
+      "group": "PERMISSION",
+      "description": "PackageInstaller pending user action, approve/deny/cleanup observed with pinned APK",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-22",
+      "group": "PERMISSION",
+      "description": "Android foreground and background Activity launch policies enforced by OS not synthetic flags",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-23",
+      "group": "PERMISSION",
+      "description": "Other user/secure-window/password node remains protected in scope-limited UI operations",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-24",
+      "group": "PERMISSION",
+      "description": "Dangerous policy, device admin or OEM-maintenance grants never inferred from user prompt",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-25",
+      "group": "DELIVERY",
+      "description": "Four QEMU API30/33/34/36 devices identity-pinned and exclusively leased before mutable test",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-26",
+      "group": "DELIVERY",
+      "description": "Evidence includes exact Git commit/tree, signed APK hash, fixture hash and real API-level OS oracle",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-27",
+      "group": "DELIVERY",
+      "description": "Original 228 test case IDs mapped to exact executed test IDs and evidence, with no assumed pass",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-28",
+      "group": "DELIVERY",
+      "description": "Cross-runtime Host shared contract compatibility tested by both Host and Native consumers",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-29",
+      "group": "DELIVERY",
+      "description": "Real native MCP Java/Kotlin SDK wire contract Tools/list/Call verified before and after grants",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-30",
+      "group": "DELIVERY",
+      "description": "Non-E2E or not-run test cannot set PRODUCT_DONE; dynamic missing work creates traced blocker",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-31",
+      "group": "DELIVERY",
+      "description": "Unattended session interruption must preserve durable task state; no false background-completion claim",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    },
+    {
+      "test_id": "V3-XR-32",
+      "group": "DELIVERY",
+      "description": "Final product sign-off compares requested original feature list, runtime registry, ledger and evidence; zero silent exclusions",
+      "required_layer": "REAL_CROSS_RUNTIME_OR_ANDROID_E2E",
+      "status": "NOT_RUN"
+    }
+  ],
+  "required_old_to_new_traceability": "Every T-Nxx-01..06 must map to executable test(s), evidence and test level; missing mapping creates a new mandatory gap before release",
+  "completion_logic": {
+    "required_native_feature_done": "Positive real Native MCP to Android API to independently observed effect plus all required negatives/recovery on each applicable tested SDK, production policy/approval gates, and zero unresolved required gaps",
+    "task_pr_merged_is_not_feature_done": true,
+    "release_done": "No unresolved required feature, E2E, security, consent, cross-runtime, deployment and acceptance gaps; only explicitly scoped Android platform exclusions allowed, with proven Host fallback when defined",
+    "external_block": "Keep FEATURE_NOT_DONE, capture exact blocker and independently continue safe work, never silently downgrade user product scope"
+  }
+}

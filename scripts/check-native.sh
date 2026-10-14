@@ -29,4 +29,11 @@ uv run --project host --locked --python 3.13 python scripts/smoke-native-local-g
 echo "== Emulator-only guard and UI selection tests (no Android SDK) =="
 uv run --project host --locked --group dev --python 3.13 pytest -q android/tests
 
-echo "JVM Native protocol tests, cross-language MCP and emulator safety gates passed."
+echo "== V3 source requirements/admission and exclusive AVD negative-path tests =="
+python3 -m unittest discover -s tests -p 'test_native_v3*.py' -v
+python3 scripts/native_v3_gate.py \
+  --registry docs/native-v3/Android_Native_MCP_E2E_Acceptance_Registry_V3_2026-10-14.json \
+  --traceability docs/native-v3/Android_Native_MCP_V3_Legacy_228_Traceability_Template_2026-10-14.csv \
+  --plan docs/native-v3/Android_Native_MCP_E2E_Implementation_Plan_V3_2026-10-14.md
+
+echo "JVM Native protocol tests, cross-language MCP, V3 admission, and safety gates passed."

@@ -1,0 +1,1563 @@
+{
+  "capabilities": {
+    "N01": {
+      "authority": "Bound Host identity + test owner + release reviewer",
+      "family": "Native MCP loopback and health",
+      "old_ledger_status": "merged_verified",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "CORE",
+      "public_tool_source_inventory": [
+        "device_status"
+      ],
+      "real_e2e_verified": false,
+      "release_gate": "AUTHENTICATED_READ + verified emulator matrix + independent acceptance",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N01-01",
+        "V3-N01-02",
+        "V3-N01-03",
+        "V3-N01-04",
+        "V3-N01-05",
+        "V3-N01-06",
+        "V3-N01-07",
+        "V3-N01-08"
+      ]
+    },
+    "N02": {
+      "authority": "Bound Host identity + test owner + release reviewer",
+      "family": "Build/OS/ABI/app profile",
+      "old_ledger_status": "inert_merged",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "CORE",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "AUTHENTICATED_READ + verified emulator matrix + independent acceptance",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N02-01",
+        "V3-N02-02",
+        "V3-N02-03",
+        "V3-N02-04",
+        "V3-N02-05",
+        "V3-N02-06",
+        "V3-N02-07",
+        "V3-N02-08"
+      ]
+    },
+    "N03": {
+      "authority": "Bound Host identity + test owner + release reviewer",
+      "family": "Battery/storage/display/network snapshots",
+      "old_ledger_status": "inert_merged",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "CORE",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "AUTHENTICATED_READ + verified emulator matrix + independent acceptance",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N03-01",
+        "V3-N03-02",
+        "V3-N03-03",
+        "V3-N03-04",
+        "V3-N03-05",
+        "V3-N03-06",
+        "V3-N03-07",
+        "V3-N03-08"
+      ]
+    },
+    "N04": {
+      "authority": "Bound Host identity + test owner + release reviewer",
+      "family": "Android permission and consent readiness",
+      "old_ledger_status": "inert_merged",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "CORE",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "AUTHENTICATED_READ + verified emulator matrix + independent acceptance",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N04-01",
+        "V3-N04-02",
+        "V3-N04-03",
+        "V3-N04-04",
+        "V3-N04-05",
+        "V3-N04-06",
+        "V3-N04-07",
+        "V3-N04-08"
+      ]
+    },
+    "N05": {
+      "authority": "Bound Host identity + test owner + release reviewer",
+      "family": "Visible packages and targeted package info",
+      "old_ledger_status": "inert_merged",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "CORE",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "AUTHENTICATED_READ + verified emulator matrix + independent acceptance",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N05-01",
+        "V3-N05-02",
+        "V3-N05-03",
+        "V3-N05-04",
+        "V3-N05-05",
+        "V3-N05-06",
+        "V3-N05-07",
+        "V3-N05-08"
+      ]
+    },
+    "N06": {
+      "authority": "Bound Host identity + test owner + release reviewer",
+      "family": "Native own-app health/diagnostics",
+      "old_ledger_status": "inert_merged",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "CORE",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "AUTHENTICATED_READ + verified emulator matrix + independent acceptance",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N06-01",
+        "V3-N06-02",
+        "V3-N06-03",
+        "V3-N06-04",
+        "V3-N06-05",
+        "V3-N06-06",
+        "V3-N06-07",
+        "V3-N06-08"
+      ]
+    },
+    "N07": {
+      "authority": "Android foreground user + scoped operator + independent security reviewer",
+      "family": "Accessibility focus and real UI tree",
+      "old_ledger_status": "blocked",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "SENSITIVE_USER_CONSENT",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "ANDROID_OS_USER_CONSENT + authenticated scoped Host authorization + independent security review",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N07-01",
+        "V3-N07-02",
+        "V3-N07-03",
+        "V3-N07-04",
+        "V3-N07-05",
+        "V3-N07-06",
+        "V3-N07-07",
+        "V3-N07-08"
+      ]
+    },
+    "N08": {
+      "authority": "Android foreground user + scoped operator + independent security reviewer",
+      "family": "Native Accessibility gesture/node actions",
+      "old_ledger_status": "plan_only",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "SENSITIVE_USER_CONSENT",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "ANDROID_OS_USER_CONSENT + authenticated scoped Host authorization + independent security review",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N08-01",
+        "V3-N08-02",
+        "V3-N08-03",
+        "V3-N08-04",
+        "V3-N08-05",
+        "V3-N08-06",
+        "V3-N08-07",
+        "V3-N08-08"
+      ]
+    },
+    "N09": {
+      "authority": "Android foreground user + scoped operator + independent security reviewer",
+      "family": "One-shot consented screen capture",
+      "old_ledger_status": "blocked",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "SENSITIVE_USER_CONSENT",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "ANDROID_OS_USER_CONSENT + authenticated scoped Host authorization + independent security review",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N09-01",
+        "V3-N09-02",
+        "V3-N09-03",
+        "V3-N09-04",
+        "V3-N09-05",
+        "V3-N09-06",
+        "V3-N09-07",
+        "V3-N09-08"
+      ]
+    },
+    "N10": {
+      "authority": "Android foreground user + scoped operator + independent security reviewer",
+      "family": "Short bounded screen recording",
+      "old_ledger_status": "blocked",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "SENSITIVE_USER_CONSENT",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "ANDROID_OS_USER_CONSENT + authenticated scoped Host authorization + independent security review",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N10-01",
+        "V3-N10-02",
+        "V3-N10-03",
+        "V3-N10-04",
+        "V3-N10-05",
+        "V3-N10-06",
+        "V3-N10-07",
+        "V3-N10-08"
+      ]
+    },
+    "N11": {
+      "authority": "Android foreground user + scoped operator + independent security reviewer",
+      "family": "SAF authorized file import/export",
+      "old_ledger_status": "plan_only",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "SENSITIVE_USER_CONSENT",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "ANDROID_OS_USER_CONSENT + authenticated scoped Host authorization + independent security review",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N11-01",
+        "V3-N11-02",
+        "V3-N11-03",
+        "V3-N11-04",
+        "V3-N11-05",
+        "V3-N11-06",
+        "V3-N11-07",
+        "V3-N11-08"
+      ]
+    },
+    "N12": {
+      "authority": "Android foreground user + operator + independent security reviewer",
+      "family": "Explicit allowlisted app launch",
+      "old_ledger_status": "plan_only",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "AUTHORIZED_WRITE",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "ANDROID_OS_USER_CONFIRMATION + signed grant + durable Native lease + review",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N12-01",
+        "V3-N12-02",
+        "V3-N12-03",
+        "V3-N12-04",
+        "V3-N12-05",
+        "V3-N12-06",
+        "V3-N12-07",
+        "V3-N12-08"
+      ]
+    },
+    "N13": {
+      "authority": "Android foreground user + scoped operator + independent security reviewer",
+      "family": "Scoped optional sensors/notifications",
+      "old_ledger_status": "inert_merged",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "OPTIONAL_CONSENT",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "ANDROID_OS_USER_CONSENT + authenticated scoped Host authorization + independent security review",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N13-01",
+        "V3-N13-02",
+        "V3-N13-03",
+        "V3-N13-04",
+        "V3-N13-05",
+        "V3-N13-06",
+        "V3-N13-07",
+        "V3-N13-08"
+      ]
+    },
+    "N14": {
+      "authority": "Bound Host identity + test owner + release reviewer",
+      "family": "Own performance/crash diagnostics retention",
+      "old_ledger_status": "inert_merged",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "CORE",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "AUTHENTICATED_READ + verified emulator matrix + independent acceptance",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N14-01",
+        "V3-N14-02",
+        "V3-N14-03",
+        "V3-N14-04",
+        "V3-N14-05",
+        "V3-N14-06",
+        "V3-N14-07",
+        "V3-N14-08"
+      ]
+    },
+    "N15": {
+      "authority": "Android foreground user + scoped operator + independent security reviewer",
+      "family": "PackageInstaller user-approved install",
+      "old_ledger_status": "blocked",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "SENSITIVE_USER_CONSENT",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "ANDROID_OS_USER_CONSENT + authenticated scoped Host authorization + independent security review",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N15-01",
+        "V3-N15-02",
+        "V3-N15-03",
+        "V3-N15-04",
+        "V3-N15-05",
+        "V3-N15-06",
+        "V3-N15-07",
+        "V3-N15-08"
+      ]
+    },
+    "N16": {
+      "authority": "Bound Host identity + test owner + release reviewer",
+      "family": "User visible Native service lifecycle",
+      "old_ledger_status": "merged_verified",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "CORE",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "AUTHENTICATED_READ + verified emulator matrix + independent acceptance",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N16-01",
+        "V3-N16-02",
+        "V3-N16-03",
+        "V3-N16-04",
+        "V3-N16-05",
+        "V3-N16-06",
+        "V3-N16-07",
+        "V3-N16-08"
+      ]
+    },
+    "N17": {
+      "authority": "Operator-paired Host identity + independent security reviewer",
+      "family": "Real authenticated Host/Native pairing",
+      "old_ledger_status": "blocked",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "SECURITY_FOUNDATION",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "BLOCKED_EXTERNAL: independent security review before production enablement",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N17-01",
+        "V3-N17-02",
+        "V3-N17-03",
+        "V3-N17-04",
+        "V3-N17-05",
+        "V3-N17-06",
+        "V3-N17-07",
+        "V3-N17-08"
+      ]
+    },
+    "N18": {
+      "authority": "Operator-paired Host identity + independent security reviewer",
+      "family": "Cross-runtime durable lease and fencing",
+      "old_ledger_status": "inert_merged",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "SECURITY_FOUNDATION",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "BLOCKED_EXTERNAL: independent security review before production enablement",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N18-01",
+        "V3-N18-02",
+        "V3-N18-03",
+        "V3-N18-04",
+        "V3-N18-05",
+        "V3-N18-06",
+        "V3-N18-07",
+        "V3-N18-08"
+      ]
+    },
+    "N19": {
+      "authority": "Enterprise test-lab owner + Android OS Device Owner",
+      "family": "Managed Android Device Owner extension",
+      "old_ledger_status": "blocked",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "MANAGED_PROFILE_OPTIONAL",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "BLOCKED_EXTERNAL: separately approved managed Device Owner laboratory",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N19-01",
+        "V3-N19-02",
+        "V3-N19-03",
+        "V3-N19-04",
+        "V3-N19-05",
+        "V3-N19-06",
+        "V3-N19-07",
+        "V3-N19-08"
+      ]
+    },
+    "N20": {
+      "authority": "Host platform safety owner + independent release review",
+      "family": "Root/Bootloader/ROM lifecycle fallback",
+      "old_ledger_status": "unsupported_by_platform",
+      "planned_spec_cases_all_claim_pass": false,
+      "profile": "HOST_FALLBACK_PLATFORM_LIMIT",
+      "public_tool_source_inventory": [],
+      "real_e2e_verified": false,
+      "release_gate": "UNSUPPORTED_BY_PLATFORM: ordinary APK Root/ROM; verified Host read-only fallback outstanding",
+      "status": "NOT_DONE",
+      "v3_planned_cases": [
+        "V3-N20-01",
+        "V3-N20-02",
+        "V3-N20-03",
+        "V3-N20-04",
+        "V3-N20-05",
+        "V3-N20-06",
+        "V3-N20-07",
+        "V3-N20-08"
+      ]
+    }
+  },
+  "emulator_features_done": 0,
+  "live_native_tool_names": [
+    "device_status"
+  ],
+  "not_a_feature_completion_certificate": true,
+  "original_v3_delivery_summary": "UNAVAILABLE_IN_LIBRARY_ZIP_ONLY_NOT_CLAIMED_READ",
+  "original_work_package_json": "UNAVAILABLE_IN_LIBRARY_ZIP_ONLY_NOT_CLAIMED_READ",
+  "product": "PRODUCT_INCOMPLETE",
+  "production_features_done": 0,
+  "required_gaps": [
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N01-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "CORE",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N01-01",
+        "V3-N01-02",
+        "V3-N01-03",
+        "V3-N01-04",
+        "V3-N01-05",
+        "V3-N01-06",
+        "V3-N01-07",
+        "V3-N01-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N02-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "CORE",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N02-01",
+        "V3-N02-02",
+        "V3-N02-03",
+        "V3-N02-04",
+        "V3-N02-05",
+        "V3-N02-06",
+        "V3-N02-07",
+        "V3-N02-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N03-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "CORE",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N03-01",
+        "V3-N03-02",
+        "V3-N03-03",
+        "V3-N03-04",
+        "V3-N03-05",
+        "V3-N03-06",
+        "V3-N03-07",
+        "V3-N03-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N04-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "CORE",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N04-01",
+        "V3-N04-02",
+        "V3-N04-03",
+        "V3-N04-04",
+        "V3-N04-05",
+        "V3-N04-06",
+        "V3-N04-07",
+        "V3-N04-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N05-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "CORE",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N05-01",
+        "V3-N05-02",
+        "V3-N05-03",
+        "V3-N05-04",
+        "V3-N05-05",
+        "V3-N05-06",
+        "V3-N05-07",
+        "V3-N05-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N06-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "CORE",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N06-01",
+        "V3-N06-02",
+        "V3-N06-03",
+        "V3-N06-04",
+        "V3-N06-05",
+        "V3-N06-06",
+        "V3-N06-07",
+        "V3-N06-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N07-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "SENSITIVE_USER_CONSENT",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N07-01",
+        "V3-N07-02",
+        "V3-N07-03",
+        "V3-N07-04",
+        "V3-N07-05",
+        "V3-N07-06",
+        "V3-N07-07",
+        "V3-N07-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N08-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "SENSITIVE_USER_CONSENT",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N08-01",
+        "V3-N08-02",
+        "V3-N08-03",
+        "V3-N08-04",
+        "V3-N08-05",
+        "V3-N08-06",
+        "V3-N08-07",
+        "V3-N08-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N09-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "SENSITIVE_USER_CONSENT",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N09-01",
+        "V3-N09-02",
+        "V3-N09-03",
+        "V3-N09-04",
+        "V3-N09-05",
+        "V3-N09-06",
+        "V3-N09-07",
+        "V3-N09-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N10-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "SENSITIVE_USER_CONSENT",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N10-01",
+        "V3-N10-02",
+        "V3-N10-03",
+        "V3-N10-04",
+        "V3-N10-05",
+        "V3-N10-06",
+        "V3-N10-07",
+        "V3-N10-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N11-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "SENSITIVE_USER_CONSENT",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N11-01",
+        "V3-N11-02",
+        "V3-N11-03",
+        "V3-N11-04",
+        "V3-N11-05",
+        "V3-N11-06",
+        "V3-N11-07",
+        "V3-N11-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N12-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "AUTHORIZED_WRITE",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N12-01",
+        "V3-N12-02",
+        "V3-N12-03",
+        "V3-N12-04",
+        "V3-N12-05",
+        "V3-N12-06",
+        "V3-N12-07",
+        "V3-N12-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N13-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "OPTIONAL_CONSENT",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N13-01",
+        "V3-N13-02",
+        "V3-N13-03",
+        "V3-N13-04",
+        "V3-N13-05",
+        "V3-N13-06",
+        "V3-N13-07",
+        "V3-N13-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N14-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "CORE",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N14-01",
+        "V3-N14-02",
+        "V3-N14-03",
+        "V3-N14-04",
+        "V3-N14-05",
+        "V3-N14-06",
+        "V3-N14-07",
+        "V3-N14-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N15-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "SENSITIVE_USER_CONSENT",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N15-01",
+        "V3-N15-02",
+        "V3-N15-03",
+        "V3-N15-04",
+        "V3-N15-05",
+        "V3-N15-06",
+        "V3-N15-07",
+        "V3-N15-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N16-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "CORE",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N16-01",
+        "V3-N16-02",
+        "V3-N16-03",
+        "V3-N16-04",
+        "V3-N16-05",
+        "V3-N16-06",
+        "V3-N16-07",
+        "V3-N16-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N17-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N17-01",
+        "V3-N17-02",
+        "V3-N17-03",
+        "V3-N17-04",
+        "V3-N17-05",
+        "V3-N17-06",
+        "V3-N17-07",
+        "V3-N17-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N18-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N18-01",
+        "V3-N18-02",
+        "V3-N18-03",
+        "V3-N18-04",
+        "V3-N18-05",
+        "V3-N18-06",
+        "V3-N18-07",
+        "V3-N18-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N19-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Implement real authenticated Native MCP tool and OS side effect; pass positive, refusal, Stop, crash, retry and per-API tests",
+      "owner": "Native Android implementation",
+      "profile": "MANAGED_PROFILE_OPTIONAL",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N19-01",
+        "V3-N19-02",
+        "V3-N19-03",
+        "V3-N19-04",
+        "V3-N19-05",
+        "V3-N19-06",
+        "V3-N19-07",
+        "V3-N19-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    },
+    {
+      "description": "No attested complete real Native MCP \u2192 authorized Android API \u2192 independent OS effect path",
+      "id": "GAP-N20-001",
+      "independent_oracle": "Signed independent Android fixture/OS oracle and exact installed APK proof",
+      "next_action": "Demonstrate scoped read-only Host fallback without Root or ROM commands",
+      "owner": "Host fallback integration",
+      "profile": "HOST_FALLBACK_PLATFORM_LIMIT",
+      "release_blocking": false,
+      "requirements": [
+        "V3-N20-01",
+        "V3-N20-02",
+        "V3-N20-03",
+        "V3-N20-04",
+        "V3-N20-05",
+        "V3-N20-06",
+        "V3-N20-07",
+        "V3-N20-08"
+      ],
+      "source": "E00 startup reality audit; not a completed/merged work package",
+      "status": "OPEN"
+    }
+  ],
+  "snapshot_origin": "V3 full-lifecycle acceptance spec plus current app Tool registration source",
+  "tools_list_needs_runtime_verification": true,
+  "verified_legacy_cases": 0,
+  "verified_v3_cases": 0,
+  "work_package_index": [
+    {
+      "dependencies": [],
+      "id": "E00.a",
+      "objective": "Freeze the original full-lifecycle goal, 20 capabilities, release profiles, platform exclusions and real client acceptance; carry forward all open blocks.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E00.a"
+      ],
+      "id": "E00.b",
+      "objective": "Map all 228 legacy T-Nxx test IDs to executable test identifiers, layer, code path, real-or-mock classification and current evidence.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E00.b"
+      ],
+      "id": "E00.c",
+      "objective": "Define and implement product-status taxonomy, capability closure ledger, independent OS-effect receipts and unforgeable PASS_REAL_E2E admission rules.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E00.c"
+      ],
+      "id": "E00.d",
+      "objective": "Classify OS consent vs operator-scoped privilege vs independent external security review; record risk owners and fallback for every family.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E00.c"
+      ],
+      "id": "E01.a",
+      "objective": "Add AndroidJUnitRunner and src/androidTest, dependency-locked instrumentation tasks and fixture-only build variants.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E01.a"
+      ],
+      "id": "E01.b",
+      "objective": "Create pinned signed deterministic fixture APK(s), UI tree/gesture counter, MediaProjection known pixels, files/provider, and APK installer target.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E01.a",
+        "E01.b"
+      ],
+      "id": "E01.c",
+      "objective": "Implement OS UI consent harness for ActivityResult, Settings, SAF and PackageInstaller; permit ADB only as test driver/oracle.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E01.a"
+      ],
+      "id": "E01.d",
+      "objective": "Build independent genuine MCP Streamable HTTP client test runner and wire/contract oracle.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E01.a",
+        "E01.c",
+        "E01.d"
+      ],
+      "id": "E01.e",
+      "objective": "Implement AVD exclusive lease/preflight, exact boot/API/ABI/owner/nonce proof, fault injection, teardown and sanitized evidence.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E01.b",
+        "E01.c",
+        "E01.d",
+        "E01.e"
+      ],
+      "id": "E01.f",
+      "objective": "Add independent Android instrumentation and full MCP E2E runs to each affected PR CI; prove failures block the gate.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E01.d",
+        "E00.d"
+      ],
+      "id": "E02.a",
+      "objective": "Run vetted transport library POC for confidential mutually authenticated Host\u2194Native session over explicit ADB forward/approved relay.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.a"
+      ],
+      "id": "E02.b",
+      "objective": "Freeze versioned shared v2 pairing/auth/permission/grant/lease schema and compatibility; coordinate C0\u2192Host\u2192Native PR train with named writers.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.b"
+      ],
+      "id": "E02.c",
+      "objective": "Wire AndroidKeyStore installation identity to user-visible local pairing UI and persistent owner binding with explicit fingerprint confirmation.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.c"
+      ],
+      "id": "E02.d",
+      "objective": "Implement Native and Host mutually authenticated session lifecycle with key rotation, expiry, replay cache, revoke/unpair, OS boot/install epoch validation.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.d",
+        "E01.d"
+      ],
+      "id": "E02.e",
+      "objective": "Register real Kotlin MCP tools/list and tools/call with session-scoped read profile + request authorization on every call.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.d",
+        "E02.e"
+      ],
+      "id": "E02.f",
+      "objective": "Run second Mac/Linux Host and same-Android-hostile-peer tests, certificate replacement, disconnect/reconnect, boot/key epoch and malformed HTTP.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.a",
+        "E02.b",
+        "E02.c",
+        "E02.d",
+        "E02.e",
+        "E02.f"
+      ],
+      "id": "E02.g",
+      "objective": "Close N17 eight-case registry and XR01\u2013XR08 security acceptance; record reviewed release scope S1.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.e",
+        "E01.f"
+      ],
+      "id": "E03.a",
+      "objective": "Wire real Build/ABI/version and permission state Tool handlers from Android readers through safe authenticated Kotlin Gateway.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.a"
+      ],
+      "id": "E03.b",
+      "objective": "Implement real bounded BatteryManager, StatFs, DisplayMetrics and permitted connectivity snapshots as MCP Tool.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.a",
+        "E01.b"
+      ],
+      "id": "E03.c",
+      "objective": "Complete PackageManager current-user filtered visible-package & exact signer info Tool for only allowlisted fixture targets.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.a"
+      ],
+      "id": "E03.d",
+      "objective": "Connect genuine own-process and Service state/error diagnostics to paired MCP read profile.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.a"
+      ],
+      "id": "E03.e",
+      "objective": "Implement optional permission-scoped sensor/system connectivity/notification status with capability discovery, not surveillance.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.d"
+      ],
+      "id": "E03.f",
+      "objective": "Implement actual own-process CPU/memory/jank/crash metrics and bounded durable redacted diagnostic event exporter.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.a",
+        "E03.d"
+      ],
+      "id": "E03.g",
+      "objective": "Complete actual default status/service (Activity, FGS/permission/reboot/Stop) real MCP regression and legacy compatibility.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.a",
+        "E03.b",
+        "E03.c",
+        "E03.d",
+        "E03.e",
+        "E03.f",
+        "E03.g"
+      ],
+      "id": "E03.h",
+      "objective": "Close seven read-only feature families: full 8-case suite per capability with no orphaned Android adapter or fixed-deny fake.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.e",
+        "E01.c"
+      ],
+      "id": "E04.a",
+      "objective": "Wire user-launched ACTION_OPEN_DOCUMENT ActivityResult from native UI, opaque exact read-permission URI token and cancellation.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E04.a",
+        "E01.b"
+      ],
+      "id": "E04.b",
+      "objective": "Implement bounded ContentResolver read from user-selected provider into checksum-verified app-private artifact.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E04.b"
+      ],
+      "id": "E04.c",
+      "objective": "Implement ACTION_CREATE_DOCUMENT WRITE grant path, bounded stream and honest provider non-atomic completion semantics.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E04.a",
+        "E04.b",
+        "E04.c"
+      ],
+      "id": "E04.d",
+      "objective": "Close N11 eight cases + crosscut picker/revocation scenarios on four APIs, including Stop, restart and duplicate writes.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.e",
+        "E01.c"
+      ],
+      "id": "E05.a",
+      "objective": "Add purpose-scoped MediaProjection ActivityResult user consent broker and API34+ projection FGS type/profile.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E05.a",
+        "E01.b"
+      ],
+      "id": "E05.b",
+      "objective": "Implement real VirtualDisplay/ImageReader bounded one-shot frame capture to opaque private artifact.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E05.b"
+      ],
+      "id": "E05.c",
+      "objective": "Handle MediaProjection onStop, screen lock, rotation, background restrictions, secure windows, buffer/FGS teardown and retention.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E05.a",
+        "E05.b",
+        "E05.c"
+      ],
+      "id": "E05.d",
+      "objective": "Close N09 eight cases and crosscut projection cases across four APIs.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E05.c"
+      ],
+      "id": "E06.a",
+      "objective": "Implement actual MediaProjection MediaCodec/MediaRecorder bounded recording pipeline and one-session grant.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E06.a"
+      ],
+      "id": "E06.b",
+      "objective": "Add start/poll/stop/cancel recording Tool state and artifact caps, DRM/secure UI/privacy and resource cleanup.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E06.a",
+        "E06.b"
+      ],
+      "id": "E06.c",
+      "objective": "Close N10 eight cases with OS consent + actual decoder oracle across API matrix.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.g",
+        "E00.d"
+      ],
+      "id": "E07.a",
+      "objective": "Resolve legitimate accessibility purpose, service declaration scope and independently reviewed user-consent constraints for debug and production profiles.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E07.a",
+        "E01.c"
+      ],
+      "id": "E07.b",
+      "objective": "Add actual purpose-scoped AccessibilityService metadata and onServiceConnected/disabled lifecycle with real Settings enable UI.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E07.b",
+        "E01.b"
+      ],
+      "id": "E07.c",
+      "objective": "Wire Android getRootInActiveWindow scoped authorized own fixture UI tree through paired Native Tool with secure-node redaction.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E07.a",
+        "E07.b",
+        "E07.c"
+      ],
+      "id": "E07.d",
+      "objective": "Close N07 eight cases and Settings disable/Stop/window-switch/restart paths on four APIs.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.g",
+        "E00.d"
+      ],
+      "id": "E08.a",
+      "objective": "Freeze Host\u2194Native action/grant/lease/fencing contract with exact digest/owner/boot epoch and durable acknowledgment states.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E08.a"
+      ],
+      "id": "E08.b",
+      "objective": "Persist Native OS-exclusive owner, monotonic fencing journal, prepared/dispatched/result uncertainty and bounded recovery.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E08.a",
+        "E08.b"
+      ],
+      "id": "E08.c",
+      "objective": "Integrate Host durable operation store and actual two independent Host processes with Native arbiter, no fake injected lease.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E08.a",
+        "E08.b",
+        "E08.c"
+      ],
+      "id": "E08.d",
+      "objective": "Close N18 eight cases and XR09\u2013XR16 with two Host processes, FGS Stop, timeout-after-dispatch, reboot and recovery.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E07.d",
+        "E08.d"
+      ],
+      "id": "E09.a",
+      "objective": "Implement real Native Accessibility dispatchGesture and allowlisted node action executor; enforce current-window/gesture consent and signed action scope.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E09.a"
+      ],
+      "id": "E09.b",
+      "objective": "Implement UI node/window epoch, rotation/foreground checking and crash/Stop/uncertain dispatch fencing before effects.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E09.a",
+        "E09.b"
+      ],
+      "id": "E09.c",
+      "objective": "Close N08 eight cases including real OS gestures, two-Host contentions, user disable and rotation on all APIs.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E08.d",
+        "E02.g"
+      ],
+      "id": "E10.a",
+      "objective": "Implement real Context/Activity-safe explicit Intent launch with exported component allowlist and foreground launch restrictions.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E10.a"
+      ],
+      "id": "E10.b",
+      "objective": "Protect duplicate launch and ambiguous state, onStop/revoke/locked screen, Android API 30\u201336 background differences.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E10.a",
+        "E10.b"
+      ],
+      "id": "E10.c",
+      "objective": "Close N12 eight cases and permission background launch crosscut with actual native startActivity.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E08.d",
+        "E01.b",
+        "E01.c"
+      ],
+      "id": "E11.a",
+      "objective": "Create separately signed pinned APK fixture and reviewed installer-only Android component/permission/flavor with real user action.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E11.a"
+      ],
+      "id": "E11.b",
+      "objective": "Implement real PackageInstaller Session, pending-user-action intent, user-visible Android confirmation and final callback.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E11.b"
+      ],
+      "id": "E11.c",
+      "objective": "Implement cancel/deny/uninstall fixture cleanup, failed stream, session abandonment, crash, foreground loss and ambiguous commit reconciliation.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E11.a",
+        "E11.b",
+        "E11.c"
+      ],
+      "id": "E11.d",
+      "objective": "Close N15 eight cases and OS pending-user-action crosscut on API30/33/34/36.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.f",
+        "E04.d"
+      ],
+      "id": "E12.a",
+      "objective": "Audit persisted diagnostic/artefact retention, MIME/digest/quotas, redaction, crash logs and full cleanup across feature classes.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.g",
+        "E05.d",
+        "E07.d"
+      ],
+      "id": "E12.b",
+      "objective": "Prove revocations of notification, projection, accessibility, SAF and pairings during live calls stop operations and update capability status.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E02.g",
+        "E03.h",
+        "E08.d"
+      ],
+      "id": "E12.c",
+      "objective": "Exercise Host alive / Native dead, Native alive / Host dead, both alive, both unavailable, airplane/USB disconnect and crash recovery.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E03.g",
+        "E12.a",
+        "E12.b",
+        "E12.c"
+      ],
+      "id": "E12.d",
+      "objective": "Close N01/N16 eight-case lifecycle/health evidence, Stop/port release, reboot and 24-hour controlled idle soak.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E01.e",
+        "E00.d"
+      ],
+      "id": "E13.a",
+      "objective": "Produce separate fresh owner-proven account-free enterprise AVD and Test DPC experiment design with explicit controlled grant.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E13.a"
+      ],
+      "id": "E13.b",
+      "objective": "Close N19 eight-case DeviceOwner feasibility/unsupported behavior on dedicated lab AVD; optional reversible policy only if separately reviewed.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E00.d",
+        "E12.c"
+      ],
+      "id": "E13.c",
+      "objective": "Close N20 eight cases: ordinary APK unsupported, real authenticated Host read-only ADB/Fastboot mode detection when available, owner-supervised recovery runbook.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E13.c",
+        "E13.b",
+        "E12.d",
+        "E11.d",
+        "E10.c",
+        "E09.c",
+        "E06.c"
+      ],
+      "id": "E14.a",
+      "objective": "Execute all 160 feature scenario IDs with per-API positive/negative/Stop/crash/consent/cleanup evidence, or documented approved platform exclusion.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E00.b",
+        "E14.a"
+      ],
+      "id": "E14.b",
+      "objective": "Finish mapping all original 228 T-Nxx IDs to real executable test and evidence, plus 160 new cases.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E14.a",
+        "E12.b"
+      ],
+      "id": "E14.c",
+      "objective": "Execute XR17\u2013XR24 permission, user-consent, DPM and background limitations; independent OS denial and cleanup.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E14.a",
+        "E12.d"
+      ],
+      "id": "E14.d",
+      "objective": "Run resource/concurrency soak, reboot/force-stop, two Hosts, duplicate requests, token expiration, binary output and redaction attacks.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E14.a",
+        "E14.b",
+        "E14.c",
+        "E14.d"
+      ],
+      "id": "E14.e",
+      "objective": "Execute XR25\u2013XR32 delivery, signed artifact, exact-tree, old-case mapping, gap closure and complete product comparison gates.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E14.e"
+      ],
+      "id": "E14.f",
+      "objective": "Run real intended ChatGPT MCP consumer (ordinary Chat if target) and independent Host clients with production transport and Tool schemas; certify per-profile release.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E14.f"
+      ],
+      "id": "E15.a",
+      "objective": "Obtain explicit physical-device selection/owner consent, non-destructive test scope, exact model and no credential/data collection outside bounds.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E15.a"
+      ],
+      "id": "E15.b",
+      "objective": "Execute only authorized physical read-only status/permission/FGS/connection compatibility matrix with operator supervising.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    },
+    {
+      "dependencies": [
+        "E15.a",
+        "E15.b"
+      ],
+      "id": "E15.c",
+      "objective": "Accept/deny each opt-in physical capability by feature-specific human OS consent and external security review; issue final signed release scope.",
+      "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
+      "status": "NOT_VERIFIED_DONE"
+    }
+  ]
+}
