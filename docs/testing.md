@@ -30,6 +30,10 @@ The repository retains macOS/Linux x Python 3.11/3.12/3.13/3.14 Hosted Actions d
 
 `scripts/check_quality_policy.py` independently enforces statement and true branch counts on every production module, preventing a high combined percent from masking weak branches. `host/.coverage.json` is a generated, ignored artifact. Any new critical module needs a policy classification. A future mutation lane should challenge semantic coverage of the security-sensitive ADB adapter and privilege broker; high coverage alone is not proof of meaningful assertions.
 
+## Device-specific ROM coverage
+
+The hardware-first selection, current observations, verified ROM provenance, acceptance gates and safeguards for the three owned tablets are documented in [Physical-tablet ROM matrix](physical-tablet-rom-matrix.md). No community ROM or GSI should be treated as tested solely because a build exists.
+
 ## Hardware separation
 
 No test in `host/tests/` should need a connected tablet, root, fastboot device, internet access or USB permissions. Hardware tests will be opt-in and must explicitly name the target device, avoid destructive actions, and not infer a host↔native identity merely from a shared serial string.
