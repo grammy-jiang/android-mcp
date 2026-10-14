@@ -5,9 +5,10 @@
   },
   "E00.b": {
     "evidence": [
-      "docs/native-v3/E00B-LEGACY-228-TRACEABILITY-EVIDENCE-20261014.md"
+      "docs/native-v3/E00B-LEGACY-228-TRACEABILITY-EVIDENCE-20261014.md",
+      "docs/native-v3/GAP-N01-002-ASSERTION-BODY-AUDIT-20261014.md"
     ],
-    "note": "All 228 historical IDs mapped to 257 exact executable JVM/Python test methods, with actual local test XML results; real device acceptance stays open",
+    "note": "228 historical case IDs and 257 existing methods traced to actual local JVM/Python execution; separate assertion audit identifies 11 only source/mock cases requiring independent semantics and Android E2E GAPs.",
     "state": "DONE_ENGINEERING"
   },
   "E00.c": {
