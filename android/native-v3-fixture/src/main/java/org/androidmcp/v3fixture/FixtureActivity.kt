@@ -1,6 +1,7 @@
 package org.androidmcp.v3fixture
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowInsets
 import android.widget.Button
@@ -40,6 +41,14 @@ class FixtureActivity : Activity() {
         parent.addView(name)
         parent.addView(counter)
         parent.addView(button)
+        parent.addView(Button(this).apply {
+            id = FixtureContract.SECURE_OPEN_BUTTON_ID
+            text = "Open synthetic secure test window"
+            contentDescription = "android-mcp-v3-open-secure-fixture"
+            setOnClickListener {
+                startActivity(Intent(this@FixtureActivity, SecureFixtureActivity::class.java))
+            }
+        })
         parent.addView(FixtureVisualSurface(this).apply {
             id = FixtureContract.SURFACE_ID
         }, LinearLayout.LayoutParams(

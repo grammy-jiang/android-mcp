@@ -43,6 +43,11 @@ class FixtureHarnessTests(unittest.TestCase):
 
     def test_ui_button_must_have_exact_accessibility_identity(self) -> None:
         self.assertEqual(locate_button(GOOD_UI), (400, 430))
+        self.assertEqual(
+            locate_button(GOOD_UI, "android-mcp-v3-increment-counter"), (400, 430)
+        )
+        with self.assertRaises(ValueError):
+            locate_button(GOOD_UI, "android-mcp-v3-open-secure-fixture")
         for bad in (
             GOOD_UI.replace("android-mcp-v3-increment-counter", "bad"),
             GOOD_UI.replace(

@@ -149,7 +149,7 @@ def _validate_pair(
         "missing deterministic fixture instrumentation/document",
     )
     need(
-        fixture.get("instrumentation") == "9 real AndroidJUnitRunner tests",
+        fixture.get("instrumentation") == "12 real AndroidJUnitRunner tests",
         "mock or incomplete fixture AndroidJUnitRunner evidence",
     )
     before, after = (
@@ -228,7 +228,7 @@ def evaluate_matrix(
         "verified_api_levels": sorted(api_ids),
         "git_head": head,
         "git_tree": tree,
-        "android_junit_tests": sum(3 + 9 for _ in receipts),
+        "android_junit_tests": sum(3 + 12 for _ in receipts),
         "native_mcp_client_calls_verified": len(receipts),
         "fixture_is_not_native_executor": True,
         "native_product_features_done": 0,
