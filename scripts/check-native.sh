@@ -27,7 +27,9 @@ uv run --project host --locked --python 3.13 python scripts/smoke-native-jvm.py
 echo "== N0.b Kotlin/JVM hostile localhost Host/Origin/HTTP denial smoke =="
 uv run --project host --locked --python 3.13 python scripts/smoke-native-local-guard.py
 echo "== Emulator-only guard and UI selection tests (no Android SDK) =="
-uv run --project host --locked --group dev --python 3.13 pytest -q android/tests
+mkdir -p artifacts
+uv run --project host --locked --group dev --python 3.13 pytest -q android/tests \
+  --junitxml=artifacts/native-v3-e00b-python-junit.xml
 
 echo "== V3 source requirements/admission and exclusive AVD negative-path tests =="
 python3 -m unittest discover -s tests -p 'test_native_v3*.py' -v
@@ -36,4 +38,13 @@ python3 scripts/native_v3_gate.py \
   --traceability docs/native-v3/Android_Native_MCP_V3_Legacy_228_Traceability_Template_2026-10-14.csv \
   --plan docs/native-v3/Android_Native_MCP_E2E_Implementation_Plan_V3_2026-10-14.md
 
-echo "JVM Native protocol tests, cross-language MCP, V3 admission, and safety gates passed."
+echo "== V3 E00.b historical executable test IDs and per-case XML evidence =="
+python3 -m unittest discover -s tests -p 'test_native_v3_legacy_attribution.py' -v
+python3 scripts/native_v3_legacy_attribution.py \
+  --repo . \
+  --kotlin-test-results android \
+  --python-junit artifacts/native-v3-e00b-python-junit.xml \
+  --require-all-unit-results \
+  --out artifacts/native-v3-e00b-unit-attribution.json
+
+echo "JVM Native protocol, cross-language MCP, V3 traceability/admission, and safety gates passed."
