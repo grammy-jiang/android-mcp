@@ -1,0 +1,20 @@
+{
+  "schema_version": 2,
+  "kind": "operation_grant",
+  "message_id": "0d2b70d7-95ef-4441-bb45-398a8fe5cb7e",
+  "session_id": "47707d52-ecf5-454d-9d28-a364bbbf9eba",
+  "native_installation_id": "598f88d9-28a5-4235-b7c8-3c8aa7827202",
+  "native_boot_epoch": "bf038b5a-d3ba-47e3-940a-dfc5ca86182b",
+  "host_spki_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "native_spki_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "issued_at_unix_ms": 1791940000000,
+  "expires_at_unix_ms": 1791940015000,
+  "payload": {
+    "scope": "user_consented",
+    "tool": "native_capture_screen",
+    "target_package": "org.androidmcp.v3fixture",
+    "operation_digest_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "consent_event_id": "12debb2e-84f8-4e62-b31a-72a4373bf23f",
+    "signature_der_b64u": "MEUCIFo8b2u3pLe4g5e6fg7h8i9j0kLm1No2Pq3Rs4Tu5VwWAiEAlfas8Bl4N36q4eGxXiLE_c2vzHokBEy2uvTzrI31Jf8"
+  }
+}

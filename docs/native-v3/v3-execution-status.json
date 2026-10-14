@@ -905,6 +905,60 @@
       ],
       "source": "E02.a genuine Keystore/Host OpenSSL one-version test POC gap-closure audit 2026-10-14",
       "status": "OPEN"
+    },
+    {
+      "description": "C0 shared v2 contract candidate has Python/Kotlin offline parsers only, not a jointly integrated live Native/Host MCP consumer.",
+      "found_in": "E02.b",
+      "id": "GAP-N17-005",
+      "independent_oracle": "Real signed/paired Host and installed Native MCP response, Android OS callback/receipt, deterministic retry/lease arbitration oracle",
+      "next_action": "Require separately owned Host and Native writers to validate exact wire bytes and version negotiation over mutually authenticated TLS with real device_status v1 compatibility test.",
+      "owner": "C0 shared contract owner plus separately acknowledged Host and Native runtime writers",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N17-01",
+        "V3-N17-02",
+        "V3-N17-03"
+      ],
+      "source": "E02.b six-kind C0 candidate/dual-runtime source test and gap review 2026-10-14",
+      "status": "OPEN"
+    },
+    {
+      "description": "Signature-shaped proof/grant fields lack jointly reviewed canonical signed-byte encoding and external Host owner key enrollment.",
+      "found_in": "E02.b",
+      "id": "GAP-N17-006",
+      "independent_oracle": "Real signed/paired Host and installed Native MCP response, Android OS callback/receipt, deterministic retry/lease arbitration oracle",
+      "next_action": "Agree and independently review standardized cryptographic envelope/canonical encoding and exact key fingerprints, then test signature, stale boot, replay, replacement and revocation against real Host and Native processes.",
+      "owner": "C0 shared contract owner plus separately acknowledged Host and Native runtime writers",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N17-04",
+        "V3-N17-05",
+        "V3-N17-06",
+        "V3-N17-07"
+      ],
+      "source": "E02.b six-kind C0 candidate/dual-runtime source test and gap review 2026-10-14",
+      "status": "OPEN"
+    },
+    {
+      "description": "The v2 lease request/receipt is a typed protocol claim; no persistent Native authoritative lease/replay journal or Android pre-effect fence is connected.",
+      "found_in": "E02.b",
+      "id": "GAP-N18-002",
+      "independent_oracle": "Real signed/paired Host and installed Native MCP response, Android OS callback/receipt, deterministic retry/lease arbitration oracle",
+      "next_action": "Implement Native durable monotonically increasing arbiter, competing Host process tests and uncertain-after-dispatch reconciliation with independent Android effect evidence.",
+      "owner": "C0 shared contract owner plus separately acknowledged Host and Native runtime writers",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N18-01",
+        "V3-N18-02",
+        "V3-N18-03",
+        "V3-N18-04",
+        "V3-N18-07"
+      ],
+      "source": "E02.b six-kind C0 candidate/dual-runtime source test and gap review 2026-10-14",
+      "status": "OPEN"
     }
   ],
   "snapshot_origin": "V3 full-lifecycle acceptance spec plus current app Tool registration source",
@@ -1019,13 +1073,15 @@
       "verification_doc": "docs/native-v3/E02A-ANDROID-KEYSTORE-MTLS-POC-20261014.md"
     },
     {
+      "capability_product_status": "NOT_DONE",
       "dependencies": [
         "E02.a"
       ],
       "id": "E02.b",
       "objective": "Freeze versioned shared v2 pairing/auth/permission/grant/lease schema and compatibility; coordinate C0\u2192Host\u2192Native PR train with named writers.",
       "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
-      "status": "NOT_VERIFIED_DONE"
+      "status": "C0_CANDIDATE_PARSED_IN_KOTLIN_PYTHON_NOT_FROZEN",
+      "verification_doc": "docs/native-v3/E02B-C0-SECURITY-WIRE-V2-CANDIDATE-20261014.md"
     },
     {
       "dependencies": [
