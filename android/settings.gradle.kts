@@ -29,3 +29,8 @@ if (providers.gradleProperty("enableV3Fixtures").orNull == "true") {
     include(":native-v3-fixture")
     include(":native-v3-install-fixture")
 }
+
+// E02.a separate test-only app. Never enable a production TLS listener.
+if (providers.gradleProperty("enableV3TlsPoc").orNull == "true") {
+    include(":native-v3-tls-fixture")
+}

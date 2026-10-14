@@ -23,6 +23,7 @@ MODULES = (
     "native-mcp-jvm",
     "native-v3-fixture",
     "native-v3-install-fixture",
+    "native-v3-tls-fixture",
 )
 COORDINATE = re.compile(
     r'\b(?:implementation|api|testImplementation|testRuntimeOnly|androidTestImplementation|runtimeOnly)\("([^"()]+)"\)'

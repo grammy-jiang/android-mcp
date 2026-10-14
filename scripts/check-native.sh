@@ -32,7 +32,7 @@ uv run --project host --locked --group dev --python 3.13 pytest -q android/tests
   --junitxml=artifacts/native-v3-e00b-python-junit.xml
 
 echo "== V3 source requirements/admission and exclusive AVD negative-path tests =="
-python3 -m unittest discover -s tests -p 'test_native_v3*.py' -v
+uv run --project host --locked --group dev --python 3.13 python -m unittest discover -s tests -p 'test_native_v3*.py' -v
 python3 scripts/native_v3_gate.py \
   --registry docs/native-v3/Android_Native_MCP_E2E_Acceptance_Registry_V3_2026-10-14.json \
   --traceability docs/native-v3/Android_Native_MCP_V3_Legacy_228_Traceability_Template_2026-10-14.csv \
