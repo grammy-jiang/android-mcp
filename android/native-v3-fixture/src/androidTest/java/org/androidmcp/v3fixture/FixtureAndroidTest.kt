@@ -72,6 +72,122 @@ class FixtureAndroidTest {
         }
     }
 
+    @Test fun secureActivityMustSetActualAndroidFlagAndMaskPassword() {
+        val intent = Intent(context, SecureFixtureActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val activity = instrumentation.startActivitySync(intent) as SecureFixtureActivity
+        try {
+            instrumentation.waitForIdleSync()
+            assertTrue(
+                "Android must enforce screenshot/MediaProjection secure-window exclusion",
+                activity.window.attributes.flags and
+                    android.view.WindowManager.LayoutParams.FLAG_SECURE != 0
+            )
+            val input = activity.findViewById<android.widget.EditText>(
+                FixtureContract.SECURE_PASSWORD_ID
+            )
+            assertNotNull(input)
+            instrumentation.runOnMainSync {
+                input.setText(FixtureContract.SYNTHETIC_SECRET)
+            }
+            assertTrue(
+                "Actual EditText must expose TYPE_TEXT_VARIATION_PASSWORD",
+                input.inputType and android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD != 0
+            )
+            assertTrue(
+                "Accessibility must classify EditText as a password node",
+                input.createAccessibilityNodeInfo().isPassword
+            )
+            val rootNode = instrumentation.uiAutomation.rootInActiveWindow
+            // Android 16 may deliberately withhold a FLAG_SECURE window from
+            // UiAutomation entirely. In that case the direct Android node
+            // classification above still must report isPassword=true.
+            val passwordNodes = mutableListOf<android.view.accessibility.AccessibilityNodeInfo>()
+            fun collect(node: android.view.accessibility.AccessibilityNodeInfo?) {
+                if (node == null) return
+                if (node.contentDescription?.toString() == "android-mcp-v3-synthetic-password") {
+                    passwordNodes.add(node)
+                }
+                for (index in 0 until node.childCount) collect(node.getChild(index))
+            }
+            collect(rootNode)
+            if (rootNode != null) {
+                assertFalse(
+                    "Accessible secure window must not reveal the raw synthetic secret",
+                    rootNode.text?.toString()?.contains(FixtureContract.SYNTHETIC_SECRET) == true
+                )
+                assertTrue(
+                    "Secure window accessibility must be withheld or contain a password node",
+                    passwordNodes.isNotEmpty() || rootNode.childCount == 0
+                )
+            }
+            for (node in passwordNodes) {
+                assertTrue("Android must classify this field as password", node.isPassword)
+                assertFalse(
+                    "Synthetic confidential fixture text leaked via accessibility",
+                    node.text?.toString()?.contains(FixtureContract.SYNTHETIC_SECRET) == true
+                )
+            }
+        } finally {
+            instrumentation.runOnMainSync { activity.finish() }
+        }
+    }
+
+    @Test fun secureSurfaceMustBeKnownColorButAbsentFromSystemScreenshot() {
+        val activity = instrumentation.startActivitySync(
+            Intent(context, SecureFixtureActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        ) as SecureFixtureActivity
+        try {
+            instrumentation.waitForIdleSync()
+            val canvasView = activity.findViewById<SecureFixtureSurface>(
+                FixtureContract.SECURE_SURFACE_ID
+            )
+            assertNotNull(canvasView)
+            val buffer = Bitmap.createBitmap(240, 240, Bitmap.Config.ARGB_8888)
+            instrumentation.runOnMainSync {
+                canvasView.measure(
+                    android.view.View.MeasureSpec.makeMeasureSpec(240, android.view.View.MeasureSpec.EXACTLY),
+                    android.view.View.MeasureSpec.makeMeasureSpec(240, android.view.View.MeasureSpec.EXACTLY)
+                )
+                canvasView.layout(0, 0, 240, 240)
+                canvasView.draw(Canvas(buffer))
+            }
+            assertEquals(
+                "Secure marker must really be rendered within the fixture process",
+                FixtureContract.SECURE_MARKER_COLOR,
+                buffer.getPixel(120, 120)
+            )
+            buffer.recycle()
+            val screenshot = instrumentation.uiAutomation.takeScreenshot()
+            if (screenshot != null) {
+                try {
+                    val x = screenshot.width / 2
+                    val y = screenshot.height * 7 / 10
+                    assertNotEquals(
+                        "Protected window pixel leaked into real Android screenshot",
+                        FixtureContract.SECURE_MARKER_COLOR,
+                        screenshot.getPixel(x, y)
+                    )
+                } finally {
+                    screenshot.recycle()
+                }
+            }
+        } finally {
+            instrumentation.runOnMainSync { activity.finish() }
+        }
+    }
+
+    @Test fun secureActivityMustNeverBeExportedToOtherApps() {
+        val information = context.packageManager.getActivityInfo(
+            android.content.ComponentName(context, SecureFixtureActivity::class.java), 0
+        )
+        assertFalse(
+            "Password-bearing fixture Activity must not be exported",
+            information.exported
+        )
+    }
+
     @Test fun knownDocumentContentsAndHashArePinned() {
         val bytes = FixtureContract.knownBytes()
         assertArrayEquals("ANDROID-MCP-V3-FIXTURE-DOCUMENT-v1\n".toByteArray(), bytes)

@@ -67,7 +67,7 @@ def example(api: int) -> tuple[dict, dict]:
         },
         "androidTest_sha256": FIXTURE_TEST,
         "document_bytes_sha256": DOC,
-        "instrumentation": "9 real AndroidJUnitRunner tests",
+        "instrumentation": "12 real AndroidJUnitRunner tests",
         "external_counter_before": 7,
         "external_counter_after": 8,
         "counter_after_process_restart": 8,
@@ -89,7 +89,7 @@ class E01MatrixGateTests(unittest.TestCase):
     def test_full_four_api_receipts_admitted_as_infrastructure_only(self) -> None:
         result = evaluate_matrix(receipts(), GIT_SHA, GIT_TREE)
         self.assertEqual(result["verified_api_levels"], [30, 33, 34, 36])
-        self.assertEqual(result["android_junit_tests"], 48)
+        self.assertEqual(result["android_junit_tests"], 60)
         self.assertEqual(result["native_mcp_client_calls_verified"], 4)
         self.assertEqual(result["native_product_features_done"], 0)
         self.assertEqual(result["product_status"], "PRODUCT_INCOMPLETE")

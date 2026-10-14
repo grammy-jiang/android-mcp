@@ -938,11 +938,13 @@
       "status": "OPEN"
     },
     {
-      "description": "Signed fixture UI tests have pixels/counter/SAF provider, but an explicit secure/password-window oracle and negative Accessibility/screenshot data-leakage fixture are still missing",
+      "description": "Secure/password fixture exists and 4-API instrumentation passes; independent OS accessibility/screenshot exclusion plus actual Native MCP secure-node refusal and privacy recovery remain missing",
+      "engineering_evidence": "docs/native-v3/GAP-N07-002-SECURE-FIXTURE-EVIDENCE-20261014.md",
+      "engineering_observation": "Signed FLAG_SECURE non-exported password fixture: 12/12 on-device AndroidJUnitRunner each API30/33/34/36; production secure Accessibility/screenshot oracle not proved",
       "found_in": "E01.b architecture acceptance fixture audit",
       "id": "GAP-N07-002",
       "independent_oracle": "Accessibility node-tree secure-screen redaction and MediaProjection secure pixels independently observed on installed fixture",
-      "next_action": "Add deterministic FLAG_SECURE and password edit controls to separately signed fixture; prove secure-window non-disclosure, redaction and targeted gesture refusal by real Android instrumentation on API30/33/34/36",
+      "next_action": "Complete independent 4-API secure/password UI tree oracle and real paired Native AccessibilityService/MediaProjection refusal; verify Stop, revocation, crash and no password or secure pixel leak",
       "owner": "Native Android signed fixture owner",
       "profile": "SENSITIVE_USER_CONSENT",
       "release_blocking": true,

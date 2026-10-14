@@ -34,8 +34,8 @@ be added to the source ledger and rendered here immediately.
   - Installed Native AndroidJUnitRunner APK; real Android API30/33/34/36 instrumentation verification; separate JVM simulation is not counted
   - Evidence: [evidence](E00-E01-EXECUTION-EVIDENCE-20261014.md)
 - [x] ~~E01.b — Create pinned signed deterministic fixture APK(s), UI tree/gesture counter, MediaProjection known pixels, files/provider, and APK installer target.~~ — DONE_ENGINEERING; dependencies: E01.a
-  - Signed deterministic UI/counter/pixel, SAF provider, installation-target fixtures tested on API30/33/34/36; secure-window extension remains a feature GAP
-  - Evidence: [evidence](E01B-SIGNED-FIXTURE-EVIDENCE-20261014.md)
+  - Signed counter/pixel/SAF/install-target fixtures plus non-exported FLAG_SECURE password fixture have real 12-test matrix on API30/33/34/36; product Native privacy E2E remains GAP-N07-002
+  - Evidence: [evidence](E01B-SIGNED-FIXTURE-EVIDENCE-20261014.md), [evidence](GAP-N07-002-SECURE-FIXTURE-EVIDENCE-20261014.md)
 - [ ] **E01.c — Implement OS UI consent harness for ActivityResult, Settings, SAF and PackageInstaller; permit ADB only as test driver/oracle.** — IN_PROGRESS; dependencies: E01.a, E01.b
   - Another exclusive E01.c developer worktree contains uncommitted real OS-consent tests; do not interfere or claim completion
 - [x] ~~E01.d — Build independent genuine MCP Streamable HTTP client test runner and wire/contract oracle.~~ — DONE_ENGINEERING; dependencies: E01.a
@@ -203,8 +203,8 @@ be added to the source ledger and rendered here immediately.
   - Next: Review each of 228 original historical specifications against executable assertions; flag fake/missing semantics and add dedicated behavioral tests per uncovered case
 - [ ] **GAP-N01-003** — OPEN: Original machine-readable 70-work-package registry and V3 delivery summary inside approved ZIP remain unavailable as original bytes; derived prose index is not the missing original
   - Next: Recover and hash the two original documents from authorized Library/ZIP; reconcile approved dependencies and acceptance metadata against the derived 70-package index without manufacturing originals
-- [ ] **GAP-N07-002** — OPEN: Signed fixture UI tests have pixels/counter/SAF provider, but an explicit secure/password-window oracle and negative Accessibility/screenshot data-leakage fixture are still missing
-  - Next: Add deterministic FLAG_SECURE and password edit controls to separately signed fixture; prove secure-window non-disclosure, redaction and targeted gesture refusal by real Android instrumentation on API30/33/34/36
+- [ ] **GAP-N07-002** — OPEN: Secure/password fixture exists and 4-API instrumentation passes; independent OS accessibility/screenshot exclusion plus actual Native MCP secure-node refusal and privacy recovery remain missing
+  - Next: Complete independent 4-API secure/password UI tree oracle and real paired Native AccessibilityService/MediaProjection refusal; verify Stop, revocation, crash and no password or secure pixel leak
 
 ## Repeatable completion workflow
 

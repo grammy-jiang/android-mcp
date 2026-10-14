@@ -60,7 +60,7 @@ def parse_signer_digest(text: str) -> str:
     return matches[0]
 
 
-def locate_button(xml: str) -> tuple[int, int]:
+def locate_button(xml: str, description: str = ACCESSIBILITY_ID) -> tuple[int, int]:
     try:
         root = ET.fromstring(xml)
     except ET.ParseError as exc:
@@ -68,7 +68,7 @@ def locate_button(xml: str) -> tuple[int, int]:
     candidates = [
         item
         for item in root.iter()
-        if item.attrib.get("content-desc") == ACCESSIBILITY_ID
+        if item.attrib.get("content-desc") == description
         and item.attrib.get("class") == "android.widget.Button"
         and item.attrib.get("enabled") != "false"
     ]
@@ -232,7 +232,7 @@ def verify_fixture(api: int, repo: Path, evidence_dir: Path) -> dict[str, object
             timeout=75,
         )
         _require(
-            "OK (9 tests)" in instrumentation
+            "OK (12 tests)" in instrumentation
             and "INSTRUMENTATION_CODE: -1" in instrumentation,
             "Fixture AndroidJUnitRunner behavior suite failed",
         )
@@ -297,7 +297,7 @@ def verify_fixture(api: int, repo: Path, evidence_dir: Path) -> dict[str, object
             "signing": signatures,
             "androidTest_sha256": _sha(test_apk),
             "document_bytes_sha256": EXPECTED_DOC_SHA,
-            "instrumentation": "9 real AndroidJUnitRunner tests",
+            "instrumentation": "12 real AndroidJUnitRunner tests",
             "external_counter_before": before,
             "external_counter_after": after,
             "counter_after_process_restart": post_restart,
