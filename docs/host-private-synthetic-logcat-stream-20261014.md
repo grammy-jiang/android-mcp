@@ -63,6 +63,11 @@ fixture stdout or stderr. Storage is bounded to **32 sessions**,
 access, with expired rows purged on later insert; an idle database is
 not a scheduled real-time deletion service.
 
+The final disclosure validator accepts **exactly one** of `V`, `D`,
+`I`, `W`, `E`, `F` for priority, rejecting empty and multi-character
+substrings even if a malicious writer recomputes the unkeyed row SHA-256.
+An adversarial red-first regression fixes the independent review finding.
+
 All cursor polls use SQLite `BEGIN IMMEDIATE` to atomically consume
 one page: an already-used, forged, malformed or cross-session cursor
 cannot return the same page twice. After the final page, unread payload
@@ -99,7 +104,12 @@ the same group and independently verifies the original Host parent
 PID and a monotonic deadline no later than three seconds. The guard
 kills its entire owned process group if the Host crashes, is SIGKILLed,
 disconnects or hangs beyond the deadline, even when the Host's own
-Python `finally` cleanup cannot execute. Normal Host cancellation,
+Python `finally` cleanup cannot execute. If the watchdog reaches its own deadline a tick before the Host reader,
+its isolated SIGKILL return is classified as `TIMEOUT` rather than an
+unrelated fixture error, with an explicit bounded timing check; Linux
+3.11–3.14 CI tests exercise this scheduler race.
+
+Normal Host cancellation,
 timeout, output overflow and process exit still kill and reap the
 guard group. The guard never sends a signal to the Host's group.
 A real subprocess SIGKILL regression test checks that an otherwise

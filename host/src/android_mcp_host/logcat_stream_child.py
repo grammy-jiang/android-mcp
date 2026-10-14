@@ -112,7 +112,15 @@ class SyntheticLogcatProcessReader:
                     if total > max_bytes:
                         raise ValueError("Synthetic fixture output cap exceeded")
                     parts.append(chunk)
-            if process.wait(timeout=max(0.01, timeout - (time.monotonic() - started))) != 0:
+            returncode = process.wait(timeout=max(0.01, timeout - (time.monotonic() - started)))
+            if returncode != 0:
+                # The independent watchdog can reach the monotonic deadline
+                # and SIGKILL the group before the reader's next select tick.
+                # Classify that exact outcome as a timeout, not fixture failure.
+                if returncode in (-signal.SIGKILL, 124) and time.monotonic() >= (
+                    started + timeout - 0.10
+                ):
+                    raise subprocess.TimeoutExpired(["synthetic-logcat-fixture"], timeout)
                 raise RuntimeError("Synthetic fixture returned unsuccessful exit")
             return StreamFrame(b"".join(parts), name, handle, lifecycle, True, True)
         finally:

@@ -157,7 +157,7 @@ def valid_stored_events(value: object) -> bool:
         priority, tag, message = event["priority"], event["tag"], event["message"]
         if (
             type(priority) is not str
-            or priority not in "VDIWEF"
+            or priority not in frozenset({"V", "D", "I", "W", "E", "F"})
             or type(tag) is not str
             or tag not in TAGS
             or type(message) is not str

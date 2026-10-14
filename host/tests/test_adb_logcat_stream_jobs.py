@@ -429,3 +429,11 @@ def test_t_h5b_06_real_inprocess_mcp_typed_schema_and_denial(tmp_path: Path) -> 
         asyncio.run(check_mcp())
     finally:
         live.shutdown()
+
+
+@pytest.mark.parametrize("invalid", ["", "VD", "IWE", "VDIWEF"])
+def test_t_h5b_03_stored_priority_is_exact_single_character(invalid: str) -> None:
+    from android_mcp_host.logcat_stream_support import valid_stored_events
+
+    item = {"priority": invalid, "tag": "McpTest", "message": "STATE=ready"}
+    assert valid_stored_events([item]) is False
