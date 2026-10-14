@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:android-mcp:host-synthetic-ui-actions:v1",
+  "title": "Bounded synthetic emulator UI intents and private action receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "runtime",
+    "status",
+    "action_state",
+    "avd_name",
+    "avd_handle",
+    "lifecycle_job_id",
+    "window_id",
+    "window_generation",
+    "rotation",
+    "focused_node_id",
+    "kind",
+    "intent_sha256",
+    "job_id",
+    "action_id",
+    "report_handle",
+    "report_sha256",
+    "preview_argv",
+    "target",
+    "synthetic_fixture_only",
+    "real_ui_input_enabled",
+    "physical_device_writes_enabled",
+    "generic_shell_enabled",
+    "errors"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "runtime": {
+      "const": "host"
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "simulated",
+        "blocked",
+        "failed",
+        "uncertain"
+      ]
+    },
+    "action_state": {
+      "enum": [
+        "none",
+        "applied_synthetic",
+        "unknown"
+      ]
+    },
+    "avd_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcp_[A-Za-z0-9][A-Za-z0-9_-]{2,43}$"
+    },
+    "avd_handle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^mcpavd_[A-Za-z0-9_-]{32}$"
+    },
+    "lifecycle_job_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^job_[A-Za-z0-9_-]{32}$"
+    },
+    "window_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^win_[A-Za-z0-9_-]{1,64}$"
+    },
+    "window_generation": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "rotation": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 3
+    },
+    "focused_node_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^node_[A-Za-z0-9_-]{1,40}$"
+    },
+    "kind": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "tap",
+        "swipe",
+        "key",
+        null
+      ]
+    },
+    "intent_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "job_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^job_[A-Za-z0-9_-]{32}$"
+    },
+    "action_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^job_[A-Za-z0-9_-]{32}$"
+    },
+    "report_handle": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^art_[A-Za-z0-9_-]{32}$"
+    },
+    "report_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "preview_argv": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "string",
+        "maxLength": 128
+      }
+    },
+    "target": {
+      "const": "disposable_emulator_only"
+    },
+    "synthetic_fixture_only": {
+      "const": true
+    },
+    "real_ui_input_enabled": {
+      "const": false
+    },
+    "physical_device_writes_enabled": {
+      "const": false
+    },
+    "generic_shell_enabled": {
+      "const": false
+    },
+    "errors": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "enum": [
+              "INVALID_ACTION",
+              "INVALID_INPUT",
+              "NOT_OWNED",
+              "MUTATION_DISABLED",
+              "CONSENT_REQUIRED",
+              "UNVERIFIED_TARGET",
+              "STALE_WINDOW",
+              "WINDOW_PROTECTED",
+              "CAPABILITY_UNAVAILABLE",
+              "RECOVERY_REQUIRED",
+              "JOB_UNAVAILABLE",
+              "IDEMPOTENCY_CONFLICT",
+              "BAD_FRAME",
+              "PARTIAL_ACTION",
+              "TIMEOUT",
+              "RUNNER_FAILED",
+              "ARTIFACT_EXPIRED",
+              "NOT_ACTIVE",
+              "CANCELLED"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 128
+          }
+        }
+      }
+    }
+  }
+}

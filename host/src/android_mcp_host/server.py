@@ -20,17 +20,15 @@ from android_mcp_host.avd_inventory import AvdInventory
 from android_mcp_host.avd_provisioning import AvdProvisioner
 from android_mcp_host.capability_profiles import CapabilityProfiles, get_capability_output_schema
 from android_mcp_host.controlled_build_jobs import ControlledBuildJobs
-from android_mcp_host.controlled_build_tool import register_build_tool
 from android_mcp_host.device_discovery import DeviceDiscovery, get_device_list_output_schema
-from android_mcp_host.durable_job_tool import register_job_status_tool
 from android_mcp_host.durable_jobs import DurableJobStore
 from android_mcp_host.emulator_debug_deployment import DebugDeployment
 from android_mcp_host.emulator_instrumentation_jobs import InstrumentationJobs
 from android_mcp_host.emulator_lifecycle import EmulatorLifecycle
 from android_mcp_host.emulator_snapshot_manager import EmulatorSnapshotManager
-from android_mcp_host.emulator_snapshot_tool import register_snapshot_tool
 from android_mcp_host.emulator_tool_registration import register_emulator_tools
 from android_mcp_host.fastboot_inventory import FastbootInventory, get_fastboot_output_schema
+from android_mcp_host.host_tail_registration import register_host_tail
 from android_mcp_host.logcat_filters import LogcatFilters, get_logcat_output_schema
 from android_mcp_host.mcp_boundary import get_development_action_field_schema, get_output_schema
 from android_mcp_host.media_tool_registration import register_media_tools
@@ -51,6 +49,7 @@ from android_mcp_host.synthetic_file_pull import FilePullService
 from android_mcp_host.synthetic_file_push import FilePushService
 from android_mcp_host.synthetic_screenrecord import ScreenRecordService
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
+from android_mcp_host.synthetic_ui_actions import UiActionService
 from android_mcp_host.synthetic_ui_hierarchy import UiHierarchyService
 from android_mcp_host.system_snapshot import SystemSnapshot, get_snapshot_output_schema
 from android_mcp_host.toolchain_inventory import (
@@ -87,6 +86,7 @@ def create_server(
     screenrecord_worker: ScreenRecordService | None = None,
     file_pull_worker: FilePullService | None = None,
     file_push_worker: FilePushService | None = None,
+    ui_action_worker: UiActionService | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -483,18 +483,8 @@ def create_server(
         screenrecord_worker,
         file_pull_worker,
         file_push_worker,
+        ui_action_worker,
     )
-    if snapshot_manager is not None:
-        register_snapshot_tool(server, snapshot_manager)
-
-    if build_jobs is not None:
-        register_build_tool(server, build_jobs)
-
-    if (durable_jobs is None) != (job_owner is None):
-        raise ValueError("Durable job status needs a trusted store and owner")
-    if durable_jobs is not None and job_owner is not None:
-        if not durable_jobs.validate_owner(job_owner):
-            raise ValueError("Invalid Host job owner")
-        register_job_status_tool(server, durable_jobs, job_owner)
+    register_host_tail(server, snapshot_manager, build_jobs, durable_jobs, job_owner)
 
     return server
