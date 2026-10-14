@@ -955,6 +955,24 @@
       ],
       "source": "V3 architecture fixture secure/password-window requirements",
       "status": "OPEN"
+    },
+    {
+      "description": "External oracle/reviewer signing identities, actual Android OS-effect receipt collection, verified trusted key rotation and replay database are not yet integrated into an independently operated release gate",
+      "found_in": "E00.c signed evidence admission audit",
+      "id": "GAP-N01-004",
+      "independent_oracle": "Live separately operated fixture and independent reviewer receipts verified against immutable out-of-band trusted roots",
+      "next_action": "Provision externally approved pinned witness/reviewer public keys through a reviewed configuration; instrument true Native MCP\u2192Android callback\u2192independent fixture receipt; test exact source/APK/boot, expiry, revoked signer and replay across all four API levels",
+      "owner": "Independent Android fixture witness and security review owner",
+      "profile": "SECURITY_FOUNDATION",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N01-01",
+        "V3-N17-08",
+        "V3-XR-07",
+        "V3-XR-08"
+      ],
+      "source": "E00.c validated conditional signed receipt / no independent production trust roots",
+      "status": "OPEN"
     }
   ],
   "snapshot_origin": "V3 full-lifecycle acceptance spec plus current app Tool registration source",
@@ -979,13 +997,15 @@
       "status": "NOT_VERIFIED_DONE"
     },
     {
+      "completion_evidence": "docs/native-v3/E00C-EVIDENCE-ADMISSION-POLICY-20261014.md",
       "dependencies": [
         "E00.b"
       ],
       "id": "E00.c",
       "objective": "Define and implement product-status taxonomy, capability closure ledger, independent OS-effect receipts and unforgeable PASS_REAL_E2E admission rules.",
+      "product_status": "NOT_DONE",
       "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
-      "status": "NOT_VERIFIED_DONE"
+      "status": "DONE_ENGINEERING_ADMISSION_POLICY_ONLY"
     },
     {
       "completion_evidence": "docs/native-v3/E00D-AUTHORITY-RISK-REVIEW-20261014.md",

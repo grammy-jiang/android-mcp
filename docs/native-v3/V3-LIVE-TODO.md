@@ -5,9 +5,9 @@ recorded evidence pass. An engineering checkbox does NOT certify a
 product capability or an independent security review.
 
 - Baseline work packages: **70**
-- Engineering packages checked: **6**
-- Remaining or partially complete packages: **64**
-- Required GAP tasks still open: **26**
+- Engineering packages checked: **7**
+- Remaining or partially complete packages: **63**
+- Required GAP tasks still open: **27**
 - Real product capabilities accepted: **0/20**
 - New V3 real-E2E case receipts admitted: **0/192**
 - Product state: **PRODUCT_INCOMPLETE**
@@ -22,8 +22,9 @@ be added to the source ledger and rendered here immediately.
 - [x] ~~E00.b — Map all 228 legacy T-Nxx test IDs to executable test identifiers, layer, code path, real-or-mock classification and current evidence.~~ — DONE_ENGINEERING; dependencies: E00.a
   - All 228 historical IDs mapped to 257 exact executable JVM/Python test methods, with actual local test XML results; real device acceptance stays open
   - Evidence: [evidence](E00B-LEGACY-228-TRACEABILITY-EVIDENCE-20261014.md)
-- [ ] **E00.c — Define and implement product-status taxonomy, capability closure ledger, independent OS-effect receipts and unforgeable PASS_REAL_E2E admission rules.** — PARTIAL; dependencies: E00.b
-  - Adversarial fake-evidence rejection in place; externally trusted signing/provenance, per-case semantic attestation and product closure remain open
+- [x] ~~E00.c — Define and implement product-status taxonomy, capability closure ledger, independent OS-effect receipts and unforgeable PASS_REAL_E2E admission rules.~~ — DONE_ENGINEERING; dependencies: E00.b
+  - Canonical two-role Ed25519 real-Android receipt policy, exact API/boot/MCP/OS callback/recovery tests and strict case matrix; actual external roots/OS witnesses remain GAP-N01-004
+  - Evidence: [evidence](E00C-EVIDENCE-ADMISSION-POLICY-20261014.md)
 - [x] ~~E00.d — Classify OS consent vs operator-scoped privilege vs independent external security review; record risk owners and fallback for every family.~~ — DONE_ENGINEERING; dependencies: E00.c
   - 20-family consent/operator/Native-lease/independent-review/fallback taxonomy; 12 adversarial tests and full local CI pass; no OS grant or external security approval claimed
   - Evidence: [evidence](E00D-AUTHORITY-RISK-REVIEW-20261014.md), [evidence](v3-authority-risk-register.json)
@@ -205,6 +206,8 @@ be added to the source ledger and rendered here immediately.
   - Next: Recover and hash the two original documents from authorized Library/ZIP; reconcile approved dependencies and acceptance metadata against the derived 70-package index without manufacturing originals
 - [ ] **GAP-N07-002** — OPEN: Secure/password fixture exists and 4-API instrumentation passes; independent OS accessibility/screenshot exclusion plus actual Native MCP secure-node refusal and privacy recovery remain missing
   - Next: Complete independent 4-API secure/password UI tree oracle and real paired Native AccessibilityService/MediaProjection refusal; verify Stop, revocation, crash and no password or secure pixel leak
+- [ ] **GAP-N01-004** — OPEN: External oracle/reviewer signing identities, actual Android OS-effect receipt collection, verified trusted key rotation and replay database are not yet integrated into an independently operated release gate
+  - Next: Provision externally approved pinned witness/reviewer public keys through a reviewed configuration; instrument true Native MCP→Android callback→independent fixture receipt; test exact source/APK/boot, expiry, revoked signer and replay across all four API levels
 
 ## Repeatable completion workflow
 
