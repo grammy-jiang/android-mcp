@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/grammy-jiang/android-mcp/blob/main/host/src/android_mcp_host/wire_schemas/host-synthetic-logcat-stream.v1.schema.json",
+  "title": "Private finite synthetic Logcat stream receipt",
+  "description": "H5.b fake-only, owner-pinned, sanitized finite pages; real streaming and physical reads disabled",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "runtime": {
+      "const": "host"
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "ok",
+        "ended",
+        "stopped",
+        "blocked",
+        "failed",
+        "uncertain"
+      ]
+    },
+    "stream_state": {
+      "enum": [
+        "none",
+        "ready",
+        "ended",
+        "stopped",
+        "unknown"
+      ]
+    },
+    "avd_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "avd_handle": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 160
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "lifecycle_job_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 80
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "job_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^job_[A-Za-z0-9_-]{32}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cursor": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^cur_[0-9]{3}_[0-9a-f]{32}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entries": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "priority",
+          "tag",
+          "message"
+        ],
+        "properties": {
+          "priority": {
+            "enum": [
+              "V",
+              "D",
+              "I",
+              "W",
+              "E",
+              "F"
+            ]
+          },
+          "tag": {
+            "enum": [
+              "McpTest",
+              "ActivityManager",
+              "System"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 160
+          }
+        }
+      }
+    },
+    "from_index": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "next_index": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "total_events": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "dropped_events": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "retention_seconds": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "privacy_class": {
+      "const": "sensitive_private"
+    },
+    "synthetic_fixture_only": {
+      "const": true
+    },
+    "real_logcat_stream_enabled": {
+      "const": false
+    },
+    "physical_device_reads_enabled": {
+      "const": false
+    },
+    "raw_logcat_returned": {
+      "const": false
+    },
+    "errors": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{1,63}$"
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 160
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "runtime",
+    "status",
+    "stream_state",
+    "avd_name",
+    "avd_handle",
+    "lifecycle_job_id",
+    "job_id",
+    "cursor",
+    "entries",
+    "from_index",
+    "next_index",
+    "total_events",
+    "dropped_events",
+    "truncated",
+    "retention_seconds",
+    "privacy_class",
+    "synthetic_fixture_only",
+    "real_logcat_stream_enabled",
+    "physical_device_reads_enabled",
+    "raw_logcat_returned",
+    "errors"
+  ]
+}

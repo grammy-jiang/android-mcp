@@ -14,6 +14,7 @@ from android_mcp_host.file_pull_support import valid_synthetic_package
 from android_mcp_host.synthetic_bugreport import BugreportService
 from android_mcp_host.synthetic_file_pull import FilePullService
 from android_mcp_host.synthetic_file_push import FilePushService
+from android_mcp_host.synthetic_logcat_stream import SyntheticLogcatStream
 from android_mcp_host.synthetic_screenrecord import ScreenRecordService
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
 from android_mcp_host.synthetic_ui_actions import UiActionService
@@ -50,6 +51,11 @@ def add_capture_flags(serve: argparse.ArgumentParser) -> None:
         "--bugreport-plan",
         action="store_true",
         help="Opt in to private sanitized synthetic bugreport plans; real read disabled.",
+    )
+    serve.add_argument(
+        "--logcat-stream-plan",
+        action="store_true",
+        help="Opt in to finite sanitized synthetic Logcat plans; no live stream.",
     )
     serve.add_argument(
         "--screenrecord-plan",
@@ -110,6 +116,13 @@ def validate_capture_flags(args: argparse.Namespace, parser: argparse.ArgumentPa
         or args.avd_owner != args.job_owner
     ):
         parser.error("--bugreport-plan requires owned AVD, lifecycle, jobs and artifacts.")
+    if args.logcat_stream_plan and (
+        not args.emulator_lifecycle_plan
+        or not args.avd_provision
+        or not args.durable_job_status
+        or args.avd_owner != args.job_owner
+    ):
+        parser.error("--logcat-stream-plan requires owned AVD, lifecycle and durable jobs.")
     if args.ui_action_plan and (
         not args.emulator_lifecycle_plan
         or not args.avd_provision
@@ -175,6 +188,13 @@ def register_capture_workers(args: argparse.Namespace, kwargs: dict[str, Any]) -
         )
     if args.ui_hierarchy_plan:
         kwargs["ui_hierarchy_worker"] = UiHierarchyService(
+            kwargs["avd_provisioner"],
+            kwargs["emulator_lifecycle"],
+            kwargs["durable_jobs"],
+            owner=args.avd_owner,
+        )
+    if args.logcat_stream_plan:
+        kwargs["logcat_stream_worker"] = SyntheticLogcatStream(
             kwargs["avd_provisioner"],
             kwargs["emulator_lifecycle"],
             kwargs["durable_jobs"],

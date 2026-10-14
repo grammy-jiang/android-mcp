@@ -12,6 +12,8 @@ from android_mcp_host.emulator_snapshot_manager import EmulatorSnapshotManager
 from android_mcp_host.emulator_snapshot_tool import register_snapshot_tool
 from android_mcp_host.synthetic_bugreport import BugreportService
 from android_mcp_host.synthetic_bugreport_tool import register_bugreport_tool
+from android_mcp_host.synthetic_logcat_stream import SyntheticLogcatStream
+from android_mcp_host.synthetic_logcat_stream_tool import register_logcat_stream_tool
 
 
 def register_host_tail(
@@ -21,10 +23,13 @@ def register_host_tail(
     build_jobs: ControlledBuildJobs | None,
     durable_jobs: DurableJobStore | None,
     job_owner: str | None,
+    logcat_stream: SyntheticLogcatStream | None = None,
 ) -> None:
     """Retains existing catalog ordering and rejects unmatched job owners."""
     if bugreport is not None:
         register_bugreport_tool(server, bugreport)
+    if logcat_stream is not None:
+        register_logcat_stream_tool(server, logcat_stream)
     if snapshot_manager is not None:
         register_snapshot_tool(server, snapshot_manager)
     if build_jobs is not None:
