@@ -11,8 +11,11 @@
     "state": "DONE_ENGINEERING"
   },
   "E00.c": {
-    "note": "Adversarial fake-evidence rejection in place; externally trusted signing/provenance, per-case semantic attestation and product closure remain open",
-    "state": "PARTIAL"
+    "evidence": [
+      "docs/native-v3/E00C-EVIDENCE-ADMISSION-POLICY-20261014.md"
+    ],
+    "note": "Canonical two-role Ed25519 real-Android receipt policy, exact API/boot/MCP/OS callback/recovery tests and strict case matrix; actual external roots/OS witnesses remain GAP-N01-004",
+    "state": "DONE_ENGINEERING"
   },
   "E00.d": {
     "evidence": [
