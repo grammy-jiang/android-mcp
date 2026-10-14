@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:allowBackup="false"
+        android:label="Android MCP V3 Deterministic Fixture"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false">
+        <activity android:name=".FixtureActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <provider
+            android:name=".FixtureDocumentsProvider"
+            android:authorities="org.androidmcp.v3fixture.documents"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+        <provider
+            android:name=".FixtureOracleProvider"
+            android:authorities="org.androidmcp.v3fixture.oracle"
+            android:exported="true"
+            android:grantUriPermissions="false" />
+    </application>
+</manifest>
