@@ -1048,6 +1048,26 @@
       ],
       "source": "Actual API30/33/34/36 installed Native APK AndroidJUnitRunner and Host UI E2E attempt",
       "status": "OPEN"
+    },
+    {
+      "description": "Signed local test AVD owner/nonce and ADB forward teardown gates work, but real consent cancel, user notification Stop, forced Native process death, reconnect/uncertain dispatch and revalidated OS-grant recovery are not yet linked to independent four-API automation",
+      "found_in": "E01.e exclusively owned AVD identity and test teardown audit",
+      "id": "GAP-N16-002",
+      "independent_oracle": "Android Framework ActivityResult/permission UI callbacks, PackageManager plus fixture OS effect, exact signed AVD boot and paired Native MCP protocol receipt",
+      "next_action": "Integrate E01.c actual Android permission/ActivityResult UI automation with sealed E01.e AVD and E01.f; exercise user reject, cancellation, Stop, timeout, process-death/retry, competing Host, stale lease, boot epoch and independent OS state on API30/33/34/36",
+      "owner": "Native lifecycle and Android OS consent integration",
+      "profile": "S0_STATUS_ONLY_AND_TEST_RECOVERY",
+      "release_blocking": true,
+      "requirements": [
+        "V3-N16-03",
+        "V3-N16-04",
+        "V3-N16-05",
+        "V3-N16-06",
+        "V3-N16-07",
+        "V3-N16-08"
+      ],
+      "source": "V3 E01.e original recovery and lifecycle requirement",
+      "status": "OPEN"
     }
   ],
   "snapshot_origin": "V3 full-lifecycle acceptance spec plus current app Tool registration source",
@@ -1136,10 +1156,12 @@
         "E01.c",
         "E01.d"
       ],
+      "engineering_evidence": "docs/native-v3/E01E-OWNED-AVD-ATTESTATION-20261014.md",
       "id": "E01.e",
       "objective": "Implement AVD exclusive lease/preflight, exact boot/API/ABI/owner/nonce proof, fault injection, teardown and sanitized evidence.",
+      "product_status": "NOT_DONE",
       "source": "V3 approved implementation plan prose; not the unavailable original registry JSON",
-      "status": "NOT_VERIFIED_DONE"
+      "status": "PARTIAL_OWNER_SEALED_EMULATOR_AND_TEARDOWN_VALIDATED_REQUIRES_CONSENT_INTEGRATION"
     },
     {
       "dependencies": [

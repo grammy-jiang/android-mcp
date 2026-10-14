@@ -7,7 +7,7 @@ product capability or an independent security review.
 - Baseline work packages: **70**
 - Engineering packages checked: **7**
 - Remaining or partially complete packages: **63**
-- Required GAP tasks still open: **31**
+- Required GAP tasks still open: **32**
 - Real product capabilities accepted: **0/20**
 - New V3 real-E2E case receipts admitted: **0/192**
 - Product state: **PRODUCT_INCOMPLETE**
@@ -43,7 +43,7 @@ be added to the source ledger and rendered here immediately.
   - Independent FastMCP Streamable HTTP real installed Native APK status/list/call/denial/Stop/restart checks across API30/33/34/36
   - Evidence: [evidence](E00-E01-EXECUTION-EVIDENCE-20261014.md)
 - [ ] **E01.e — Implement AVD exclusive lease/preflight, exact boot/API/ABI/owner/nonce proof, fault injection, teardown and sanitized evidence.** — PARTIAL; dependencies: E01.a, E01.c, E01.d
-  - Exclusive owned AVD markers, PID/ABI/boot checks and OS lock present; nonce, fault-injection and full teardown beyond E01.f remain unverified
+  - Sealed owner/boot/PID test-only HMAC attestation and per-run nonce/ADB-forward cleanup added; real consent, Stop, process-death and recovery not yet complete
 - [ ] **E01.f — Add independent Android instrumentation and full MCP E2E runs to each affected PR CI; prove failures block the gate.** — PARTIAL; dependencies: E01.b, E01.c, E01.d, E01.e
   - Optional full local --v3-matrix passed with 48 on-device tests; affected PR CI enforcement and E01.c actual consent failure gates not yet all integrated
 
@@ -217,6 +217,8 @@ be added to the source ledger and rendered here immediately.
   - Next: Implement Native durable monotonically increasing arbiter, competing Host process tests and uncertain-after-dispatch reconciliation with independent Android effect evidence.
 - [ ] **GAP-N17-007** — OPEN: Installed Native APK AndroidKeyStore persists and signs after ART compatibility patch, but exact user-confirmed Host public key binding through visible Native UI + independent Host roundtrip is not yet admitted as real paired MCP authentication
   - Next: Complete user-visible fingerprint approval path with independently operated Host signature/proof and actual paired MCP, verify wrong Host/replay/Stop/crash/unpair on four owned Android APIs; never fabricate foreground OS/user approval
+- [ ] **GAP-N16-002** — OPEN: Signed local test AVD owner/nonce and ADB forward teardown gates work, but real consent cancel, user notification Stop, forced Native process death, reconnect/uncertain dispatch and revalidated OS-grant recovery are not yet linked to independent four-API automation
+  - Next: Integrate E01.c actual Android permission/ActivityResult UI automation with sealed E01.e AVD and E01.f; exercise user reject, cancellation, Stop, timeout, process-death/retry, competing Host, stale lease, boot epoch and independent OS state on API30/33/34/36
 
 ## Repeatable completion workflow
 

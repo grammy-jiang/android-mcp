@@ -27,6 +27,7 @@ from scripts.native_v3_owned_avd import (
     _run,
     _sha,
     exclusive_avd_lock,
+    validate_test_run_nonce,
 )
 
 FIXTURE = "org.androidmcp.v3fixture"
@@ -189,9 +190,14 @@ def _screenshot_palette(serial: str) -> str:
         return hashlib.sha256(binary.stdout).hexdigest()
 
 
-def verify_fixture(api: int, repo: Path, evidence_dir: Path) -> dict[str, object]:
+def verify_fixture(
+    api: int, repo: Path, evidence_dir: Path, run_nonce: str | None = None
+) -> dict[str, object]:
     # Same exact exclusive AVD as V3 Native check; never adopt shared/physical
     # Android serial by CLI parameter or mere emulator-xxxx shape.
+    import secrets
+
+    run_nonce = validate_test_run_nonce(run_nonce or secrets.token_hex(16))
     owner, _, avd = _owner_and_device(api)
     with exclusive_avd_lock(avd / "v3-test-exclusive.lock"):
         owner, observed, _ = _owner_and_device(api)
@@ -294,6 +300,9 @@ def verify_fixture(api: int, repo: Path, evidence_dir: Path) -> dict[str, object
             "avd": observed["avd"],
             "boot_identity": observed["boot_identity"],
             "emulator_pid": owner["pid"],
+            "owner_attestation_nonce": observed["owner_attestation_nonce"],
+            "owner_attestation_sha256": observed["owner_attestation_sha256"],
+            "run_nonce": run_nonce,
             "signing": signatures,
             "androidTest_sha256": _sha(test_apk),
             "document_bytes_sha256": EXPECTED_DOC_SHA,
@@ -329,8 +338,11 @@ def main() -> int:
     parser.add_argument("--api", type=int, choices=(30, 33, 34, 36), required=True)
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--evidence-dir", type=Path, default=Path("artifacts/v3-e01"))
+    parser.add_argument("--run-nonce", type=str)
     args = parser.parse_args()
-    outcome = verify_fixture(args.api, args.repo.resolve(), args.evidence_dir.resolve())
+    outcome = verify_fixture(
+        args.api, args.repo.resolve(), args.evidence_dir.resolve(), args.run_nonce
+    )
     print(json.dumps(outcome, sort_keys=True))
     return 0
 

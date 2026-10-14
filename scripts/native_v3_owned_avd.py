@@ -16,14 +16,47 @@ import contextlib
 import fcntl
 import hashlib
 import json
+import os
 import re
-import socket
+import secrets
+import stat
 import subprocess
 import sys
 import time
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
+
+from scripts.native_v3_avd_attestation import (
+    IdentityError,
+    _owner_canonical_bytes,
+    _require,
+    atomic_create_owner_proof,
+    create_owner_attestation,
+    parse_owned_forward_routes,
+    read_lab_owner_secret,
+    read_owner_proof,
+    validate_identity,
+    validate_test_run_nonce,
+    verify_owner_attestation,
+)
+
+# Preserve public helper imports for existing provision/test callers.
+__all__ = [
+    "EXPECTED_NATIVE_ANDROID_TEST_NAMES",
+    "IdentityError",
+    "assert_forward_cleanup",
+    "atomic_create_owner_proof",
+    "create_owner_attestation",
+    "exclusive_avd_lock",
+    "parse_owned_forward_routes",
+    "read_lab_owner_secret",
+    "read_owner_proof",
+    "validate_identity",
+    "validate_test_run_nonce",
+    "verify_native_instrumentation_report",
+    "verify_owner_attestation",
+]
 
 EXPECTED_NATIVE_ANDROID_TEST_NAMES = frozenset(
     {
@@ -61,76 +94,34 @@ def verify_native_instrumentation_report(text: str) -> list[str]:
     return sorted(EXPECTED_NATIVE_ANDROID_TEST_NAMES)
 
 
-class IdentityError(ValueError):
-    """An AVD or process cannot prove disposable exclusive ownership."""
-
-
-def _require(assertion: bool, message: str) -> None:
-    if not assertion:
-        raise IdentityError(message)
-
-
-def validate_identity(owner: dict[str, Any], observed: dict[str, Any]) -> None:
-    """Pure functional admission; test first, inspect right before any install."""
-    _require(owner.get("disposable") is True, "Not a declared disposable AVD")
-    name = owner.get("avd")
-    serial = owner.get("expected_serial")
-    api = owner.get("expected_api")
-    _require(
-        isinstance(name, str)
-        and bool(
-            re.fullmatch(r"android_mcp_native_v3_api(30|33|34|36)_20[0-9]{6}", name)
-        ),
-        "Unknown or non-owned AVD",
-    )
-    _require(
-        owner.get("worktree", "").startswith("android-mcp-native-v3-"),
-        "Wrong owner worktree",
-    )
-    _require(owner.get("host") == socket.gethostname(), "Wrong owner workstation")
-    _require(
-        isinstance(serial, str) and bool(re.fullmatch(r"emulator-55[0-9]{2}", serial)),
-        "Physical/malformed serial",
-    )
-    _require(isinstance(api, int) and api in (30, 33, 34, 36), "Unapproved Android API")
-    _require(name == f"android_mcp_native_v3_api{api}_20261014", "Wrong AVD marker/API")
-    _require(
-        owner.get("pid", 0) > 0 and isinstance(owner.get("pid"), int),
-        "No owned emulator PID",
-    )
-    _require(observed.get("serial") == serial, "Serial changed")
-    _require(observed.get("avd") == name, "AVD identity mismatch")
-    _require(observed.get("api") == api, "SDK mismatch")
-    _require(observed.get("qemu") == "1", "Physical device or unverifiable emulator")
-    _require(observed.get("abi") == "arm64-v8a", "Unknown ABI")
-    _require(observed.get("boot_completed") == "1", "Device not fully booted")
-    boot = observed.get("boot_identity")
-    _require(
-        isinstance(boot, str)
-        and bool(
-            re.fullmatch(
-                r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", boot
-            )
-        ),
-        "Missing device kernel boot epoch",
-    )
-    process = observed.get("process")
-    _require(isinstance(process, str) and "qemu-system-" in process, "Not QEMU process")
-    _require(
-        f"-avd {name}" in process and f"-port {serial.split('-')[1]}" in process,
-        "Emulator process does not own expected AVD/port",
-    )
-
-
 @contextlib.contextmanager
 def exclusive_avd_lock(path: Path) -> Iterator[None]:
-    """Fail immediately if another local test holds this shared OS lock."""
-    with path.open("a+b") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        try:
-            yield
-        finally:
-            fcntl.flock(lock, fcntl.LOCK_UN)
+    """Exclusive owned AVD lock; never follow a symlink or truncate data."""
+    _require(path.parent.is_dir() and not path.is_symlink(), "Invalid owner lock path")
+    try:
+        fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    except OSError as exc:
+        raise IdentityError("Could not open exclusive AVD lock safely") from exc
+    try:
+        info = os.fstat(fd)
+        _require(
+            stat.S_ISREG(info.st_mode) and info.st_uid == os.getuid(),
+            "AVD lock is not an owned regular file",
+        )
+        # Existing mode 0644 owner-created lock files can be tightened safely;
+        # do not remove or replace the existing inode another test holds.
+        if stat.S_IMODE(info.st_mode) != 0o600:
+            os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "r+b") as lock:
+            fd = -1
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            try:
+                yield
+            finally:
+                fcntl.flock(lock, fcntl.LOCK_UN)
+    finally:
+        if fd >= 0:
+            os.close(fd)
 
 
 def _run(argv: list[str], timeout: int = 45, max_bytes: int = 128 * 1024) -> str:
@@ -162,7 +153,9 @@ def _sha(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _owner_and_device(api: int) -> tuple[dict[str, Any], dict[str, Any], Path]:
+def _owner_and_device(
+    api: int, *, require_attestation: bool = True
+) -> tuple[dict[str, Any], dict[str, Any], Path]:
     name = f"android_mcp_native_v3_api{api}_20261014"
     avd = Path.home() / ".android" / "avd" / f"{name}.avd"
     manifest = Path.home() / ".android" / "avd" / f"{name}.ini"
@@ -176,6 +169,7 @@ def _owner_and_device(api: int) -> tuple[dict[str, Any], dict[str, Any], Path]:
     if not isinstance(pid, int) or pid < 1:
         raise IdentityError("No emulator PID")
     process = _run(["ps", "-p", str(pid), "-o", "command="], timeout=10).strip()
+    started = _run(["ps", "-p", str(pid), "-o", "lstart="], timeout=10).strip()
     serial = owner["expected_serial"]
     actual_avd = _adb(serial, "emu", "avd", "name").strip().splitlines()[0]
     observed = {
@@ -191,8 +185,19 @@ def _owner_and_device(api: int) -> tuple[dict[str, Any], dict[str, Any], Path]:
             serial, "shell", "cat", "/proc/sys/kernel/random/boot_id"
         ).strip(),
         "process": process,
+        "process_start": started,
     }
     validate_identity(owner, observed)
+    if require_attestation:
+        proof = read_owner_proof(avd / "v3-owner-proof.v1.json")
+        key = read_lab_owner_secret(
+            Path.home() / ".android/avd/v3-attestation-key.v1", create=False
+        )
+        verify_owner_attestation(proof, owner, observed, started, key, int(time.time()))
+        observed["owner_attestation_nonce"] = proof["nonce"]
+        observed["owner_attestation_sha256"] = hashlib.sha256(
+            _owner_canonical_bytes(proof)
+        ).hexdigest()
     return owner, observed, avd
 
 
@@ -201,8 +206,15 @@ def _git(path: Path, arg: str) -> str:
 
 
 def run_for_api(
-    api: int, repo: Path, python: Path, apk: Path, test_apk: Path, evidence_dir: Path
+    api: int,
+    repo: Path,
+    python: Path,
+    apk: Path,
+    test_apk: Path,
+    evidence_dir: Path,
+    run_nonce: str | None = None,
 ) -> dict[str, Any]:
+    run_nonce = validate_test_run_nonce(run_nonce or secrets.token_hex(16))
     owner, _, avd = _owner_and_device(api)
     with exclusive_avd_lock(avd / "v3-test-exclusive.lock"):
         # Check identity again AFTER lock: first read was just to locate lock.
@@ -239,17 +251,18 @@ def run_for_api(
         executed_android_methods = verify_native_instrumentation_report(tests)
         # MCP client calls real APK. ADB here exclusively launches the app and
         # presses UI buttons; it does not execute the requested MCP status Tool.
-        mcp_out = _run(
-            [
-                str(python),
-                str(repo / "scripts/smoke-native-emulator.py"),
-                "--serial",
-                serial,
-                "--apk",
-                str(apk),
-            ],
-            timeout=100,
-        )
+        with assert_forward_cleanup(serial):
+            mcp_out = _run(
+                [
+                    str(python),
+                    str(repo / "scripts/smoke-native-emulator.py"),
+                    "--serial",
+                    serial,
+                    "--apk",
+                    str(apk),
+                ],
+                timeout=100,
+            )
         result = json.loads(mcp_out)
         if result.get("result") != "pass" or result.get("registered_tools") != 1:
             raise RuntimeError("Native real MCP client failed or catalog drifted")
@@ -261,12 +274,16 @@ def run_for_api(
             "abi": observed["abi"],
             "boot_identity": observed["boot_identity"],
             "emulator_pid": owner["pid"],
+            "owner_attestation_nonce": observed["owner_attestation_nonce"],
+            "owner_attestation_sha256": observed["owner_attestation_sha256"],
+            "run_nonce": run_nonce,
             "git_head": _git(repo, "HEAD"),
             "git_tree": _git(repo, "HEAD^{tree}"),
             "apk_sha256": _sha(apk),
             "instrumentation_apk_sha256": _sha(test_apk),
             "instrumentation_tests": len(executed_android_methods),
             "instrumentation_method_ids": executed_android_methods,
+            "forward_cleanup_verified": True,
             "mcp_client": "FastMCP to installed Native Android APK",
             "mcp_check": result,
             "independent_android_oracle": "PackageManager installed version/UID",
@@ -283,6 +300,27 @@ def run_for_api(
         return receipt
 
 
+def _owned_forward_snapshot(serial: str) -> tuple[str, ...]:
+    return parse_owned_forward_routes(_adb(serial, "forward", "--list"), serial)
+
+
+@contextlib.contextmanager
+def assert_forward_cleanup(serial: str) -> Iterator[None]:
+    """Detect leftover Android MCP forwards even when tool run fails.
+
+    No unscoped forward --remove-all: such cleanup could tear down another
+    Host's active development. Preserve a failure as a required GAP until
+    an owner verifies the exact orphaned mapping.
+    """
+    baseline = _owned_forward_snapshot(serial)
+    try:
+        yield
+    finally:
+        after = _owned_forward_snapshot(serial)
+        if baseline != after:
+            raise RuntimeError("Owned emulator MCP forward mapping leaked/changed")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--api", type=int, choices=(30, 33, 34, 36), required=True)
@@ -291,6 +329,7 @@ def main() -> int:
     parser.add_argument("--apk", type=Path, required=True)
     parser.add_argument("--instrumentation-apk", type=Path, required=True)
     parser.add_argument("--evidence-dir", type=Path, required=True)
+    parser.add_argument("--run-nonce", type=str)
     args = parser.parse_args()
     receipt = run_for_api(
         args.api,
@@ -299,6 +338,7 @@ def main() -> int:
         args.apk.resolve(),
         args.instrumentation_apk.resolve(),
         args.evidence_dir.resolve(),
+        args.run_nonce,
     )
     print(json.dumps(receipt, sort_keys=True))
     return 0

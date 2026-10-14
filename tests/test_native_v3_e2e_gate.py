@@ -25,6 +25,9 @@ BOOTS = "-".join(["a" * 8, "a" * 4, "a" * 4, "a" * 4, "a" * 12])
 def example(api: int) -> tuple[dict, dict]:
     name = f"android_mcp_native_v3_api{api}_20261014"
     serial = f"emulator-{ {30: 5564, 33: 5566, 34: 5568, 36: 5562}[api] }"
+    attested_nonce = f"{api:02x}" * 16
+    test_run_nonce = f"{api + 3:02x}" * 16
+    proof_sha = f"{api:02x}" * 32
     owned = {
         "run_type": "V3_E01_BASELINE_NOT_PRODUCT_ACCEPTANCE",
         "api": api,
@@ -33,12 +36,16 @@ def example(api: int) -> tuple[dict, dict]:
         "abi": "arm64-v8a",
         "boot_identity": BOOTS,
         "emulator_pid": api + 60000,
+        "owner_attestation_nonce": attested_nonce,
+        "owner_attestation_sha256": proof_sha,
+        "run_nonce": test_run_nonce,
         "git_head": GIT_SHA,
         "git_tree": GIT_TREE,
         "apk_sha256": APK,
         "instrumentation_apk_sha256": TEST_APK,
         "instrumentation_tests": 8,
         "instrumentation_method_ids": sorted(EXPECTED_NATIVE_ANDROID_TEST_NAMES),
+        "forward_cleanup_verified": True,
         "mcp_client": "FastMCP to installed Native Android APK",
         "independent_android_oracle": "PackageManager installed version/UID",
         "mcp_check": {
@@ -58,6 +65,9 @@ def example(api: int) -> tuple[dict, dict]:
         "serial": serial,
         "avd": name,
         "emulator_pid": api + 60000,
+        "owner_attestation_nonce": attested_nonce,
+        "owner_attestation_sha256": proof_sha,
+        "run_nonce": test_run_nonce,
         "boot_identity": BOOTS,
         "git_head": GIT_SHA,
         "git_tree": GIT_TREE,
@@ -130,6 +140,7 @@ class E01MatrixGateTests(unittest.TestCase):
 
     def test_fake_android_runner_result_fails(self) -> None:
         for key, bad in (
+            ("forward_cleanup_verified", False),
             ("instrumentation_tests", 0),
             ("independent_android_oracle", "ADB performed tool"),
             ("run_type", "PASS_REAL_E2E"),
@@ -168,6 +179,24 @@ class E01MatrixGateTests(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(GateError):
                 evaluate_matrix(data, GIT_SHA, GIT_TREE)
 
+    def test_owned_hmac_proof_and_random_run_nonce_cannot_be_replayed(self) -> None:
+        cases = (
+            ("run_nonce", "f" * 32),
+            ("owner_attestation_nonce", "0" * 32),
+            ("owner_attestation_sha256", "1" * 64),
+        )
+        for key, value in cases:
+            records = receipts()
+            records[1][1][key] = value
+            with self.subTest(key=key), self.assertRaises(GateError):
+                evaluate_matrix(records, GIT_SHA, GIT_TREE)
+        records = receipts()
+        for native, fixture in records:
+            native.pop("owner_attestation_nonce")
+            fixture.pop("owner_attestation_nonce")
+        with self.assertRaises(GateError):
+            evaluate_matrix(records, GIT_SHA, GIT_TREE)
+
     def test_broken_fixture_signature_or_bytes_blocks(self) -> None:
         for key, bad in (
             ("fixture_certificate_sha256", "f" * 64),
@@ -205,6 +234,10 @@ class E01MatrixGateTests(unittest.TestCase):
         content = script.read_text()
         self.assertIn(":app:assembleDebugAndroidTest", content)
         self.assertIn("-m scripts.native_v3_e2e_gate", content)
+        self.assertIn(
+            '"scripts.native_v3_owned_avd"',
+            (repo / "scripts/native_v3_e2e_gate.py").read_text(),
+        )
         self.assertIn("scripts/check-native-v3-fixtures.sh", content)
 
     def test_missing_executed_suite_cannot_be_replaced_by_one_jvm_result(self) -> None:
