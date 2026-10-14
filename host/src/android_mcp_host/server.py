@@ -51,6 +51,7 @@ from android_mcp_host.private_artifact_store import (
 from android_mcp_host.probes import MAX_PROBES, PROBES, ProbeService
 from android_mcp_host.sdk_ndk_inventory import SdkNdkInventory, get_sdk_ndk_output_schema
 from android_mcp_host.status import build_status
+from android_mcp_host.synthetic_file_pull import FilePullService
 from android_mcp_host.synthetic_screenrecord import ScreenRecordService
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
 from android_mcp_host.synthetic_ui_hierarchy import UiHierarchyService
@@ -87,6 +88,7 @@ def create_server(
     screenshot_worker: ScreenshotArtifacts | None = None,
     ui_hierarchy_worker: UiHierarchyService | None = None,
     screenrecord_worker: ScreenRecordService | None = None,
+    file_pull_worker: FilePullService | None = None,
     snapshot_manager: EmulatorSnapshotManager | None = None,
     durable_jobs: DurableJobStore | None = None,
     job_owner: str | None = None,
@@ -478,7 +480,9 @@ def create_server(
         register_instrumentation_tool(server, instrumentation_jobs)
     if debug_deployment is not None:
         register_debug_deployment_tool(server, debug_deployment)
-    register_media_tools(server, screenshot_worker, ui_hierarchy_worker, screenrecord_worker)
+    register_media_tools(
+        server, screenshot_worker, ui_hierarchy_worker, screenrecord_worker, file_pull_worker
+    )
     if snapshot_manager is not None:
         register_snapshot_tool(server, snapshot_manager)
 

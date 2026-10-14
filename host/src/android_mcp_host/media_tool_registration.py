@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from fastmcp import FastMCP
 
+from android_mcp_host.synthetic_file_pull import FilePullService
+from android_mcp_host.synthetic_file_pull_tool import register_file_pull_tool
 from android_mcp_host.synthetic_screenrecord import ScreenRecordService
 from android_mcp_host.synthetic_screenrecord_tool import register_screenrecord_tool
 from android_mcp_host.synthetic_screenshot import ScreenshotArtifacts
@@ -17,6 +19,7 @@ def register_media_tools(
     screenshot: ScreenshotArtifacts | None,
     hierarchy: UiHierarchyService | None,
     screenrecord: ScreenRecordService | None,
+    file_pull: FilePullService | None = None,
 ) -> None:
     if screenshot is not None:
         register_screenshot_tool(server, screenshot)
@@ -24,3 +27,5 @@ def register_media_tools(
         register_ui_hierarchy_tool(server, hierarchy)
     if screenrecord is not None:
         register_screenrecord_tool(server, screenrecord)
+    if file_pull is not None:
+        register_file_pull_tool(server, file_pull)
