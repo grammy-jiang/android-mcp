@@ -367,3 +367,20 @@ def test_negative_timestamp_forged_sanitized_trace_is_rejected() -> None:
     }
     raw = json.dumps(forged, sort_keys=True, separators=(",", ":")).encode("ascii")
     assert valid_sanitized_trace(raw, profile=PROF, duration_s=3) is False
+
+
+def test_independent_approval_alone_never_enables_production_trace_reader(
+    tmp_path: Path,
+) -> None:
+    worker, live, jobs, store, handle, lid, calls = builder(tmp_path)
+    worker._fixture = None
+    try:
+        denied = submit(worker, handle, lid, "capture")
+        assert denied["status"] == "blocked"
+        assert denied["errors"][0]["code"] == "EXECUTION_DISABLED"
+        assert denied["artifact_handle"] is None
+        assert store.list_metadata(ART_OWNER) == []
+        assert calls == []
+        assert len(jobs.list_status(OWNER)) == 1
+    finally:
+        live.shutdown()

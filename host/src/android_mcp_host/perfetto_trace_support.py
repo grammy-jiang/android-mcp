@@ -26,7 +26,6 @@ _EVENTS = {
 _RECORD = re.compile(
     rb"ts_ms=(?:0|[1-9][0-9]{0,5});event=([a-z_]{3,24});value=(?:0|[1-9][0-9]{0,7})\Z"
 )
-_NUMBER = re.compile(rb"(?:0|[1-9][0-9]{0,7})\Z")
 _ERRORS = {
     "INVALID_ACTION": "Only synthetic trace plan, capture or cancel are supported",
     "INVALID_INPUT": "Invalid finite synthetic trace selectors",
