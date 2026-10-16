@@ -122,4 +122,44 @@ class LocalPortOwnerTest {
             pool.shutdownNow()
         }
     }
+
+    @Test
+    fun repeatedPortContentionKeepsUncertainShutdownFailClosed() {
+        val owner = LocalPortOwner()
+        val pool = Executors.newFixedThreadPool(8)
+        try {
+            repeat(100) {
+                val candidates = List(8) { Any() }
+                val ready = CountDownLatch(candidates.size)
+                val begin = CountDownLatch(1)
+                try {
+                    val futures = candidates.map { candidate ->
+                        pool.submit<Boolean> {
+                            ready.countDown()
+                            begin.await(5, TimeUnit.SECONDS) && owner.reserve(candidate)
+                        }
+                    }
+                    assertTrue(ready.await(5, TimeUnit.SECONDS))
+                    begin.countDown()
+                    val winners = candidates.zip(futures).filter { (_, future) ->
+                        future.get(5, TimeUnit.SECONDS)
+                    }.map { (candidate, _) -> candidate }
+                    assertEquals(1, winners.size)
+                    val winner = winners.single()
+                    assertTrue(owner.confirmReady(winner))
+                    assertTrue(owner.beginStop(winner))
+                    assertFalse(owner.confirmStopped(winner, false))
+                    assertEquals(PortPhase.UNKNOWN, owner.currentPhase())
+                    assertFalse(owner.reserve(Any()))
+                    assertTrue(owner.beginStop(winner))
+                    assertTrue(owner.confirmStopped(winner, true))
+                    assertEquals(PortPhase.FREE, owner.currentPhase())
+                } finally {
+                    begin.countDown()
+                }
+            }
+        } finally {
+            pool.shutdownNow()
+        }
+    }
 }
