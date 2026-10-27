@@ -42,7 +42,7 @@ jobs:
           java-version: "17"
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
-          version: "0.12.24"
+          version: "0.13.4"
       - name: Install pinned Python and confirm emulator-only guards
         run: |
           uv python install 3.13
