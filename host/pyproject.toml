@@ -7,7 +7,7 @@ name = "android-mcp-host"
 version = "0.1.0"
 description = "Cross-platform macOS/Linux ADB host runtime for Android MCP."
 requires-python = ">=3.11,<3.15"
-dependencies = ["fastmcp==4.1.0", "cryptography>=46,<51", "defusedxml==0.7.1"]
+dependencies = ["fastmcp==4.1.2", "cryptography>=46,<51", "defusedxml==0.7.1"]
 
 [project.scripts]
 android-mcp-host = "android_mcp_host.cli:main"
@@ -26,7 +26,7 @@ dev = [
 security = ["pip-audit>=2.9,<3"]
 
 [tool.uv]
-required-version = ">=0.12.22,<0.13"
+required-version = ">=0.13.4,<0.14"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/android_mcp_host"]
