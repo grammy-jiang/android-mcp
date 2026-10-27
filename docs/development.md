@@ -5,7 +5,7 @@ This document owns bootstrap, local checks and collaboration conventions. `AGENT
 ## Host toolchain
 
 - macOS or Linux (including ARM64 Raspberry Pi); Python 3.11–3.14, preferred development interpreter Python 3.13 from `host/.python-version`.
-- `uv` 0.12.x (GitHub CI uses an explicit pinned uv release; `host/uv.lock` locks Python dependencies).
+- `uv` >=0.13.4,<0.14 (GitHub CI uses `uv` 0.13.4; `host/uv.lock` locks Python dependencies).
 - Git, and optional official Android Platform Tools. ADB and an attached tablet are **not** needed to run any current tests.
 - Native/Kotlin development will require a tested JDK (minimum 17 for AGP 9.4), Android SDK/Gradle plugin and signed debug APK workflow; **not bootstrapped by this Host script yet**.
 
