@@ -37,6 +37,9 @@ def assert_fixture_terminated(pid: int) -> None:
 def script(tmp_path: Path, body: str) -> Path:
     source = tmp_path / "synthetic-logcat-fixture.py"
     source.write_text(body, encoding="utf-8")
+    # The reader rejects group/other-writable scripts. Set the mode explicitly
+    # so the result does not depend on the test process umask (0002 on some hosts).
+    source.chmod(0o644)
     return source
 
 

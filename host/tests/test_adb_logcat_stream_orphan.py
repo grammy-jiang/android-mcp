@@ -170,6 +170,8 @@ def test_real_parent_sigkill_causes_guard_to_terminate_fixture_and_descendants(
         "    time.sleep(0.03)\n",
         encoding="utf-8",
     )
+    # Keep the trusted-fixture check independent of the test process umask.
+    fake.chmod(0o644)
     parent_script = (
         "import sys,threading\nfrom pathlib import Path\n"
         "from android_mcp_host.logcat_stream_child import SyntheticLogcatProcessReader\n"
