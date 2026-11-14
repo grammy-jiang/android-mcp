@@ -85,7 +85,7 @@ def build_checklist(
     )
 
     gaps = status.get("required_gaps")
-    _require(isinstance(gaps, list) and len(gaps) >= 32, "Previously found GAP deleted")
+    _require(isinstance(gaps, list) and len(gaps) >= 33, "Previously found GAP deleted")
     gap_ids = [item.get("id") for item in gaps]
     _require(
         len(set(gap_ids)) == len(gaps)
@@ -105,6 +105,7 @@ def build_checklist(
             "GAP-N01-002",
             "GAP-N01-003",
             "GAP-N01-004",
+            "GAP-N01-005",
             "GAP-N07-002",
             "GAP-N17-005",
             "GAP-N17-006",
