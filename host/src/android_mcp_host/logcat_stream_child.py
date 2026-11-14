@@ -51,6 +51,23 @@ class SyntheticLogcatProcessReader:
             os.killpg(process.pid, signal.SIGKILL)
         except ProcessLookupError:
             pass
+        except PermissionError:
+            # On macOS the watchdog can leave a dying/zombie-only group that
+            # returns EPERM until it is reaped. A dead leader alone is NOT
+            # evidence that its descendants are gone. Only ESRCH for the whole
+            # group resolves this race; live or unverifiable groups fail closed.
+            deadline = time.monotonic() + 0.5
+            while True:
+                process.poll()  # Reap our leader without blocking on a live one.
+                try:
+                    os.killpg(process.pid, 0)
+                except ProcessLookupError:
+                    break
+                except PermissionError:
+                    pass
+                if time.monotonic() >= deadline:
+                    raise
+                time.sleep(0.01)
         try:
             process.wait(timeout=0.5)
         except subprocess.TimeoutExpired:
@@ -124,6 +141,8 @@ class SyntheticLogcatProcessReader:
                 raise RuntimeError("Synthetic fixture returned unsuccessful exit")
             return StreamFrame(b"".join(parts), name, handle, lifecycle, True, True)
         finally:
-            self._stop_group(process)
-            if process.stdout is not None:
-                process.stdout.close()
+            try:
+                self._stop_group(process)
+            finally:
+                if process.stdout is not None:
+                    process.stdout.close()
